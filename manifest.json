@@ -8,6 +8,10 @@
   "background_color": "#0d0e12",
   "theme_color": "#171821",
   "orientation": "portrait-primary",
+  "categories": [
+    "education",
+    "games"
+  ],
   "icons": [
     {
       "src": "icons/icon48.png",
