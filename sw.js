@@ -21,7 +21,9 @@ const ASSETS = [
   './icons/icon192.png',
   './icons/icon512.png',
   './screenshots/screenshot1.png',
-  './screenshots/screenshot2.png'
+  './screenshots/screenshot2.png',
+  './screenshots/screenshot_mobile1.png',
+  './screenshots/screenshot_mobile2.png'
 ];
 
 // Install: Cache static resources

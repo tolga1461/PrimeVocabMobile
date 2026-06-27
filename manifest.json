@@ -46,14 +46,28 @@
       "sizes": "1920x945",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Vocabulary Training Screen"
+      "label": "Desktop - Spaced Repetition SRS View"
     },
     {
       "src": "screenshots/screenshot2.png",
       "sizes": "1920x945",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Settings & Sync Screen"
+      "label": "Desktop - Application Settings"
+    },
+    {
+      "src": "screenshots/screenshot_mobile1.png",
+      "sizes": "500x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile - Dictionary Vocabulary View"
+    },
+    {
+      "src": "screenshots/screenshot_mobile2.png",
+      "sizes": "500x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile - Application Settings"
     }
   ]
 }
