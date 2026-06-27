@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <script>
+    window.addEventListener('error', function(e) {
+      console.error("DOM ERROR LOG:", e.message, e.filename, e.lineno);
+      setTimeout(() => {
+        let errDiv = document.createElement('div');
+        errDiv.className = 'dom-error-display';
+        errDiv.style.cssText = 'position:fixed; top:10px; left:10px; right:10px; background:#ef4444; color:white; padding:12px; border-radius:8px; z-index:99999; font-family:monospace; font-size:11px; box-shadow:0 4px 12px rgba(0,0,0,0.5); word-break:break-all;';
+        errDiv.innerHTML = '<strong>Hata:</strong> ' + e.message + '<br><small>' + e.filename + ':' + e.lineno + '</small>';
+        document.body.appendChild(errDiv);
+      }, 100);
+    });
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PrimeVocab Mobile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css?v=3">
+  
+  <!-- Add support for PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PrimeVocab">
+  <link rel="apple-touch-icon" href="icons/icon128.png">
+
+  <script>
+    // Force unregister service worker to clear stale cache during development
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
+
+  <!-- Include Google Identity Services Client SDK for standalone Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Chart.js for statistics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* PWA Mobile-first UI overrides for bottom navigation and layout */
+    body {
+      overflow-x: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: -webkit-fill-available;
+      overflow: hidden;
+    }
+
+    /* Move header tabs to bottom tab bar on mobile */
+    .header {
+      padding: 12px 16px 8px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .tabs {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 (safe-area-inset-bottom);
+      z-index: 1000;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 8px 0;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .tab::before {
+      font-size: 20px;
+      margin-bottom: 2px;
+    }
+    
+    #tab-archive::before { content: "📚"; }
+    #tab-review::before { content: "⚡"; }
+    #tab-settings::before { content: "⚙️"; }
+
+    .tab.active {
+      color: var(--accent);
+      background: transparent;
+      border: none;
+    }
+    
+    .tab.active::after {
+      display: none;
+    }
+
+    .panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 16px 80px 16px; /* 80px padding-bottom to avoid overlaying with the bottom tab bar */
+      height: calc(100vh - 140px);
+    }
+
+    /* Close panel button is hidden in mobile PWA */
+    #close-sidepanel-btn {
+      display: none !important;
+    }
+
+    /* PWA Install banner style */
+    .install-banner {
+      display: none;
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      z-index: 2000;
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+      justify-content: space-between;
+      align-items: center;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- PWA Install Banner -->
+  <div id="install-banner" class="install-banner">
+    <div>
+      <div style="font-weight: 700; font-size: 14px;">PrimeVocab'ı Telefona Ekle</div>
+      <div style="font-size: 11px; opacity: 0.9;">Ana ekrana ekleyerek uygulama gibi kullanın.</div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button id="install-close-btn" style="background:transparent; border:none; color:white; font-size:16px;">✕</button>
+      <button id="install-action-btn" style="background:white; border:none; color:#4f46e5; padding:6px 12px; border-radius:6px; font-weight:700; font-size:12px;">Yükle</button>
+    </div>
+  </div>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <div class="logo">
+          <span class="logo-text" style="font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #818cf8, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PrimeVocab</span>
+        </div>
+        <div class="header-actions">
+          <button class="profile-btn" id="profile-btn" title="Profil">👤</button>
+          <button class="info-btn" id="info-btn" title="Bilgi">i</button>
+          <button class="tour-btn" id="tour-btn" style="display:none;">🚀</button>
+          <button class="help-btn" id="help-btn" style="display:none;">?</button>
+          <button class="close-panel-btn" id="close-sidepanel-btn" style="display:none;">✕</button>
+        </div>
+      </div>
+      
+      <!-- Bottom Navigation bar placeholder for desktop/mobile bindings -->
+      <div class="tabs">
+        <button class="tab" id="tab-subtitle" data-tab="subtitle" style="display:none;"></button>
+        <button class="tab active" id="tab-archive" data-tab="archive">
+          <span data-i18n="tab_archive">Sözlük</span>
+          <span class="badge" id="archive-badge" style="display:none">0</span>
+        </button>
+        <button class="tab" id="tab-review" data-tab="review">
+          <span data-i18n="tab_review">Çalışma</span>
+          <span class="badge badge-due" id="review-badge" style="display:none">0</span>
+        </button>
+        <button class="tab" id="tab-settings" data-tab="settings" data-i18n="tab_settings">Ayarlar</button>
+      </div>
+    </header>
+
+    <!-- Profil overlay -->
+    <div class="shortcuts-overlay" id="profile-overlay" style="display:none">
+      <div class="shortcuts-modal" style="max-width: 320px;">
+        <div class="shortcuts-header">
+          <span data-i18n="profile_title">👤 Profil ve İlerleme</span>
+          <button class="shortcuts-close" id="profile-close">✕</button>
+        </div>
+        <div class="profile-body"
+          style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: var(--text-dim); line-height: 1.5; padding: 4px 0 0 0;">
+          <div style="text-align: center; margin-bottom: 4px;">
+            <div id="profile-avatar-container" style="font-size: 40px; margin-bottom: 6px; display: flex; justify-content: center; align-items: center; min-height: 48px;">👤</div>
+            <h3 style="margin: 0; font-size: 16px; color: var(--text); font-weight: 700; font-family: var(--font);" id="profile-username" data-i18n="profile_user_title">Kullanıcı</h3>
+            <small style="color: var(--text-muted); font-weight: 500; display: block;" id="profile-email" data-i18n="profile_local_user">Yerel Kullanıcı</small>
+            <div id="profile-membership-badge" style="margin-top: 4px; font-size: 10px; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 12px; background: var(--border);">FREE</div>
+          </div>
+          <hr style="border: none; border-top: 1px solid var(--border2); margin: 2px 0;">
+          <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="profile_total_words">Toplam Kelime:</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-total-words">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="profile_streak">Çalışma Serisi:</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-streak">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="profile_exp">Toplam EXP (Deneyim):</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-exp">0</span>
+            </div>
+            
+            <!-- Seviye ve İlerleme Barı -->
+            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 2px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
+                <span style="color: var(--text-muted);" data-i18n="profile_level_label">Mevcut Seviye:</span>
+                <span style="font-weight: 700; color: var(--accent);" id="profile-level">Level 1</span>
+              </div>
+              <div style="width: 100%; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; border: 1px solid var(--border2);">
+                <div id="profile-level-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #818cf8, #a5b4fc); transition: width 0.3s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Bugünkü Aktivite -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="profile_today_activity_label">Bugünkü Aktivite:</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-today-activity">0 kelime</span>
+            </div>
+
+            <!-- Kazanılan Başarımlar -->
+            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 2px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-muted);" data-i18n="profile_achievements_label">Başarımlar:</span>
+                <span style="font-weight: 600; color: var(--text);" id="profile-achievements-ratio">0 / 0</span>
+              </div>
+              <div id="profile-achievements-badges" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; min-height: 24px;"></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font); width: 100%;">
+              <!-- Google ile Giriş Yap -->
+              <button id="profile-login-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #6366f1; border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 13px; margin: 4px 0 8px 0; transition: all 0.2s;" data-i18n="profile_login_btn">
+                <span>🔑</span> Google ile Giriş Yap
+              </button>
+
+              <div id="profile-sync-status-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                <span id="profile-sync-status" data-i18n="profile_sync_status_unlinked">Senkronizasyon Kapalı</span>
+                <button id="profile-sync-now-btn" style="display: none; background: var(--accent-dim); border: 1px solid var(--border); color: #818cf8; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;" data-i18n="profile_sync_now">Şimdi Eşitle</button>
+              </div>
+              <div id="profile-last-sync-row" style="font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
+                <span data-i18n="profile_last_sync_label">Son Eşitleme:</span>
+                <span id="profile-last-sync-time" style="font-weight: 600; color: var(--text);" data-i18n="profile_last_sync_never">Henüz Yapılmadı</span>
+              </div>
+              <div id="profile-logout-row" style="display: flex; justify-content: flex-end; margin-top: 8px;">
+                <button id="profile-logout-btn" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit; width: 100%; text-align: center;" data-i18n="profile_logout">Çıkış Yap</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bilgi overlay -->
+    <div class="shortcuts-overlay" id="info-overlay" style="display:none">
+      <div class="shortcuts-modal" style="max-width: 320px;">
+        <div class="shortcuts-header">
+          <span data-i18n="info_title">ℹ️ PrimeVocab Hakkında</span>
+          <button class="shortcuts-close" id="info-close">✕</button>
+        </div>
+        <div class="info-body"
+          style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: var(--text-dim); line-height: 1.5; padding: 4px 0 0 0;">
+          <div style="text-align: center; margin-bottom: 4px;">
+            <h3 style="margin: 0; font-size: 16px; color: var(--text); font-weight: 700; font-family: var(--font);">
+              PrimeVocab Mobile</h3>
+            <small style="color: var(--text-muted); font-weight: 500;">v1.0 (Companion App)</small>
+          </div>
+
+          <p style="margin: 0; text-align: center; font-family: var(--font);" data-i18n="info_desc">
+            PrimeVocab, video izlerken çift altyazı ve aralıklı tekrar yöntemiyle dil öğrenmenizi sağlayan akıllı bir
+            eklentidir. Bu mobil uygulama, masaüstünden eklediğiniz kelimeleri tekrar etmenizi ve oyun oynamanızı sağlar.
+          </p>
+
+          <hr style="border: none; border-top: 1px solid var(--border2); margin: 2px 0;">
+
+          <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="info_developer">Geliştirici:</span>
+              <span style="font-weight: 600; color: var(--text);">Tolga KASAP</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden Subtitle Panel (avoids errors in panel_subtitles.js) -->
+    <div class="panel" id="panel-subtitle" style="display:none !important;">
+      <div class="transcript-list" id="transcript-list"></div>
+      <div id="empty-subtitle"></div>
+    </div>
+
+    <!-- ── SÖZLÜK PANELİ ── -->
+    <div class="panel active" id="panel-archive">
+      <!-- Toolbar -->
+      <div class="archive-toolbar">
+        <span class="archive-count" id="archive-count">0 Kelime</span>
+        <div class="archive-btns">
+          <button class="toolbar-btn" id="flashcard-btn" title="Kart Çalış">🃏</button>
+          <button class="toolbar-btn" id="refresh-families-btn" title="Kökleri Yenile">🔁</button>
+          <button class="toolbar-btn toolbar-btn-toggle" id="toggle-family-btn" title="Grup Kök">📚</button>
+          <button class="toolbar-btn toolbar-btn-toggle" id="toggle-tags-btn" title="Etiketleri Göster/Gizle">🏷️</button>
+          <button class="toolbar-btn toolbar-btn-toggle" id="toggle-expand-all-btn" title="Tüm Detayları Aç/Kapat">↕️</button>
+          <button class="toolbar-btn" id="export-btn" title="Dışa Aktar">📥</button>
+          <button class="toolbar-btn danger" id="clear-btn" title="Temizle">🗑️</button>
+        </div>
+      </div>
+
+      <!-- Arama -->
+      <div class="archive-search-row">
+        <input type="text" id="archive-search" class="archive-search" placeholder="Kelime ara…" autocomplete="off" />
+      </div>
+
+      <!-- Filtre + Sıralama -->
+      <div class="archive-filter-row">
+        <div class="filter-chips" id="cefr-filter-chips">
+          <button class="filter-chip active" data-level="all" data-i18n="filter_all">Tümü</button>
+          <button class="filter-chip" data-level="hard" style="--chip-color:#ef4444" data-i18n="filter_hard">🔥 Zor</button>
+          <button class="filter-chip" data-level="A1" style="--chip-color:#22c55e">A1</button>
+          <button class="filter-chip" data-level="A2" style="--chip-color:#84cc16">A2</button>
+          <button class="filter-chip" data-level="B1" style="--chip-color:#eab308">B1</button>
+          <button class="filter-chip" data-level="B2" style="--chip-color:#f97316">B2</button>
+          <button class="filter-chip" data-level="C1" style="--chip-color:#ef4444">C1</button>
+          <button class="filter-chip" data-level="C2" style="--chip-color:#a855f7">C2</button>
+          <button class="filter-chip" data-level="phrasal" style="--chip-color:#a855f7">📚 Phrasal</button>
+          <button class="filter-chip" data-level="??" style="--chip-color:#64748b" data-i18n="filter_other">Diğer</button>
+        </div>
+      </div>
+
+      <!-- Sıralama + Kaynak filtresi -->
+      <div class="archive-sort-source-row">
+        <select id="archive-sort" class="archive-source-select">
+          <option value="newest" data-i18n="sort_newest">En Yeni</option>
+          <option value="oldest" data-i18n="sort_oldest">En Eski</option>
+          <option value="az" data-i18n="sort_az">A → Z</option>
+          <option value="za" data-i18n="sort_za">Z → A</option>
+        </select>
+        <select id="archive-source-select" class="archive-source-select" style="display:none">
+          <option value="all" data-i18n="select_all_sources">Tüm kaynaklar</option>
+        </select>
+        <select id="archive-tag-select" class="archive-source-select" style="display:none">
+          <option value="all">🏷️ Tüm etiketler</option>
+        </select>
+        <datalist id="global-tags-datalist"></datalist>
+      </div>
+
+      <!-- Kelime Listesi -->
+      <div class="word-list" id="word-list">
+        <div class="empty-state" id="empty-archive">
+          <div class="empty-icon">📚</div>
+          <p data-i18n="empty_archive_title">Henüz kelime eklenmedi</p>
+          <small data-i18n="empty_archive_help">Bilgisayardaki eklentinizden kelime ekleyin ve senkronize edin</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ÇALIŞMA PANELİ (SRS) ── -->
+    <div class="panel" id="panel-review">
+
+      <!-- Alt Sekmeler -->
+      <div class="review-subtabs" id="review-subtabs">
+        <button class="review-subtab active" id="subtab-srs" data-subtab="srs">
+          <span data-i18n="subtab_srs">⚡ Antrenman</span>
+        </button>
+        <button class="review-subtab" id="subtab-games" data-subtab="games">
+          <span data-i18n="subtab_games">🎮 Oyunlar</span>
+        </button>
+        <button class="review-subtab" id="subtab-achievements" data-subtab="achievements">
+          <span data-i18n="subtab_achievements">🏆 Başarımlar</span>
+        </button>
+      </div>
+
+      <!-- Antrenman (SRS) Alanı -->
+      <div id="review-training-content" style="display: flex; flex-direction: column; gap: 8px; flex: 1;">
+        <!-- Özet ekranı -->
+        <div id="srs-home">
+          <div class="srs-stats-row">
+            <div class="srs-stat-card" id="srs-stat-due">
+              <div class="srs-stat-num" id="srs-due-count">0</div>
+              <div class="srs-stat-label" data-i18n="srs_stat_due">Bugün bekliyor</div>
+            </div>
+            <div class="srs-stat-card" id="srs-stat-total">
+              <div class="srs-stat-num" id="srs-total-count">0</div>
+              <div class="srs-stat-label" data-i18n="srs_stat_total">Toplam kelime</div>
+            </div>
+            <div class="srs-stat-card" id="srs-stat-streak" style="position: relative;">
+              <div class="srs-stat-num" id="srs-streak-count">0</div>
+              <div class="srs-stat-label" data-i18n="srs_stat_streak">Gün serisi 🔥</div>
+              <div class="srs-stat-best" id="srs-best-streak-container" style="position: absolute; top: 4px; right: 6px; font-size: 9px; color: var(--text-muted); font-weight: 700; display: none;"></div>
+            </div>
+          </div>
+
+          <div class="srs-next-info" id="srs-next-info" style="display:none">
+            <span id="srs-next-text"></span>
+          </div>
+
+          <!-- Aktivite ısı haritası -->
+          <div class="srs-heatmap-section" id="srs-heatmap-section" style="display:none">
+            <div class="srs-heatmap-header">
+              <span class="srs-heatmap-title" data-i18n="srs_heatmap_title">Son 12 Hafta</span>
+              <span class="srs-heatmap-legend">
+                <span class="heatmap-legend-label" data-i18n="heatmap_less">Az</span>
+                <span class="heatmap-cell" style="background:var(--hm-1)"></span>
+                <span class="heatmap-cell" style="background:var(--hm-2)"></span>
+                <span class="heatmap-cell" style="background:var(--hm-3)"></span>
+                <span class="heatmap-cell" style="background:var(--hm-4)"></span>
+                <span class="heatmap-legend-label" data-i18n="heatmap_more">Çok</span>
+              </span>
+            </div>
+            <div class="srs-heatmap-grid" id="srs-heatmap-grid"></div>
+          </div>
+
+          <!-- Haftalık kelime grafiği -->
+          <div class="srs-weekly-chart-section" id="srs-weekly-chart-section" style="display:none">
+            <div class="srs-chart-title" data-i18n="srs_weekly_title">📈 Haftalık Kelime</div>
+            <div class="srs-chart-summary" id="srs-chart-summary"></div>
+            <canvas id="srs-weekly-canvas" class="srs-weekly-canvas"></canvas>
+          </div>
+
+          <button class="srs-start-btn" id="srs-start-btn" data-i18n="srs_start_btn">Çalışmaya Başla</button>
+          <button class="srs-words-btn" id="srs-words-btn" style="margin-top: 10px; width: 100%; padding: 12px; background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.4); color: #818cf8; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 14px; transition: all 0.2s;" data-i18n="srs_study_list_btn">📋 Kelimeler & İlerleme</button>
+
+          <div class="srs-empty" id="srs-empty" style="display:none">
+            <div class="empty-icon">🎉</div>
+            <p data-i18n="srs_completed">Bugünkü çalışma tamamlandı!</p>
+            <small id="srs-empty-next"></small>
+          </div>
+
+          <!-- Antrenman Ayarları -->
+          <div class="srs-settings-section">
+            <div class="srs-settings-title" data-i18n="srs_settings_title">⚙️ Çalışma Ayarları</div>
+            <div class="srs-settings-group">
+              <div class="srs-settings-row">
+                <div>
+                  <div class="srs-settings-label" data-i18n="srs_settings_new_limit">Günlük Yeni Kart Limiti</div>
+                  <div class="srs-settings-help" data-i18n="srs_settings_new_limit_help">Günde en fazla bu kadar yeni kart çalışılır.</div>
+                </div>
+              </div>
+              <div class="btn-group" id="srs-new-limit-group">
+                <button class="setting-btn" data-value="5">5</button>
+                <button class="setting-btn active" data-value="10">10</button>
+                <button class="setting-btn" data-value="20">20</button>
+                <button class="setting-btn" data-value="50">50</button>
+                <button class="setting-btn" data-value="0" data-i18n="srs_unlimited">Sınırsız</button>
+              </div>
+            </div>
+            <div class="srs-settings-group">
+              <div class="srs-settings-row">
+                <div>
+                  <div class="srs-settings-label" data-i18n="srs_settings_session_limit">Oturum Süresi</div>
+                  <div class="srs-settings-help" data-i18n="srs_settings_session_limit_help">Oturum başına maksimum kart sayısı.</div>
+                </div>
+              </div>
+              <div class="btn-group" id="srs-session-limit-group">
+                <button class="setting-btn" data-value="10">10</button>
+                <button class="setting-btn active" data-value="20">20</button>
+                <button class="setting-btn" data-value="30">30</button>
+                <button class="setting-btn" data-value="0" data-i18n="srs_unlimited">Sınırsız</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kart ekranı -->
+        <div id="srs-session" style="display:none">
+          <div class="srs-session-header">
+            <span class="srs-session-progress" id="srs-session-progress">0 / 0</span>
+            <div class="srs-session-bar-wrap">
+              <div class="srs-session-bar" id="srs-session-bar" style="width:0%"></div>
+            </div>
+            <button class="srs-quit-btn" id="srs-quit-btn">✕</button>
+          </div>
+
+          <div class="srs-card" id="srs-card">
+            <div class="srs-card-front" id="srs-card-front">
+              <div class="srs-card-meta">
+                <span class="srs-card-level-badge" id="srs-card-level"></span>
+                <span class="srs-card-interval" id="srs-card-interval"></span>
+              </div>
+              <div class="srs-card-word" id="srs-card-word"></div>
+              <div class="srs-card-context" id="srs-card-context"></div>
+              <div id="srs-card-hint-container" style="display:none; margin: 15px 0 5px 0; display: flex; flex-direction: column; align-items: center;">
+                <button class="srs-hint-btn" id="srs-hint-btn" style="background: rgba(99, 102, 241, 0.15); border: 1px dashed #6366f1; color: #818cf8; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; font-family: inherit; transition: all 0.2s;" data-i18n="srs_card_hint_btn">💡 İpucu Göster</button>
+                <div id="srs-card-hint-emoji" style="display:none; margin-top: 10px; animation: primevocab-fade-in 0.2s ease-out;">
+                  <img id="srs-card-hint-img" src="" style="width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" alt="İpucu Çizimi">
+                </div>
+              </div>
+              <button class="srs-reveal-btn" id="srs-reveal-btn" data-i18n="srs_card_reveal_btn">Çeviriyi Göster</button>
+            </div>
+
+            <div class="srs-card-back" id="srs-card-back" style="display:none">
+              <div class="srs-card-meta">
+                <span class="srs-card-level-badge" id="srs-card-level-back"></span>
+              </div>
+              <div class="srs-card-word" id="srs-card-word-back"></div>
+              <div class="srs-card-translation" id="srs-card-translation"></div>
+              <div class="srs-card-context" id="srs-card-context-back"></div>
+              <div class="srs-rating-row">
+                <button class="srs-rate-btn srs-rate-again" id="srs-rate-again">
+                  <span class="srs-rate-label" data-i18n="srs_rate_again">Bilmedim</span>
+                  <span class="srs-rate-interval" id="srs-int-again">10dk</span>
+                </button>
+                <button class="srs-rate-btn srs-rate-hard" id="srs-rate-hard">
+                  <span class="srs-rate-label" data-i18n="srs_rate_hard">Zor</span>
+                  <span class="srs-rate-interval" id="srs-int-hard">1g</span>
+                </button>
+                <button class="srs-rate-btn srs-rate-good" id="srs-rate-good">
+                  <span class="srs-rate-label" data-i18n="srs_rate_good">İyi</span>
+                  <span class="srs-rate-interval" id="srs-int-good">3g</span>
+                </button>
+                <button class="srs-rate-btn srs-rate-easy" id="srs-rate-easy">
+                  <span class="srs-rate-label" data-i18n="srs_rate_easy">Kolay</span>
+                  <span class="srs-rate-interval" id="srs-int-easy">7g</span>
+                </button>
+                <button class="srs-rate-btn srs-rate-learned" id="srs-rate-learned" style="background: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important;">
+                  <span class="srs-rate-label" style="color: #10b981 !important;" data-i18n="srs_rate_learned">Öğrendim</span>
+                  <span class="srs-rate-interval" style="color: #a7f3d0 !important;" data-i18n="srs_rate_learned_interval">Sorma 🎓</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Oturum sonu -->
+        <div id="srs-result" style="display:none">
+          <div class="srs-result-icon">🎯</div>
+          <div class="srs-result-title" data-i18n="srs_result_title">Oturum Tamamlandı</div>
+          <div class="srs-result-stats" id="srs-result-stats"></div>
+          <button class="srs-start-btn" id="srs-back-btn" data-i18n="srs_result_back_btn">Ana Sayfaya Dön</button>
+        </div>
+
+        <!-- Çalışma Listesi Popup/Overlay -->
+        <div id="srs-words-overlay" style="display:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 100; flex-direction: column; padding: 15px; overflow-y: auto;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
+            <span style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;" data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
+            <button id="srs-words-close-btn" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
+          </div>
+          <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+            <select id="srs-words-sort" style="flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-family: inherit; font-weight: 600; outline: none;">
+              <option value="time-asc" data-i18n="srs_sort_time_asc">Süreye Göre Artan (En Yakın)</option>
+              <option value="time-desc" data-i18n="srs_sort_time_desc">Süreye Göre Azalan (En Uzak)</option>
+              <option value="alphabetical" data-i18n="srs_sort_alphabetical">Kelime (A → Z)</option>
+              <option value="learned-first" data-i18n="srs_sort_learned_first">Öğrenilenler Önce</option>
+              <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
+            </select>
+          </div>
+          <div id="srs-words-list" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto;"></div>
+        </div>
+      </div>
+
+      <!-- Oyunlar Alanı -->
+      <div id="review-games-content" style="display: none; flex-direction: column; gap: 8px; flex: 1;">
+        <div id="resume-game-container" class="resume-game-container">
+          <div class="resume-game-icon">⏳</div>
+          <div id="resume-game-title" class="resume-game-title" data-i18n="game_resume_title">Devam Eden Oyun</div>
+          <p id="resume-game-desc" class="resume-game-desc"></p>
+          <button class="srs-start-btn" id="resume-game-btn" style="width: 100%;" data-i18n="game_resume_btn">Kaldığım Yerden Devam Et</button>
+          <button class="srs-start-btn resume-discard-btn" id="discard-game-btn" data-i18n="game_discard_btn">Yeni Oyun Başlat</button>
+        </div>
+
+        <div id="games-hub" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="games-grid">
+            <div class="game-card" data-game="multiple_choice">
+              <span class="game-card-icon">🎯</span>
+              <span class="game-card-title" data-i18n="game_mc_title">Çoktan Seçmeli</span>
+              <span class="game-card-desc" data-i18n="game_mc_desc">Doğru çeviriyi 4 seçenek arasından bulun.</span>
+            </div>
+            <div class="game-card" data-game="fill_blank">
+              <span class="game-card-icon">📝</span>
+              <span class="game-card-title" data-i18n="game_blank_title">Boşluk Doldurma</span>
+              <span class="game-card-desc" data-i18n="game_blank_desc">Cümledeki boşluğa gelecek doğru kelimeyi bulun.</span>
+            </div>
+            <div class="game-card" data-game="scramble">
+              <span class="game-card-icon">🧩</span>
+              <span class="game-card-title" data-i18n="game_scramble_title">Kelime Karıştırma</span>
+              <span class="game-card-desc" data-i18n="game_scramble_desc">Karışık harflerden doğru kelimeyi oluşturun.</span>
+            </div>
+            <div class="game-card" data-game="match">
+              <span class="game-card-icon">🔗</span>
+              <span class="game-card-title" data-i18n="game_match_title">Kelime Eşleştirme</span>
+              <span class="game-card-desc" data-i18n="game_match_desc">Kelimeleri Türkçe anlamlarıyla eşleştirin.</span>
+            </div>
+            <div class="game-card" data-game="dictation">
+              <span class="game-card-icon">🎧</span>
+              <span class="game-card-title" data-i18n="game_dictation_title">Dikte</span>
+              <span class="game-card-desc" data-i18n="game_dictation_desc">Duyduğunuz kelimeyi doğru şekilde yazın.</span>
+            </div>
+            <div class="game-card" data-game="context_choice">
+              <span class="game-card-icon">🎬</span>
+              <span class="game-card-title" data-i18n="game_context_title">Sahne Eşleştirme</span>
+              <span class="game-card-desc" data-i18n="game_context_desc">Cümledeki boşluğu bağlamdan tahmin edin.</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="game-play-area" class="game-play-area">
+          <div class="game-play-header">
+            <button class="game-exit-btn" id="game-exit-btn">✕</button>
+            <span class="game-play-title" id="game-play-title">Oyun</span>
+            <span class="game-play-score" id="game-play-score">Skor: 0</span>
+          </div>
+          <div class="game-progress-bar-wrap">
+            <div class="game-progress-bar" id="game-progress-bar"></div>
+          </div>
+          <div class="game-stage" id="game-stage"></div>
+        </div>
+
+        <!-- Öğrenme İstatistikleri -->
+        <div id="games-stats-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+          <h2 class="achievements-page-title" data-i18n="stats_title">Öğrenme İstatistikleri</h2>
+          <div class="stats-section">
+            <div class="stats-section-title" data-i18n="stats_game_perf">🎮 Oyun Performansı</div>
+            <div class="stats-cards-row" id="stats-game-cards"></div>
+          </div>
+          <div class="stats-section">
+            <div class="stats-section-title" data-i18n="stats_game_breakdown">🎮 Oyun Bazlı Detaylı İstatistikler</div>
+            <div class="stats-table-wrapper">
+              <table class="stats-table" id="stats-game-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="stats_th_game">Oyun</th>
+                    <th data-i18n="stats_th_played">Oynama</th>
+                    <th data-i18n="stats_th_accuracy">Başarı %</th>
+                    <th data-i18n="stats_th_best">En Yüksek</th>
+                  </tr>
+                </thead>
+                <tbody id="stats-game-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="stats-section">
+            <div class="stats-section-title" data-i18n="stats_level_dist">📊 CEFR Seviye Dağılımı</div>
+            <div class="stats-chart-wrap">
+              <canvas id="stats-cefr-canvas" width="200" height="200" class="stats-ring-canvas"></canvas>
+              <div id="stats-cefr-legend" class="stats-ring-legend"></div>
+            </div>
+          </div>
+          <div class="stats-section">
+            <div class="stats-section-title" data-i18n="stats_vocab_growth">📈 Kelime Büyümesi (Son 30 Gün)</div>
+            <canvas id="stats-growth-canvas" class="stats-growth-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Başarımlar Alanı -->
+      <div id="review-achievements-content" style="display: none; flex-direction: column; gap: 8px; flex: 1;">
+        <div class="user-profile-banner">
+          <div class="user-exp-label" data-i18n="user_exp_label">Toplam Puanınız</div>
+          <div class="user-exp-value" id="user-exp-display">0</div>
+        </div>
+        <h2 class="achievements-page-title" data-i18n="achievements_title">Başarımlar</h2>
+        <div id="achievements-grid" class="achievements-grid"></div>
+      </div>
+    </div>
+
+    <!-- ── AYARLAR PANELİ ── -->
+    <div class="panel" id="panel-settings">
+      <!-- Alt Sekmeler (Settings) -->
+      <div class="review-subtabs" id="settings-subtabs" style="margin-bottom: 12px;">
+        <button class="review-subtab active" id="settings-subtab-general" data-settings-subtab="general">
+          <span>⚙️ Genel</span>
+        </button>
+      </div>
+
+      <div id="settings-tab-general" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- Senkronizasyon Ayarları -->
+        <div class="settings-section">
+          <div class="settings-section-title" data-i18n="settings_sync_title">🔄 Google Drive Senkronizasyonu</div>
+          <div class="settings-group">
+            <div style="padding: 10px; font-size: 12px; color: var(--text-dim); line-height: 1.5;">
+              Kelimelerinizi ve ilerlemenizi tüm cihazlarınızla senkronize edin. 
+              Giriş yaptığınızda verileriniz güvenli bir şekilde kendi Google Drive hesabınızda saklanır.
+            </div>
+            <div style="padding: 8px 12px;">
+              <button id="settings-login-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #6366f1; border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 13px;" data-i18n="profile_login_btn">
+                <span>🔑</span> Google ile Giriş Yap
+              </button>
+              <div id="settings-sync-status-container" style="display:none; margin-top: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                  <div id="settings-user-avatar" style="width:32px; height:32px; border-radius:50%; background:var(--surface2); display:flex; justify-content:center; align-items:center; font-size:16px;">👤</div>
+                  <div>
+                    <div id="settings-user-email" style="font-weight:600; font-size:12px;">email@gmail.com</div>
+                    <div style="font-size:10px; color:var(--text-muted);" id="settings-sync-status-text">Bağlandı</div>
+                  </div>
+                </div>
+                <button id="settings-sync-now-btn" style="width:100%; background:var(--accent-dim); border:1px solid var(--border); color:#818cf8; padding:8px; border-radius:6px; font-weight:600; margin-bottom:8px; cursor:pointer;" data-i18n="profile_sync_now">Şimdi Eşitle</button>
+                <button id="settings-logout-btn" style="width:100%; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); color:#ef4444; padding:8px; border-radius:6px; font-weight:600; cursor:pointer;" data-i18n="profile_logout">Çıkış Yap</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anki Aktar -->
+        <div class="settings-section">
+          <div class="settings-section-title">📦 Veri Yönetimi</div>
+          <div class="settings-group" style="padding: 10px; display: flex; flex-direction: column; gap: 8px;">
+            <button class="toolbar-btn" id="anki-export-btn" data-i18n="settings_anki_export_btn" style="width:100%; justify-content:center; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; font-weight:600; padding:10px; border-radius:8px;">⭐ Anki Aktar</button>
+            <button id="reset-data-btn" style="width:100%; background:rgba(239,68,68,0.05); border:1px dashed rgba(239,68,68,0.3); color:#ef4444; padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">⚠️ Verileri Sıfırla (Reset)</button>
+          </div>
+        </div>
+
+        <!-- Eklenti Dili -->
+        <div class="settings-section">
+          <div class="settings-section-title" data-i18n="settings_app_lang">Eklenti Dili</div>
+          <div class="settings-group">
+            <div class="setting-row">
+              <span class="setting-label" data-i18n="settings_app_lang">Eklenti Dili</span>
+              <select id="app-lang-select" class="setting-select-inline">
+                <option value="auto" data-i18n="settings_lang_auto">Otomatik (Tarayıcı Dili)</option>
+                <option value="tr">Türkçe</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievement Toast -->
+    <div id="achievement-toast" class="achievement-toast" style="display:none;">
+      <div class="achievement-toast-icon" id="achievement-toast-icon">🏆</div>
+      <div class="achievement-toast-body">
+        <div class="achievement-toast-label">Başarım Kazanıldı!</div>
+        <div class="achievement-toast-title" id="achievement-toast-title"></div>
+      </div>
+    </div>
+
+    <!-- ── FLASH CARD MODAL ── -->
+    <div class="fc-overlay" id="fc-overlay" style="display:none">
+      <div class="fc-modal">
+        <div class="fc-header">
+          <span class="fc-progress" id="fc-progress">1 / 10</span>
+          <button class="fc-close" id="fc-close">✕</button>
+        </div>
+        <div class="fc-card" id="fc-card">
+          <div class="fc-front" id="fc-front">
+            <div class="fc-level-badge" id="fc-level-badge"></div>
+            <div class="fc-word" id="fc-word">word</div>
+            <div class="fc-context" id="fc-context"></div>
+            <button class="fc-reveal-btn" id="fc-reveal-btn" data-i18n="srs_card_reveal_btn">Çeviriyi Göster</button>
+          </div>
+          <div class="fc-back" id="fc-back" style="display:none">
+            <div class="fc-word" id="fc-word-back">word</div>
+            <div class="fc-translation" id="fc-translation">çeviri</div>
+            <div class="fc-context" id="fc-context-back"></div>
+            <div class="fc-actions">
+              <button class="fc-btn fc-again" id="fc-again" data-i18n="fc_again_btn">Tekrar 🔁</button>
+              <button class="fc-btn fc-good" id="fc-good" data-i18n="fc_good_btn">Bildim ✓</button>
+            </div>
+          </div>
+        </div>
+        <div class="fc-done" id="fc-done" style="display:none">
+          <div style="font-size: 50px; margin-bottom: 12px;">🎉</div>
+          <h3 data-i18n="fc_done_title" style="margin: 0 0 6px 0; color:var(--text); font-weight:700;">Tebrikler!</h3>
+          <div class="fc-done-sub" id="fc-done-sub" style="margin: 0 0 16px 0; font-size:12px; color:var(--text-muted);"></div>
+          <button class="fc-restart-btn" id="fc-restart-btn" data-i18n="fc_restart_btn" style="margin:0; width:100%">Tekrar Başlat</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CUSTOM CONFIRM MODAL ── -->
+    <div class="custom-confirm-overlay" id="custom-confirm-overlay" style="display:none">
+      <div class="custom-confirm-modal">
+        <div class="custom-confirm-body" id="custom-confirm-message" data-i18n="game_quit_confirm">Oyundan çıkmak istediğinize emin misiniz? İlerlemeniz silinecek.</div>
+        <div class="custom-confirm-actions">
+          <button class="custom-confirm-btn cancel" id="custom-confirm-cancel" data-i18n="game_btn_cancel">Vazgeç</button>
+          <button class="custom-confirm-btn confirm" id="custom-confirm-ok" data-i18n="game_btn_quit">Çık</button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- Closes .app -->
+
+  <!-- Load PWA polyfills and scripts -->
+  <script src="js/polyfill.js?v=3"></script>
+  <script src="js/config.js?v=3"></script>
+  <script src="js/utils_common.js?v=3"></script>
+  <script src="js/phrasal_verbs.js?v=3"></script>
+  <script src="js/cefr_data.js?v=3"></script>
+  <script src="js/apiClient.js?v=3"></script>
+  <script src="js/panel_utils.js?v=3"></script>
+  <script src="js/archive.js?v=3"></script>
+  <script src="js/review.js?v=3"></script>
+  <script src="js/games.js?v=3"></script>
+  <script src="js/settings.js?v=3"></script>
+  <script src="js/sync.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
+  
+  <!-- Register PWA Service Worker (disabled on localhost) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registered successfully!', reg.scope))
+            .catch(err => console.warn('Service Worker registration failed:', err));
+        });
+      } else {
+        console.log("Localhost detected - Service Worker registration skipped for development.");
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for(let reg of regs) {
+            reg.unregister().then(() => {
+              console.log("Stale Service Worker unregistered.");
+              // Clear cache storage too to force fresh assets
+              caches.keys().then(keys => Promise.all(keys.map(k => caches.delete(k))));
+            });
+          }
+        });
+      }
+    }
+  </script>
+</body>
+
+</html>

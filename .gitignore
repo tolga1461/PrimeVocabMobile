@@ -1,0 +1,12 @@
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Log files
+*.log
+
+# Local server testing folders
+node_modules/
+package-lock.json

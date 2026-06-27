@@ -1,0 +1,22 @@
+{
+  "name": "PrimeVocab Mobile",
+  "short_name": "PrimeVocab",
+  "description": "PrimeVocab Companion Mobile App for Spaced Repetition (SRS) Vocabulary Games",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d0e12",
+  "theme_color": "#171821",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon48.png",
+      "type": "image/png",
+      "sizes": "48x48"
+    },
+    {
+      "src": "icons/icon128.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    }
+  ]
+}
