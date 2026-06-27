@@ -32,5 +32,21 @@
       "sizes": "512x512",
       "purpose": "any"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/screenshot1.png",
+      "sizes": "1920x945",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Vocabulary Training Screen"
+    },
+    {
+      "src": "screenshots/screenshot2.png",
+      "sizes": "1920x945",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Settings & Sync Screen"
+    }
   ]
 }

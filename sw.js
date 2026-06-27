@@ -19,7 +19,9 @@ const ASSETS = [
   './icons/icon48.png',
   './icons/icon128.png',
   './icons/icon192.png',
-  './icons/icon512.png'
+  './icons/icon512.png',
+  './screenshots/screenshot1.png',
+  './screenshots/screenshot2.png'
 ];
 
 // Install: Cache static resources
