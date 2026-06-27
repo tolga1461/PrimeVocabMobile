@@ -5,6 +5,10 @@
   "id": "primevocab-mobile",
   "start_url": "./index.html",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
   "background_color": "#0d0e12",
   "theme_color": "#171821",
   "orientation": "portrait-primary",
