@@ -510,9 +510,17 @@ async function start() {
     bindAuthButtons();
     updateProfileUI();
 
-    // Default load tab states
-    const savedTab = sessionStorage.getItem('activeMainTab') || 'archive';
-    switchMainTab(savedTab);
+    // Default load tab states (handles home screen shortcuts using query params)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlTab = urlParams.get('tab');
+    let initialTab = 'archive';
+    
+    if (urlTab && ['archive', 'review', 'settings'].includes(urlTab)) {
+        initialTab = urlTab;
+    } else {
+        initialTab = sessionStorage.getItem('activeMainTab') || 'archive';
+    }
+    switchMainTab(initialTab);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
