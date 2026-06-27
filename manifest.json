@@ -11,12 +11,26 @@
     {
       "src": "icons/icon48.png",
       "type": "image/png",
-      "sizes": "48x48"
+      "sizes": "48x48",
+      "purpose": "any"
     },
     {
       "src": "icons/icon128.png",
       "type": "image/png",
-      "sizes": "128x128"
+      "sizes": "128x128",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
     }
   ]
 }

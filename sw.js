@@ -17,7 +17,9 @@ const ASSETS = [
   './js/app.js',
   './manifest.json',
   './icons/icon48.png',
-  './icons/icon128.png'
+  './icons/icon128.png',
+  './icons/icon192.png',
+  './icons/icon512.png'
 ];
 
 // Install: Cache static resources
