@@ -47,6 +47,32 @@
       "purpose": "any"
     }
   ],
+  "shortcuts": [
+    {
+      "name": "Sözlük",
+      "short_name": "Sözlük",
+      "description": "Kayıtlı kelimeleri gör",
+      "url": "./index.html?tab=archive",
+      "icons": [
+        {
+          "src": "icons/icon192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Çalışma",
+      "short_name": "Çalışma",
+      "description": "Kelimeleri tekrar et",
+      "url": "./index.html?tab=review",
+      "icons": [
+        {
+          "src": "icons/icon192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "screenshots": [
     {
       "src": "screenshots/screenshot1.png",
