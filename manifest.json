@@ -6,6 +6,7 @@
   "start_url": "./index.html",
   "scope": "./",
   "lang": "tr",
+  "dir": "ltr",
   "display": "standalone",
   "display_override": [
     "standalone",
