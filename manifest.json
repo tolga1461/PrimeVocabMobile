@@ -5,6 +5,7 @@
   "id": "primevocab-mobile",
   "start_url": "./index.html",
   "scope": "./",
+  "lang": "tr",
   "display": "standalone",
   "display_override": [
     "standalone",
