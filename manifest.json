@@ -4,6 +4,7 @@
   "description": "PrimeVocab Companion Mobile App for Spaced Repetition (SRS) Vocabulary Games",
   "id": "primevocab-mobile",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "display_override": [
     "standalone",
