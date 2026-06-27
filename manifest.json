@@ -12,6 +12,8 @@
     "education",
     "games"
   ],
+  "prefer_related_applications": false,
+  "related_applications": [],
   "icons": [
     {
       "src": "icons/icon48.png",
