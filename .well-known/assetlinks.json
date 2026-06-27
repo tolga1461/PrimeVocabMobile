@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.vercel.prime_vocab_mobile.twa",
+    "sha256_cert_fingerprints": ["6D:45:C4:DF:29:04:2D:2C:1B:CD:2C:4B:57:AD:01:E8:EC:41:51:95:9E:F1:D9:D7:E5:F4:C4:8F:19:28:5E:77"]
+  }
+}]
