@@ -610,13 +610,21 @@ function initBottomSheetController() {
         });
     }
 
+    const srsSortTrigger = document.getElementById('srs-words-sort-trigger');
+    if (srsSortTrigger) {
+        srsSortTrigger.addEventListener('click', () => {
+            openBottomSheet('srs-words-sort', 'Sıralama Seçenekleri');
+        });
+    }
+
     // Synchronize legacy selects state with our custom buttons
     function syncSelectsToTriggers() {
         const selects = [
             { id: 'archive-sort', btnId: 'sort-trigger-btn', labelId: 'sort-trigger-label' },
             { id: 'archive-source-select', btnId: 'source-trigger-btn', labelId: 'source-trigger-label' },
             { id: 'archive-tag-select', btnId: 'tag-trigger-btn', labelId: 'tag-trigger-label' },
-            { id: 'app-lang-select', btnId: 'lang-trigger-row', labelId: 'app-lang-value' }
+            { id: 'app-lang-select', btnId: 'lang-trigger-row', labelId: 'app-lang-value' },
+            { id: 'srs-words-sort', btnId: 'srs-words-sort-trigger', labelId: 'srs-words-sort-label' }
         ];
 
         selects.forEach(item => {
