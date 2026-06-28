@@ -17,6 +17,7 @@ let virtualLicenseType = 'FREE';
 let itemOffsets = [];
 let totalScrollHeight = 0;
 let scrollListenerAttached = false;
+let lastScrollTop = 0;
 
 function throttle(fn, ms) {
     let last = 0;
@@ -105,7 +106,7 @@ function updateTagDropdown(savedWords) {
     const tags = [...new Set(savedWords
             .flatMap(w => w.tags || [])
             .filter(t => t && t.trim()))].sort();
-    sel.style.display = tags.length === 0 ? 'none' : '';
+    sel.style.display = 'none';
     const current = archiveTag;
     sel.innerHTML = `<option value="all">${getMessage("all_tags_option") || '🏷️ Tüm etiketler'}</option>`;
     tags.forEach(tag => {
@@ -135,7 +136,7 @@ function updateSourceDropdown(savedWords) {
         sel.innerHTML = '';
         return;
     }
-    sel.style.display = '';
+    sel.style.display = 'none';
     // Gruplama anahtarı:
     // – showTitle + season varsa → "ShowName::season::N" (aynı sezondaki tüm bölümleri birleştir)
     // – showTitle var ama season yoksa → "ShowName::title::EpisodeTitle"
@@ -412,6 +413,22 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                 } else {
                     archivePanel.classList.remove('scrolled');
                 }
+            }
+            
+            // Auto-hiding bottom navigation bar (Twitter style)
+            const navBar = document.querySelector('.tabs');
+            if (navBar) {
+                const currentScrollTop = wordList.scrollTop;
+                if (currentScrollTop <= 10) {
+                    navBar.classList.remove('tabs-hidden');
+                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
+                    if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
+                        navBar.classList.add('tabs-hidden');
+                    } else {
+                        navBar.classList.remove('tabs-hidden');
+                    }
+                }
+                lastScrollTop = currentScrollTop;
             }
         }, 50));
         scrollListenerAttached = true;
