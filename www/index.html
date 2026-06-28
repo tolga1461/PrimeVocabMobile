@@ -966,10 +966,7 @@
       
       <!-- Sticky Search Header (Always visible at top of panel) -->
       <div class="archive-sticky-search-wrap">
-        <input type="text" id="archive-search" class="archive-search" placeholder="Kelime ara…" autocomplete="off" />
-      </div>
-
-      <!-- Collapsible header tools containing big buttons, filter chips, sheet triggers, and management -->
+          <!-- Collapsible header tools containing big buttons, filter chips, and sheet triggers -->
       <div class="archive-header-wrap" id="archive-header-wrap">
         
         <!-- Card 1: Active Tools -->
@@ -1021,36 +1018,24 @@
             </button>
           </div>
 
-        </div>
-
-        <!-- Management title -->
-        <div class="glass-card-section-label" style="text-align: center; margin: 12px 0 6px 0;">Management</div>
-
-        <!-- Card 2: Management -->
-        <div class="glass-tool-card" style="padding: 12px 6px;">
-          <div class="management-grid">
-            
-            <button type="button" class="mgmt-action-btn" id="flashcard-btn" title="Kelimeleri Tekrar Et / Kart Çalış">
-              <span class="mgmt-icon">🃏</span>
-              <span class="mgmt-label">Tekrar Et</span>
-            </button>
-
-            <button type="button" class="mgmt-action-btn" id="refresh-families-btn" title="Kök Verileri Güncelle">
-              <span class="mgmt-icon">🔄</span>
-              <span class="mgmt-label">Güncelle</span>
-            </button>
-
-            <button type="button" class="mgmt-action-btn" id="export-btn" title="Kelimeleri Dışa Aktar / Arşivle">
-              <span class="mgmt-icon">📥</span>
-              <span class="mgmt-label">Aktar</span>
+          <!-- Action Buttons Row (Combined) -->
+          <div style="display: flex; gap: 8px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+            <button type="button" class="bottom-sheet-trigger" id="flashcard-btn" style="flex: 2; background: rgba(129, 140, 248, 0.2); border-color: rgba(129, 140, 248, 0.4); justify-content: center; gap: 8px;" title="Kelimeleri Tekrar Et / Kart Çalış">
+              <span>🃏</span>
+              <span style="font-weight: 700; color: #a5b4fc;">Tekrar Et</span>
             </button>
             
-            <button type="button" class="mgmt-action-btn" id="clear-btn" title="Tüm Kelimeleri Sil">
-              <span class="mgmt-icon">🗑️</span>
-              <span class="mgmt-label">Temizle</span>
+            <button type="button" class="bottom-sheet-trigger" id="refresh-families-btn" style="flex: 1; justify-content: center; gap: 6px;" title="Kök Verileri Güncelle">
+              <span>🔄</span>
+              <span style="font-size: 11px; font-weight: 700;">Güncelle</span>
             </button>
-
+            
+            <button type="button" class="bottom-sheet-trigger" id="clear-btn" style="flex: 1; justify-content: center; gap: 6px; border-color: rgba(239, 68, 68, 0.2);" title="Tüm Kelimeleri Sil">
+              <span style="color: #ef4444;">🗑️</span>
+              <span style="font-size: 11px; font-weight: 700; color: #ef4444;">Temizle</span>
+            </button>
           </div>
+
         </div>
 
       </div>
