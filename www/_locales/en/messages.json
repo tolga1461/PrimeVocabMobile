@@ -47,6 +47,9 @@
   "tab_subtitle": {
     "message": "Subtitles"
   },
+  "tab_profile": {
+    "message": "Profile"
+  },
   "tab_settings": {
     "message": "Settings"
   },

@@ -181,26 +181,12 @@
           <span class="logo-text" style="font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #818cf8, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PrimeVocab</span>
         </div>
         <div class="header-actions">
-          <button class="profile-btn" id="profile-btn" title="Profil">👤</button>
+          <button class="profile-btn" id="profile-btn" title="Profil" style="display:none;">👤</button>
           <button class="info-btn" id="info-btn" title="Bilgi">i</button>
           <button class="tour-btn" id="tour-btn" style="display:none;">🚀</button>
           <button class="help-btn" id="help-btn" style="display:none;">?</button>
           <button class="close-panel-btn" id="close-sidepanel-btn" style="display:none;">✕</button>
         </div>
-      </div>
-      
-      <!-- Bottom Navigation bar placeholder for desktop/mobile bindings -->
-      <div class="tabs">
-        <button class="tab" id="tab-subtitle" data-tab="subtitle" style="display:none;"></button>
-        <button class="tab active" id="tab-archive" data-tab="archive">
-          <span data-i18n="tab_archive">Sözlük</span>
-          <span class="badge" id="archive-badge" style="display:none">0</span>
-        </button>
-        <button class="tab" id="tab-review" data-tab="review">
-          <span data-i18n="tab_review">Çalışma</span>
-          <span class="badge badge-due" id="review-badge" style="display:none">0</span>
-        </button>
-        <button class="tab" id="tab-settings" data-tab="settings" data-i18n="tab_settings">Ayarlar</button>
       </div>
     </header>
 
@@ -802,7 +788,30 @@
       </div>
     </div>
 
-  </div> <!-- Closes .app -->
+      <!-- Bottom Navigation bar -->
+      <div class="tabs">
+        <button class="tab" id="tab-subtitle" data-tab="subtitle" style="display:none;"></button>
+        <button class="tab active" id="tab-archive" data-tab="archive">
+          <span class="tab-icon">📚</span>
+          <span class="tab-label" data-i18n="tab_archive">Sözlük</span>
+          <span class="badge" id="archive-badge" style="display:none">0</span>
+        </button>
+        <button class="tab" id="tab-review" data-tab="review">
+          <span class="tab-icon">🧠</span>
+          <span class="tab-label" data-i18n="tab_review">Çalışma</span>
+          <span class="badge badge-due" id="review-badge" style="display:none">0</span>
+        </button>
+        <button class="tab" id="tab-settings" data-tab="settings">
+          <span class="tab-icon">⚙️</span>
+          <span class="tab-label" data-i18n="tab_settings">Ayarlar</span>
+        </button>
+        <button class="tab" id="tab-profile" data-tab="profile">
+          <span class="tab-icon">👤</span>
+          <span class="tab-label" data-i18n="tab_profile">Profil</span>
+        </button>
+      </div>
+
+    </div> <!-- Closes .app -->
 
   <!-- Load PWA polyfills and scripts -->
   <script src="capacitor.js"></script>

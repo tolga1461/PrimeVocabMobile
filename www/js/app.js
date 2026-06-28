@@ -238,6 +238,11 @@ function initMainTabs() {
     document.querySelectorAll('.tab').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const tabName = btn.dataset.tab;
+            if (tabName === 'profile') {
+                const profileBtn = document.getElementById('profile-btn');
+                if (profileBtn) profileBtn.click();
+                return;
+            }
             if (tabName) switchMainTab(tabName);
         });
     });
