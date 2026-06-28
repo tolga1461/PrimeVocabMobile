@@ -56,7 +56,7 @@ function estimateItemHeight(item, showFamily, showTags, isExpanded) {
 
 function recalculateOffsets() {
     itemOffsets = [];
-    let currentOffset = 0;
+    let currentOffset = 180;
     virtualWords.forEach((item) => {
         itemOffsets.push(currentOffset);
         const isExpanded = virtualExpandAll ? !collapsedIndices.has(item.originalIndex) : expandedIndices.has(item.originalIndex);
@@ -410,14 +410,6 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
             updateVirtualScroll();
-            const archivePanel = document.getElementById('panel-archive');
-            if (archivePanel) {
-                if (wordList.scrollTop > 35) {
-                    archivePanel.classList.add('scrolled');
-                } else {
-                    archivePanel.classList.remove('scrolled');
-                }
-            }
             
             // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
             const appContainer = document.querySelector('.app');
