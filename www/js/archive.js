@@ -56,7 +56,7 @@ function estimateItemHeight(item, showFamily, showTags, isExpanded) {
 
 function recalculateOffsets() {
     itemOffsets = [];
-    let currentOffset = 0;
+    let currentOffset = 210; // Start at 210px to leave clean space for absolute header
     virtualWords.forEach((item) => {
         itemOffsets.push(currentOffset);
         const isExpanded = virtualExpandAll ? !collapsedIndices.has(item.originalIndex) : expandedIndices.has(item.originalIndex);
@@ -416,14 +416,14 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             // Fluid header sliding on scroll to avoid layout gaps and shifts
             const headerWrap = document.getElementById('archive-header-wrap');
             if (headerWrap) {
-                // Slide up in sync with scroll, max 165px
-                const translateVal = Math.min(scrollTop, 165);
+                // Slide up in sync with scroll, max 158px
+                const translateVal = Math.min(scrollTop, 158);
                 headerWrap.style.transform = `translateY(-${translateVal}px)`;
                 
-                // Adjust opacity in sync with scroll (fade out over the 130px range)
-                const opacityVal = Math.max(0, 1 - (scrollTop / 130));
+                // Adjust opacity in sync with scroll (fade out over the 120px range)
+                const opacityVal = Math.max(0, 1 - (scrollTop / 120));
                 headerWrap.style.opacity = opacityVal;
-                headerWrap.style.pointerEvents = scrollTop > 130 ? 'none' : 'auto';
+                headerWrap.style.pointerEvents = scrollTop > 120 ? 'none' : 'auto';
             }
 
             const archivePanel = document.getElementById('panel-archive');
