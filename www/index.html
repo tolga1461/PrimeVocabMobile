@@ -761,6 +761,103 @@
     .master-danger {
       background-color: rgba(239, 68, 68, 0.03);
     }
+
+    /* ── Glassmorphic Active Tools Card ── */
+    .glass-tool-card {
+      background: rgba(30, 41, 59, 0.45) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 16px !important;
+      padding: 16px !important;
+      backdrop-filter: blur(12px) !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      margin-bottom: 12px !important;
+    }
+
+    .top-actions-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
+      gap: 12px !important;
+    }
+
+    .glass-action-btn {
+      background: rgba(255, 255, 255, 0.03) !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border-radius: 12px !important;
+      height: 68px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer !important;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    .glass-action-btn:active {
+      transform: scale(0.95) !important;
+      background: rgba(255, 255, 255, 0.06) !important;
+    }
+
+    /* Purple glowing border when active matching screenshot */
+    .glass-action-btn.active {
+      border: 1.5px solid #818cf8 !important;
+      background: rgba(129, 140, 248, 0.08) !important;
+      box-shadow: 0 0 16px rgba(129, 140, 248, 0.35) !important;
+    }
+
+    .glass-action-icon {
+      font-size: 28px !important;
+    }
+
+    .glass-card-section-label {
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: var(--text-muted) !important;
+      letter-spacing: 0.03em !important;
+      margin-top: 4px !important;
+      margin-left: 2px !important;
+      text-transform: uppercase !important;
+    }
+
+    /* Management grid cards */
+    .management-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr 1fr !important;
+      text-align: center !important;
+    }
+
+    .mgmt-action-btn {
+      background: transparent !important;
+      border: none !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 6px !important;
+      cursor: pointer !important;
+      padding: 8px 4px !important;
+      color: var(--text-dim) !important;
+      transition: all 0.15s !important;
+    }
+
+    .mgmt-action-btn:active {
+      transform: scale(0.92) !important;
+      color: var(--text) !important;
+    }
+
+    .mgmt-icon {
+      font-size: 24px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      height: 32px !important;
+    }
+
+    .mgmt-label {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.01em !important;
+    }
   </style>
 </head>
 
@@ -837,73 +934,97 @@
 
     <!-- ── SÖZLÜK PANELİ ── -->
     <div class="panel active" id="panel-archive">
-      <!-- Toolbar -->
-      <div class="archive-toolbar">
-        <span class="archive-count" id="archive-count">0 Kelime</span>
-        <div class="archive-btns">
-          <button class="toolbar-btn" id="flashcard-btn" title="Kart Çalış">🃏</button>
-          <button class="toolbar-btn" id="refresh-families-btn" title="Kökleri Yenile">🔁</button>
-          <button class="toolbar-btn toolbar-btn-toggle" id="toggle-family-btn" title="Grup Kök">📚</button>
-          <button class="toolbar-btn toolbar-btn-toggle" id="toggle-tags-btn" title="Etiketleri Göster/Gizle">🏷️</button>
-          <button class="toolbar-btn toolbar-btn-toggle" id="toggle-expand-all-btn" title="Tüm Detayları Aç/Kapat">↕️</button>
-          <button class="toolbar-btn" id="export-btn" title="Dışa Aktar">📥</button>
-          <button class="toolbar-btn danger" id="clear-btn" title="Temizle">🗑️</button>
+      
+      <!-- Card 1: Active Tools -->
+      <div class="glass-tool-card">
+        
+        <!-- Big 3 Actions Grid -->
+        <div class="top-actions-grid">
+          <button type="button" class="glass-action-btn" id="toggle-family-btn" title="Kelimeleri Köklerine Göre Grupla">
+            <span class="glass-action-icon">📖</span>
+          </button>
+          <button type="button" class="glass-action-btn" id="sort-trigger-btn" title="Kelime Sıralaması">
+            <span class="glass-action-icon">⇅</span>
+          </button>
+          <button type="button" class="glass-action-btn" id="flashcard-btn" title="Kartları Çalış">
+            <span class="glass-action-icon">🔀</span>
+          </button>
+        </div>
+
+        <div class="glass-card-section-label">Active Tools</div>
+
+        <!-- Arama -->
+        <div class="archive-search-row">
+          <input type="text" id="archive-search" class="archive-search" placeholder="Kelime ara…" autocomplete="off" />
+        </div>
+
+        <!-- Filtre Chips -->
+        <div class="archive-filter-row">
+          <div class="filter-chips" id="cefr-filter-chips">
+            <button class="filter-chip active" data-level="all" data-i18n="filter_all">Tümü</button>
+            <button class="filter-chip" data-level="hard" style="--chip-color:#ef4444" data-i18n="filter_hard">🔥 Zor</button>
+            <button class="filter-chip" data-level="A1" style="--chip-color:#22c55e">A1</button>
+            <button class="filter-chip" data-level="A2" style="--chip-color:#84cc16">A2</button>
+            <button class="filter-chip" data-level="B1" style="--chip-color:#eab308">B1</button>
+            <button class="filter-chip" data-level="B2" style="--chip-color:#f97316">B2</button>
+            <button class="filter-chip" data-level="C1" style="--chip-color:#ef4444">C1</button>
+            <button class="filter-chip" data-level="C2" style="--chip-color:#a855f7">C2</button>
+            <button class="filter-chip" data-level="phrasal" style="--chip-color:#a855f7">📚 Phrasal</button>
+            <button class="filter-chip" data-level="??" style="--chip-color:#64748b" data-i18n="filter_other">Diğer</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Management title -->
+      <div class="glass-card-section-label" style="text-align: center; margin: 12px 0 6px 0;">Management</div>
+
+      <!-- Card 2: Management -->
+      <div class="glass-tool-card" style="padding: 12px 6px;">
+        <div class="management-grid">
+          
+          <button type="button" class="mgmt-action-btn" id="export-btn" title="Kelimeleri Dışa Aktar">
+            <span class="mgmt-icon">📂</span>
+            <span class="mgmt-label">Arşivle</span>
+          </button>
+          
+          <button type="button" class="mgmt-action-btn" id="clear-btn" title="Tüm Kelimeleri Sil">
+            <span class="mgmt-icon">🗑️</span>
+            <span class="mgmt-label">Sil</span>
+          </button>
+          
+          <button type="button" class="mgmt-action-btn" id="tag-trigger-btn" title="Etiketlere Göre Filtrele">
+            <span class="mgmt-icon">🏷️ <span style="font-size: 8px;">▼</span></span>
+            <span class="mgmt-label">Etiketler</span>
+          </button>
+          
+          <button type="button" class="mgmt-action-btn" id="source-trigger-btn" title="Kaynaklara Göre Filtrele">
+            <span class="mgmt-icon">📹</span>
+            <span class="mgmt-label">Kaynaklar</span>
+          </button>
+
         </div>
       </div>
 
-      <!-- Arama -->
-      <div class="archive-search-row">
-        <input type="text" id="archive-search" class="archive-search" placeholder="Kelime ara…" autocomplete="off" />
-      </div>
+      <!-- Hidden legacy selects (JS compatibility) -->
+      <select id="archive-sort" style="display:none !important">
+        <option value="newest" data-i18n="sort_newest">En Yeni</option>
+        <option value="oldest" data-i18n="sort_oldest">En Eski</option>
+        <option value="az" data-i18n="sort_az">A → Z</option>
+        <option value="za" data-i18n="sort_za">Z → A</option>
+      </select>
+      <select id="archive-source-select" style="display:none !important">
+        <option value="all" data-i18n="select_all_sources">Tüm kaynaklar</option>
+      </select>
+      <select id="archive-tag-select" style="display:none !important">
+        <option value="all">🏷️ Tüm etiketler</option>
+      </select>
+      <datalist id="global-tags-datalist"></datalist>
 
-      <!-- Filtre + Sıralama -->
-      <div class="archive-filter-row">
-        <div class="filter-chips" id="cefr-filter-chips">
-          <button class="filter-chip active" data-level="all" data-i18n="filter_all">Tümü</button>
-          <button class="filter-chip" data-level="hard" style="--chip-color:#ef4444" data-i18n="filter_hard">🔥 Zor</button>
-          <button class="filter-chip" data-level="A1" style="--chip-color:#22c55e">A1</button>
-          <button class="filter-chip" data-level="A2" style="--chip-color:#84cc16">A2</button>
-          <button class="filter-chip" data-level="B1" style="--chip-color:#eab308">B1</button>
-          <button class="filter-chip" data-level="B2" style="--chip-color:#f97316">B2</button>
-          <button class="filter-chip" data-level="C1" style="--chip-color:#ef4444">C1</button>
-          <button class="filter-chip" data-level="C2" style="--chip-color:#a855f7">C2</button>
-          <button class="filter-chip" data-level="phrasal" style="--chip-color:#a855f7">📚 Phrasal</button>
-          <button class="filter-chip" data-level="??" style="--chip-color:#64748b" data-i18n="filter_other">Diğer</button>
-        </div>
-      </div>
-
-      <!-- Sıralama + Kaynak filtresi -->
-      <div class="archive-sort-source-row">
-        <!-- Hidden legacy selects -->
-        <select id="archive-sort" class="archive-source-select" style="display:none !important">
-          <option value="newest" data-i18n="sort_newest">En Yeni</option>
-          <option value="oldest" data-i18n="sort_oldest">En Eski</option>
-          <option value="az" data-i18n="sort_az">A → Z</option>
-          <option value="za" data-i18n="sort_za">Z → A</option>
-        </select>
-        <select id="archive-source-select" class="archive-source-select" style="display:none !important">
-          <option value="all" data-i18n="select_all_sources">Tüm kaynaklar</option>
-        </select>
-        <select id="archive-tag-select" class="archive-source-select" style="display:none !important">
-          <option value="all">🏷️ Tüm etiketler</option>
-        </select>
-
-        <!-- New custom Bottom Sheet trigger buttons -->
-        <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn">
-          <span class="trigger-icon">⇅</span>
-          <span class="trigger-label" id="sort-trigger-label">En Yeni</span>
-        </button>
-        <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn" style="display:none">
-          <span class="trigger-icon">🎬</span>
-          <span class="trigger-label" id="source-trigger-label">Tüm Kaynaklar</span>
-        </button>
-        <button type="button" class="bottom-sheet-trigger" id="tag-trigger-btn" style="display:none">
-          <span class="trigger-icon">🏷️</span>
-          <span class="trigger-label" id="tag-trigger-label">Tüm Etiketler</span>
-        </button>
-
-        <datalist id="global-tags-datalist"></datalist>
-      </div>
+      <!-- Custom label references (JS bindings fallback compatibility) -->
+      <span id="sort-trigger-label" style="display:none !important"></span>
+      <span id="source-trigger-label" style="display:none !important"></span>
+      <span id="tag-trigger-label" style="display:none !important"></span>
 
       <!-- Kelime Listesi -->
       <div class="word-list" id="word-list">
