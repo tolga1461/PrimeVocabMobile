@@ -202,16 +202,35 @@
       gap: 20px !important;
     }
 
-    /* Larger bottom navigation tabs */
+    .app {
+      position: relative !important;
+    }
+
+    /* Larger bottom navigation tabs positioned absolutely */
     .tabs {
+      position: absolute !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 100 !important;
       padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) !important;
       height: auto !important;
       border-radius: 16px 16px 0 0 !important; /* Premium rounded top corner bottom tab bar */
       transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
     }
 
-    .tabs.tabs-hidden {
+    .app.nav-hidden .tabs {
       transform: translateY(100%) !important;
+    }
+
+    /* Space reservation for bottom tab bar, dynamically collapsing when hidden */
+    .panel {
+      padding-bottom: calc(78px + env(safe-area-inset-bottom)) !important;
+      transition: padding-bottom 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+
+    .app.nav-hidden .panel {
+      padding-bottom: 10px !important;
     }
 
     .tab {

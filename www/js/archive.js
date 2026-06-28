@@ -419,17 +419,17 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                 }
             }
             
-            // Auto-hiding bottom navigation bar (Twitter style)
-            const navBar = document.querySelector('.tabs');
-            if (navBar) {
+            // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
+            const appContainer = document.querySelector('.app');
+            if (appContainer) {
                 const currentScrollTop = wordList.scrollTop;
                 if (currentScrollTop <= 10) {
-                    navBar.classList.remove('tabs-hidden');
+                    appContainer.classList.remove('nav-hidden');
                 } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
                     if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
-                        navBar.classList.add('tabs-hidden');
+                        appContainer.classList.add('nav-hidden');
                     } else {
-                        navBar.classList.remove('tabs-hidden');
+                        appContainer.classList.remove('nav-hidden');
                     }
                 }
                 lastScrollTop = currentScrollTop;
