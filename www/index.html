@@ -938,16 +938,16 @@
       <!-- Card 1: Active Tools -->
       <div class="glass-tool-card">
         
-        <!-- Big 3 Actions Grid -->
+        <!-- Big 3 Actions Grid (Toggle State Buttons) -->
         <div class="top-actions-grid">
           <button type="button" class="glass-action-btn" id="toggle-family-btn" title="Kelimeleri Köklerine Göre Grupla">
-            <span class="glass-action-icon">📖</span>
+            <span class="glass-action-icon">📚</span>
           </button>
-          <button type="button" class="glass-action-btn" id="sort-trigger-btn" title="Kelime Sıralaması">
-            <span class="glass-action-icon">⇅</span>
+          <button type="button" class="glass-action-btn" id="toggle-tags-btn" title="Etiketleri Göster/Gizle">
+            <span class="glass-action-icon">🏷️</span>
           </button>
-          <button type="button" class="glass-action-btn" id="flashcard-btn" title="Kartları Çalış">
-            <span class="glass-action-icon">🔀</span>
+          <button type="button" class="glass-action-btn" id="toggle-expand-all-btn" title="Tüm Kelime Ayrıntılarını Göster/Gizle">
+            <span class="glass-action-icon">↕️</span>
           </button>
         </div>
 
@@ -974,6 +974,22 @@
           </div>
         </div>
 
+        <!-- Bottom Sheet Triggers Row (Filters) -->
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn" style="flex: 1; padding: 10px !important;">
+            <span class="trigger-icon">⇅</span>
+            <span class="trigger-label" id="sort-trigger-label" style="font-size: 12px; font-weight: 700;">En Yeni</span>
+          </button>
+          <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
+            <span class="trigger-icon">📹</span>
+            <span class="trigger-label" id="source-trigger-label" style="font-size: 12px; font-weight: 700;">Kaynaklar</span>
+          </button>
+          <button type="button" class="bottom-sheet-trigger" id="tag-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
+            <span class="trigger-icon">🏷️</span>
+            <span class="trigger-label" id="tag-trigger-label" style="font-size: 12px; font-weight: 700;">Etiket Filtresi</span>
+          </button>
+        </div>
+
       </div>
 
       <!-- Management title -->
@@ -983,24 +999,24 @@
       <div class="glass-tool-card" style="padding: 12px 6px;">
         <div class="management-grid">
           
-          <button type="button" class="mgmt-action-btn" id="export-btn" title="Kelimeleri Dışa Aktar">
-            <span class="mgmt-icon">📂</span>
-            <span class="mgmt-label">Arşivle</span>
+          <button type="button" class="mgmt-action-btn" id="flashcard-btn" title="Kelimeleri Tekrar Et / Kart Çalış">
+            <span class="mgmt-icon">🃏</span>
+            <span class="mgmt-label">Tekrar Et</span>
+          </button>
+
+          <button type="button" class="mgmt-action-btn" id="refresh-families-btn" title="Kök Verileri Güncelle">
+            <span class="mgmt-icon">🔄</span>
+            <span class="mgmt-label">Güncelle</span>
+          </button>
+
+          <button type="button" class="mgmt-action-btn" id="export-btn" title="Kelimeleri Dışa Aktar / Arşivle">
+            <span class="mgmt-icon">📥</span>
+            <span class="mgmt-label">Aktar</span>
           </button>
           
           <button type="button" class="mgmt-action-btn" id="clear-btn" title="Tüm Kelimeleri Sil">
             <span class="mgmt-icon">🗑️</span>
-            <span class="mgmt-label">Sil</span>
-          </button>
-          
-          <button type="button" class="mgmt-action-btn" id="tag-trigger-btn" title="Etiketlere Göre Filtrele">
-            <span class="mgmt-icon">🏷️ <span style="font-size: 8px;">▼</span></span>
-            <span class="mgmt-label">Etiketler</span>
-          </button>
-          
-          <button type="button" class="mgmt-action-btn" id="source-trigger-btn" title="Kaynaklara Göre Filtrele">
-            <span class="mgmt-icon">📹</span>
-            <span class="mgmt-label">Kaynaklar</span>
+            <span class="mgmt-label">Temizle</span>
           </button>
 
         </div>
@@ -1020,11 +1036,6 @@
         <option value="all">🏷️ Tüm etiketler</option>
       </select>
       <datalist id="global-tags-datalist"></datalist>
-
-      <!-- Custom label references (JS bindings fallback compatibility) -->
-      <span id="sort-trigger-label" style="display:none !important"></span>
-      <span id="source-trigger-label" style="display:none !important"></span>
-      <span id="tag-trigger-label" style="display:none !important"></span>
 
       <!-- Kelime Listesi -->
       <div class="word-list" id="word-list">
