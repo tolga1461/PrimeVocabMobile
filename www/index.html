@@ -608,12 +608,16 @@
 
     /* ── Hyper-Premium Mobile Settings Layout ── */
     #panel-settings {
+      display: none;
       padding: 16px 16px 100px 16px !important;
-      display: flex;
       flex-direction: column;
       gap: 16px;
       overflow-y: auto;
       height: calc(100vh - 80px) !important;
+    }
+
+    #panel-settings.active {
+      display: flex !important;
     }
 
     .mobile-settings-card-title {
