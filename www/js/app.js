@@ -617,6 +617,13 @@ function initBottomSheetController() {
         });
     }
 
+    const filterTrigger = document.getElementById('filter-trigger-btn');
+    if (filterTrigger) {
+        filterTrigger.addEventListener('click', () => {
+            openBottomSheet('archive-filter-select', 'Seviye Seçin');
+        });
+    }
+
     // Synchronize legacy selects state with our custom buttons
     function syncSelectsToTriggers() {
         const selects = [
@@ -624,7 +631,8 @@ function initBottomSheetController() {
             { id: 'archive-source-select', btnId: 'source-trigger-btn', labelId: 'source-trigger-label' },
             { id: 'archive-tag-select', btnId: 'tag-trigger-btn', labelId: 'tag-trigger-label' },
             { id: 'app-lang-select', btnId: 'lang-trigger-row', labelId: 'app-lang-value' },
-            { id: 'srs-words-sort', btnId: 'srs-words-sort-trigger', labelId: 'srs-words-sort-label' }
+            { id: 'srs-words-sort', btnId: 'srs-words-sort-trigger', labelId: 'srs-words-sort-label' },
+            { id: 'archive-filter-select', btnId: 'filter-trigger-btn', labelId: 'filter-trigger-label' }
         ];
 
         selects.forEach(item => {
@@ -643,7 +651,10 @@ function initBottomSheetController() {
 
             // Mirror label text
             if (selectEl.selectedIndex >= 0) {
-                const selectedOptText = selectEl.options[selectEl.selectedIndex].textContent;
+                let selectedOptText = selectEl.options[selectEl.selectedIndex].textContent;
+                if (item.id === 'archive-filter-select') {
+                    selectedOptText = `Seviye: ${selectedOptText}`;
+                }
                 labelEl.textContent = selectedOptText;
             }
         });

@@ -207,7 +207,7 @@
       padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) !important;
       height: auto !important;
       border-radius: 16px 16px 0 0 !important; /* Premium rounded top corner bottom tab bar */
-      transition: transform 0.28s cubic-bezier(0.25, 1, 0.5, 1) !important;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
     }
 
     .tabs.tabs-hidden {
@@ -875,7 +875,7 @@
     }
 
     .archive-header-wrap {
-      transition: all 0.28s cubic-bezier(0.25, 1, 0.5, 1) !important;
+      transition: all 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
       max-height: 520px !important;
       opacity: 1 !important;
       overflow: hidden !important;
@@ -994,27 +994,15 @@
 
           <div class="glass-card-section-label">Active Tools</div>
 
-          <!-- Filtre Chips -->
-          <div class="archive-filter-row">
-            <div class="filter-chips" id="cefr-filter-chips">
-              <button class="filter-chip active" data-level="all" data-i18n="filter_all">Tümü</button>
-              <button class="filter-chip" data-level="hard" style="--chip-color:#ef4444" data-i18n="filter_hard">🔥 Zor</button>
-              <button class="filter-chip" data-level="A1" style="--chip-color:#22c55e">A1</button>
-              <button class="filter-chip" data-level="A2" style="--chip-color:#84cc16">A2</button>
-              <button class="filter-chip" data-level="B1" style="--chip-color:#eab308">B1</button>
-              <button class="filter-chip" data-level="B2" style="--chip-color:#f97316">B2</button>
-              <button class="filter-chip" data-level="C1" style="--chip-color:#ef4444">C1</button>
-              <button class="filter-chip" data-level="C2" style="--chip-color:#a855f7">C2</button>
-              <button class="filter-chip" data-level="phrasal" style="--chip-color:#a855f7">📚 Phrasal</button>
-              <button class="filter-chip" data-level="??" style="--chip-color:#64748b" data-i18n="filter_other">Diğer</button>
-            </div>
-          </div>
-
           <!-- Bottom Sheet Triggers Row (Filters) -->
           <div style="display: flex; gap: 8px; margin-top: 4px;">
             <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn" style="flex: 1; padding: 10px !important;">
               <span class="trigger-icon">⇅</span>
               <span class="trigger-label" id="sort-trigger-label" style="font-size: 12px; font-weight: 700;">En Yeni</span>
+            </button>
+            <button type="button" class="bottom-sheet-trigger" id="filter-trigger-btn" style="flex: 1; padding: 10px !important;">
+              <span class="trigger-icon">🎓</span>
+              <span class="trigger-label" id="filter-trigger-label" style="font-size: 12px; font-weight: 700;">Seviye: Tümü</span>
             </button>
             <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
               <span class="trigger-icon">📹</span>
@@ -1060,6 +1048,18 @@
       </select>
       <select id="archive-tag-select" style="display:none !important">
         <option value="all">🏷️ Tüm etiketler</option>
+      </select>
+      <select id="archive-filter-select" style="display:none !important">
+        <option value="all" data-i18n="filter_all">Tümü</option>
+        <option value="hard" data-i18n="filter_hard">🔥 Zor</option>
+        <option value="A1">A1</option>
+        <option value="A2">A2</option>
+        <option value="B1">B1</option>
+        <option value="B2">B2</option>
+        <option value="C1">C1</option>
+        <option value="C2">C2</option>
+        <option value="phrasal">📚 Phrasal</option>
+        <option value="??" data-i18n="filter_other">Diğer</option>
       </select>
       <datalist id="global-tags-datalist"></datalist>
 

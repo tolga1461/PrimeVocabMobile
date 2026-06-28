@@ -78,6 +78,10 @@ function loadArchive() {
     const expandAllBtn = document.getElementById('toggle-expand-all-btn');
     const expandAll = expandAllBtn ? expandAllBtn.dataset.expanded === 'true' : false;
     chrome.storage.local.get({ savedWords: [], licenseType: 'FREE' }, ({ savedWords, licenseType }) => {
+        const archiveFilterSelect = document.getElementById('archive-filter-select');
+        if (archiveFilterSelect) {
+            archiveFilterSelect.value = archiveFilter;
+        }
         if (btn) {
             btn.classList.toggle('active', showFamily);
             btn.title = showFamily ? getMessage("tooltip_hide_family") : getMessage("tooltip_show_family");
@@ -897,14 +901,13 @@ if (archiveSearchEl) {
         loadArchive();
     });
 }
-document.querySelectorAll('.filter-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        archiveFilter = chip.dataset.level;
+const archiveFilterSelect = document.getElementById('archive-filter-select');
+if (archiveFilterSelect) {
+    archiveFilterSelect.addEventListener('change', (e) => {
+        archiveFilter = e.target.value;
         loadArchive();
     });
-});
+}
 const archiveSortEl = document.getElementById('archive-sort');
 if (archiveSortEl) {
     archiveSortEl.addEventListener('change', (e) => {
