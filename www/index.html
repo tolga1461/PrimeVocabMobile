@@ -605,6 +605,146 @@
     input:checked + .switch-slider:before {
       transform: translateX(22px);
     }
+
+    /* ── Hyper-Premium Mobile Settings Layout ── */
+    #panel-settings {
+      padding: 16px 16px 100px 16px !important;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      height: calc(100vh - 80px) !important;
+    }
+
+    .mobile-settings-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-left: 8px;
+      margin-top: 8px;
+    }
+
+    .mobile-settings-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .border-red {
+      border: 1px solid rgba(239, 68, 68, 0.2) !important;
+    }
+
+    .color-red {
+      color: #ef4444 !important;
+    }
+
+    .color-orange {
+      color: #f59e0b !important;
+    }
+
+    .color-green {
+      color: #10b981 !important;
+    }
+
+    .color-blue {
+      color: #818cf8 !important;
+    }
+
+    .mobile-settings-row, .mobile-settings-action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid var(--border2);
+      transition: background-color 0.2s;
+    }
+
+    .mobile-settings-row:last-child, .mobile-settings-action-row:last-child {
+      border-bottom: none;
+    }
+
+    .mobile-settings-action-row:active {
+      background-color: rgba(255, 255, 255, 0.05); /* Tap effect */
+    }
+
+    .settings-row-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .settings-row-icon {
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+    }
+
+    .settings-row-text {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .settings-row-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .settings-row-sublabel {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .settings-row-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .settings-row-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-brand, #a5b4fc);
+    }
+
+    .settings-row-chevron {
+      font-size: 12px;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    /* Danger row adjustments */
+    .danger-row {
+      cursor: pointer;
+    }
+
+    .danger-row:active {
+      background-color: rgba(239, 68, 68, 0.08) !important;
+    }
+
+    .danger-row .settings-row-label {
+      color: #ef4444 !important;
+    }
+
+    .master-danger {
+      background-color: rgba(239, 68, 68, 0.03);
+    }
   </style>
 </head>
 
@@ -1138,80 +1278,148 @@
     <div class="panel" id="panel-settings">
       
       <!-- Uygulama Ayarları Grubu -->
-      <div class="settings-section">
-        <div class="settings-section-title">⚙️ Uygulama Ayarları</div>
-        <div class="settings-group" style="padding: 4px 0;">
-          
-          <!-- Uygulama Dili -->
-          <div class="setting-row" style="padding: 12px 14px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between;">
-            <span class="setting-label" style="font-size: 14px; font-weight: 600;">🌐 Uygulama Dili</span>
-            <select id="app-lang-select" class="setting-select-inline">
-              <option value="auto" data-i18n="settings_lang_auto">Otomatik</option>
-              <option value="tr">Türkçe</option>
-              <option value="en">English</option>
-              <option value="de">Deutsch</option>
-              <option value="fr">Français</option>
-              <option value="es">Español</option>
-            </select>
+      <div class="mobile-settings-card">
+        
+        <!-- Uygulama Dili (Bottom Sheet Trigger Row) -->
+        <div class="mobile-settings-row" id="lang-trigger-row" style="cursor: pointer;">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">🌐</span>
+            <div class="settings-row-text">
+              <span class="settings-row-label">Uygulama Dili</span>
+              <span class="settings-row-sublabel">Arayüz dilini değiştirin</span>
+            </div>
           </div>
+          <div class="settings-row-right">
+            <span class="settings-row-value" id="app-lang-value">Türkçe</span>
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+        <!-- Hidden select for compatibility with app.js / settings.js -->
+        <select id="app-lang-select" style="display:none !important">
+          <option value="auto">Otomatik</option>
+          <option value="tr">Türkçe</option>
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+        </select>
 
-          <!-- Uygulama Sesleri -->
-          <div class="setting-row" style="padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
-            <span class="setting-label" style="font-size: 14px; font-weight: 600;">🔊 Uygulama Sesleri</span>
+        <!-- Uygulama Sesleri -->
+        <div class="mobile-settings-row">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">🔊</span>
+            <div class="settings-row-text">
+              <span class="settings-row-label">Uygulama Sesleri</span>
+              <span class="settings-row-sublabel">Çalışırken ve oyunlarda ses oynatın</span>
+            </div>
+          </div>
+          <div class="settings-row-right">
             <label class="switch-container">
               <input type="checkbox" id="games-sound-toggle">
               <span class="switch-slider"></span>
             </label>
           </div>
-
         </div>
+
       </div>
 
       <!-- Veri Yönetimi Grubu -->
-      <div class="settings-section">
-        <div class="settings-section-title">📦 Veri Yönetimi</div>
-        <div class="settings-group" style="padding: 14px; display: flex; flex-direction: column; gap: 12px;">
-          
-          <!-- Yedekleme & Geri Yükleme Butonları -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <button id="backup-btn" class="toolbar-btn" style="background: rgba(16, 185, 129, 0.1) !important; border: 1px solid rgba(16, 185, 129, 0.3) !important; color: #10b981 !important;">
-              📥 Yedek Al
-            </button>
-            <button id="restore-btn" class="toolbar-btn" style="background: rgba(99, 102, 241, 0.1) !important; border: 1px solid rgba(99, 102, 241, 0.3) !important; color: #818cf8 !important;">
-              📤 Yedek Yükle
-            </button>
-            <input type="file" id="restore-input" accept=".json" style="display: none;">
+      <div class="mobile-settings-card-title">📦 Veri Yönetimi</div>
+      <div class="mobile-settings-card">
+        
+        <!-- Anki'ye Aktar -->
+        <div class="mobile-settings-action-row" id="anki-export-btn" style="cursor: pointer;">
+          <div class="settings-row-left">
+            <span class="settings-row-icon color-orange">⭐</span>
+            <div class="settings-row-text">
+              <span class="settings-row-label">Anki'ye Aktar</span>
+              <span class="settings-row-sublabel">Kelimelerinizi Anki destesi (.txt) olarak aktarın</span>
+            </div>
           </div>
-
-          <button class="toolbar-btn" id="anki-export-btn" data-i18n="settings_anki_export_btn" style="width: 100%; justify-content: center; background: rgba(245, 158, 11, 0.1) !important; border: 1px solid rgba(245, 158, 11, 0.3) !important; color: #f59e0b !important;">
-            ⭐ Anki'ye Aktar
-          </button>
-
+          <div class="settings-row-right">
+            <span class="settings-row-chevron">❯</span>
+          </div>
         </div>
+
+        <!-- Yedek Al -->
+        <div class="mobile-settings-action-row" id="backup-btn" style="cursor: pointer;">
+          <div class="settings-row-left">
+            <span class="settings-row-icon color-green">📥</span>
+            <div class="settings-row-text">
+              <span class="settings-row-label">Verileri Yedekle (Yedek Al)</span>
+              <span class="settings-row-sublabel">Tüm kelimeleri JSON dosyası olarak kaydedin</span>
+            </div>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+
+        <!-- Yedek Yükle -->
+        <div class="mobile-settings-action-row" id="restore-btn" style="cursor: pointer;">
+          <div class="settings-row-left">
+            <span class="settings-row-icon color-blue">📤</span>
+            <div class="settings-row-text">
+              <span class="settings-row-label">Yedeği Geri Yükle</span>
+              <span class="settings-row-sublabel">JSON yedek dosyanızı uygulamaya yükleyin</span>
+            </div>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+        <input type="file" id="restore-input" accept=".json" style="display: none;">
+
       </div>
 
-      <!-- Sıfırlama Grubu -->
-      <div class="settings-section">
-        <div class="settings-section-title" style="color: #ef4444 !important;">⚠️ Tehlikeli Bölge (Sıfırlama)</div>
-        <div class="settings-group" style="padding: 14px; display: flex; flex-direction: column; gap: 10px;">
-          
-          <button id="reset-srs-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.05) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; color: #ef4444 !important; width: 100%; justify-content: center;">
-            🔁 SRS İlerlemesini Sıfırla
-          </button>
-          
-          <button id="reset-streak-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.05) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; color: #ef4444 !important; width: 100%; justify-content: center;">
-            🔥 Günlük Seriyi (Streak) Sıfırla
-          </button>
-          
-          <button id="reset-games-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.05) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; color: #ef4444 !important; width: 100%; justify-content: center;">
-            🏆 Oyun ve Başarımları Sıfırla
-          </button>
-
-          <button id="reset-data-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.1) !important; border: 1px dashed rgba(239, 68, 68, 0.4) !important; color: #ef4444 !important; width: 100%; justify-content: center; font-weight: 800 !important;">
-            ☠️ TÜM KELİMELERİ VE VERİLERİ SIFIRLA
-          </button>
-          
+      <!-- Sıfırlama İşlemleri (Danger Zone) -->
+      <div class="mobile-settings-card-title color-red">⚠️ Tehlikeli Bölge (Sıfırlama)</div>
+      <div class="mobile-settings-card border-red">
+        
+        <!-- SRS Sıfırla -->
+        <div class="mobile-settings-action-row danger-row" id="reset-srs-btn">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">🔁</span>
+            <span class="settings-row-label">SRS İlerlemesini Sıfırla</span>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-chevron">❯</span>
+          </div>
         </div>
+
+        <!-- Seri Sıfırla -->
+        <div class="mobile-settings-action-row danger-row" id="reset-streak-btn">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">🔥</span>
+            <span class="settings-row-label">Günlük Çalışma Serisini Sıfırla</span>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+
+        <!-- Oyun & Başarımları Sıfırla -->
+        <div class="mobile-settings-action-row danger-row" id="reset-games-btn">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">🏆</span>
+            <span class="settings-row-label">Oyun ve Başarımları Sıfırla</span>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+
+        <!-- Master Sıfırla -->
+        <div class="mobile-settings-action-row danger-row master-danger" id="reset-data-btn">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">☠️</span>
+            <span class="settings-row-label" style="font-weight: 800;">TÜM KELİMELERİ VE VERİLERİ SIFIRLA</span>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+
       </div>
 
     </div>

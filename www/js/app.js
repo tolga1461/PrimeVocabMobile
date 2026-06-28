@@ -622,12 +622,20 @@ function initBottomSheetController() {
         });
     }
 
+    const langTrigger = document.getElementById('lang-trigger-row');
+    if (langTrigger) {
+        langTrigger.addEventListener('click', () => {
+            openBottomSheet('app-lang-select', 'Uygulama Dili');
+        });
+    }
+
     // Synchronize legacy selects state with our custom buttons
     function syncSelectsToTriggers() {
         const selects = [
             { id: 'archive-sort', btnId: 'sort-trigger-btn', labelId: 'sort-trigger-label' },
             { id: 'archive-source-select', btnId: 'source-trigger-btn', labelId: 'source-trigger-label' },
-            { id: 'archive-tag-select', btnId: 'tag-trigger-btn', labelId: 'tag-trigger-label' }
+            { id: 'archive-tag-select', btnId: 'tag-trigger-btn', labelId: 'tag-trigger-label' },
+            { id: 'app-lang-select', btnId: 'lang-trigger-row', labelId: 'app-lang-value' }
         ];
 
         selects.forEach(item => {
@@ -637,10 +645,12 @@ function initBottomSheetController() {
 
             if (!selectEl || !btnEl || !labelEl) return;
 
-            // Mirror display visibility (since source/tag selects are hidden if empty)
-            const style = window.getComputedStyle(selectEl);
-            const isSelectVisible = selectEl.style.display !== 'none' && style.display !== 'none';
-            btnEl.style.display = isSelectVisible ? 'flex' : 'none';
+            // Mirror display visibility (only for source & tag filters)
+            if (item.id === 'archive-source-select' || item.id === 'archive-tag-select') {
+                const style = window.getComputedStyle(selectEl);
+                const isSelectVisible = selectEl.style.display !== 'none' && style.display !== 'none';
+                btnEl.style.display = isSelectVisible ? 'flex' : 'none';
+            }
 
             // Mirror label text
             if (selectEl.selectedIndex >= 0) {
