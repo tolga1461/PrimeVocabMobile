@@ -897,12 +897,27 @@
     .word-item-header {
       display: flex !important;
       align-items: center !important;
-      min-height: 38px !important;
+      justify-content: flex-start !important;
+      padding: 6px 0 !important;
+      margin: 0 !important;
+      line-height: normal !important;
+      min-height: auto !important;
     }
-    .word-item-header > span,
-    .word-item-header > div,
-    .word-item-header > button {
-      align-self: center !important;
+    .word-item-word,
+    .word-item-trans,
+    .expand-toggle-icon {
+      display: inline-flex !important;
+      align-items: center !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+    }
+    .cefr-badge,
+    .hard-badge,
+    .inactive-sub-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      margin: 0 !important;
+      line-height: 1 !important;
     }
   </style>
 </head>
