@@ -230,6 +230,8 @@ function switchMainTab(tabName) {
         if (typeof loadSettings === 'function') {
             loadSettings();
         }
+    } else if (tabName === 'profile') {
+        loadProfileData();
     }
 }
 
@@ -238,95 +240,74 @@ function initMainTabs() {
     document.querySelectorAll('.tab').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const tabName = btn.dataset.tab;
-            if (tabName === 'profile') {
-                const profileBtn = document.getElementById('profile-btn');
-                if (profileBtn) profileBtn.click();
-                return;
-            }
             if (tabName) switchMainTab(tabName);
         });
     });
 }
 
-// ── Profile overlay events ──
-const profileBtn = document.getElementById('profile-btn');
-if (profileBtn) {
-    profileBtn.addEventListener('click', () => {
-        const overlay = document.getElementById('profile-overlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
-            chrome.storage.local.get({
-                savedWords: [],
-                srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 },
-                gameStats: {},
-                achievements: {}
-            }, (data) => {
-                const totalWords = data.savedWords ? data.savedWords.length : 0;
-                let streak = data.srsStreakStats ? (data.srsStreakStats.currentStreak || 0) : 0;
-                
-                // Reset streak if missed days
-                if (data.srsStreakStats && data.srsStreakStats.lastStudyDate) {
-                    const todayStr = new Date().toDateString();
-                    const yesterday = new Date();
-                    yesterday.setDate(yesterday.getDate() - 1);
-                    const yesterdayStr = yesterday.toDateString();
-                    if (data.srsStreakStats.lastStudyDate !== todayStr && data.srsStreakStats.lastStudyDate !== yesterdayStr) {
-                        streak = 0;
-                        if (data.srsStreakStats.currentStreak !== 0) {
-                            data.srsStreakStats.currentStreak = 0;
-                            chrome.storage.local.set({ srsStreakStats: data.srsStreakStats });
-                        }
-                    }
+// ── Profile data loader ──
+function loadProfileData() {
+    chrome.storage.local.get({
+        savedWords: [],
+        srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 },
+        gameStats: {},
+        achievements: {}
+    }, (data) => {
+        const totalWords = data.savedWords ? data.savedWords.length : 0;
+        let streak = data.srsStreakStats ? (data.srsStreakStats.currentStreak || 0) : 0;
+        
+        // Reset streak if missed days
+        if (data.srsStreakStats && data.srsStreakStats.lastStudyDate) {
+            const todayStr = new Date().toDateString();
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toDateString();
+            if (data.srsStreakStats.lastStudyDate !== todayStr && data.srsStreakStats.lastStudyDate !== yesterdayStr) {
+                streak = 0;
+                if (data.srsStreakStats.currentStreak !== 0) {
+                    data.srsStreakStats.currentStreak = 0;
+                    chrome.storage.local.set({ srsStreakStats: data.srsStreakStats });
                 }
-                const exp = data.gameStats ? (data.gameStats.totalExp || 0) : 0;
-                
-                const totalWordsEl = document.getElementById('profile-total-words');
-                const streakEl = document.getElementById('profile-streak');
-                const expEl = document.getElementById('profile-exp');
-                
-                if (totalWordsEl) totalWordsEl.textContent = totalWords.toLocaleString();
-                if (streakEl) streakEl.textContent = `${streak} Gün`;
-                if (expEl) expEl.textContent = exp.toLocaleString();
-
-                // XP Level calculations
-                const level = Math.floor(exp / 1000) + 1;
-                const nextLevelProgress = (exp % 1000) / 10;
-                const levelEl = document.getElementById('profile-level');
-                const levelBarEl = document.getElementById('profile-level-bar');
-                if (levelEl) {
-                    levelEl.textContent = `Seviye ${level} (${exp % 1000} / 1000 XP)`;
-                }
-                if (levelBarEl) levelBarEl.style.width = `${nextLevelProgress}%`;
-
-                // Calculate today activity
-                const todayStr = new Date().toDateString();
-                const wordsSavedToday = (data.savedWords || []).filter(w => {
-                    if (!w || !w.timestamp) return false;
-                    return new Date(w.timestamp).toDateString() === todayStr;
-                }).length;
-                const todayActivityEl = document.getElementById('profile-today-activity');
-                if (todayActivityEl) {
-                    todayActivityEl.textContent = `${wordsSavedToday} kelime kaydedildi`;
-                }
-
-                // Render achievements ratio
-                const earnedAchievements = Object.keys(data.achievements || {}).filter(key => data.achievements[key] && data.achievements[key].earned);
-                const totalAchievementsCount = (typeof ACHIEVEMENTS !== 'undefined') ? ACHIEVEMENTS.length : 34;
-                const achievementsRatioEl = document.getElementById('profile-achievements-ratio');
-                if (achievementsRatioEl) {
-                    achievementsRatioEl.textContent = `${earnedAchievements.length} / ${totalAchievementsCount}`;
-                }
-            });
+            }
         }
-    });
-}
+        const exp = data.gameStats ? (data.gameStats.totalExp || 0) : 0;
+        
+        const totalWordsEl = document.getElementById('profile-total-words');
+        const streakEl = document.getElementById('profile-streak');
+        const expEl = document.getElementById('profile-exp');
+        
+        if (totalWordsEl) totalWordsEl.textContent = totalWords.toLocaleString();
+        if (streakEl) streakEl.textContent = `${streak} Gün`;
+        if (expEl) expEl.textContent = exp.toLocaleString();
 
-// Close profile modal events
-const profileCloseBtn = document.getElementById('profile-close');
-if (profileCloseBtn) {
-    profileCloseBtn.addEventListener('click', () => {
-        const overlay = document.getElementById('profile-overlay');
-        if (overlay) overlay.style.display = 'none';
+        // XP Level calculations
+        const level = Math.floor(exp / 1000) + 1;
+        const nextLevelProgress = (exp % 1000) / 10;
+        const levelEl = document.getElementById('profile-level');
+        const levelBarEl = document.getElementById('profile-level-bar');
+        if (levelEl) {
+            levelEl.textContent = `Seviye ${level} (${exp % 1000} / 1000 XP)`;
+        }
+        if (levelBarEl) levelBarEl.style.width = `${nextLevelProgress}%`;
+
+        // Calculate today activity
+        const todayStr = new Date().toDateString();
+        const wordsSavedToday = (data.savedWords || []).filter(w => {
+            if (!w || !w.timestamp) return false;
+            return new Date(w.timestamp).toDateString() === todayStr;
+        }).length;
+        const todayActivityEl = document.getElementById('profile-today-activity');
+        if (todayActivityEl) {
+            todayActivityEl.textContent = `${wordsSavedToday} kelime kaydedildi`;
+        }
+
+        // Render achievements ratio
+        const earnedAchievements = Object.keys(data.achievements || {}).filter(key => data.achievements[key] && data.achievements[key].earned);
+        const totalAchievementsCount = (typeof ACHIEVEMENTS !== 'undefined') ? ACHIEVEMENTS.length : 34;
+        const achievementsRatioEl = document.getElementById('profile-achievements-ratio');
+        if (achievementsRatioEl) {
+            achievementsRatioEl.textContent = `${earnedAchievements.length} / ${totalAchievementsCount}`;
+        }
     });
 }
 

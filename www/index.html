@@ -607,7 +607,7 @@
     }
 
     /* ── Hyper-Premium Mobile Settings Layout ── */
-    #panel-settings {
+    #panel-settings, #panel-profile {
       display: none;
       padding: 16px 16px 100px 16px !important;
       flex-direction: column;
@@ -616,7 +616,7 @@
       height: calc(100vh - 80px) !important;
     }
 
-    #panel-settings.active {
+    #panel-settings.active, #panel-profile.active {
       display: flex !important;
     }
 
@@ -783,83 +783,7 @@
       </div>
     </header>
 
-    <!-- Profil overlay -->
-    <div class="shortcuts-overlay" id="profile-overlay" style="display:none">
-      <div class="shortcuts-modal" style="max-width: 320px;">
-        <div class="shortcuts-header">
-          <span data-i18n="profile_title">👤 Profil ve İlerleme</span>
-          <button class="shortcuts-close" id="profile-close">✕</button>
-        </div>
-        <div class="profile-body"
-          style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: var(--text-dim); line-height: 1.5; padding: 4px 0 0 0;">
-          <div style="text-align: center; margin-bottom: 4px;">
-            <div id="profile-avatar-container" style="font-size: 40px; margin-bottom: 6px; display: flex; justify-content: center; align-items: center; min-height: 48px;">👤</div>
-            <h3 style="margin: 0; font-size: 16px; color: var(--text); font-weight: 700; font-family: var(--font);" id="profile-username" data-i18n="profile_user_title">Kullanıcı</h3>
-            <small style="color: var(--text-muted); font-weight: 500; display: block;" id="profile-email" data-i18n="profile_local_user">Yerel Kullanıcı</small>
-            <div id="profile-membership-badge" style="margin-top: 4px; font-size: 10px; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 12px; background: var(--border);">FREE</div>
-          </div>
-          <hr style="border: none; border-top: 1px solid var(--border2); margin: 2px 0;">
-          <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: var(--text-muted);" data-i18n="profile_total_words">Toplam Kelime:</span>
-              <span style="font-weight: 600; color: var(--text);" id="profile-total-words">0</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: var(--text-muted);" data-i18n="profile_streak">Çalışma Serisi:</span>
-              <span style="font-weight: 600; color: var(--text);" id="profile-streak">0</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: var(--text-muted);" data-i18n="profile_exp">Toplam EXP (Deneyim):</span>
-              <span style="font-weight: 600; color: var(--text);" id="profile-exp">0</span>
-            </div>
-            
-            <!-- Seviye ve İlerleme Barı -->
-            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 2px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px;">
-                <span style="color: var(--text-muted);" data-i18n="profile_level_label">Mevcut Seviye:</span>
-                <span style="font-weight: 700; color: var(--accent);" id="profile-level">Level 1</span>
-              </div>
-              <div style="width: 100%; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; border: 1px solid var(--border2);">
-                <div id="profile-level-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #818cf8, #a5b4fc); transition: width 0.3s ease;"></div>
-              </div>
-            </div>
 
-            <!-- Bugünkü Aktivite -->
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: var(--text-muted);" data-i18n="profile_today_activity_label">Bugünkü Aktivite:</span>
-              <span style="font-weight: 600; color: var(--text);" id="profile-today-activity">0 kelime</span>
-            </div>
-
-            <!-- Kazanılan Başarımlar -->
-            <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 2px;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: var(--text-muted);" data-i18n="profile_achievements_label">Başarımlar:</span>
-                <span style="font-weight: 600; color: var(--text);" id="profile-achievements-ratio">0 / 0</span>
-              </div>
-              <div id="profile-achievements-badges" style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; min-height: 24px;"></div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font); width: 100%;">
-              <!-- Google ile Giriş Yap -->
-              <button id="profile-login-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #6366f1; border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 13px; margin: 4px 0 8px 0; transition: all 0.2s;" data-i18n="profile_login_btn">
-                <span>🔑</span> Google ile Giriş Yap
-              </button>
-
-              <div id="profile-sync-status-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); margin-top: 2px;">
-                <span id="profile-sync-status" data-i18n="profile_sync_status_unlinked">Senkronizasyon Kapalı</span>
-                <button id="profile-sync-now-btn" style="display: none; background: var(--accent-dim); border: 1px solid var(--border); color: #818cf8; padding: 2px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit;" data-i18n="profile_sync_now">Şimdi Eşitle</button>
-              </div>
-              <div id="profile-last-sync-row" style="font-size: 11px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; margin-top: 2px;">
-                <span data-i18n="profile_last_sync_label">Son Eşitleme:</span>
-                <span id="profile-last-sync-time" style="font-weight: 600; color: var(--text);" data-i18n="profile_last_sync_never">Henüz Yapılmadı</span>
-              </div>
-              <div id="profile-logout-row" style="display: flex; justify-content: flex-end; margin-top: 8px;">
-                <button id="profile-logout-btn" style="display: none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit; width: 100%; text-align: center;" data-i18n="profile_logout">Çıkış Yap</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Bilgi overlay -->
     <div class="shortcuts-overlay" id="info-overlay" style="display:none">
@@ -1154,22 +1078,27 @@
           <button class="srs-start-btn" id="srs-back-btn" data-i18n="srs_result_back_btn">Ana Sayfaya Dön</button>
         </div>
 
-        <!-- Çalışma Listesi Popup/Overlay -->
-        <div id="srs-words-overlay" style="display:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 100; flex-direction: column; padding: 15px; overflow-y: auto;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
-            <span style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;" data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
-            <button id="srs-words-close-btn" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
+        <!-- Çalışma Listesi Popup/Overlay (Bottom Sheet Style) -->
+        <div id="srs-words-overlay" class="bottom-sheet-overlay">
+          <div class="bottom-sheet" style="height: 80vh;">
+            <div class="bottom-sheet-header">
+              <div class="bottom-sheet-handle"></div>
+              <span class="bottom-sheet-title" data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
+              <button class="bottom-sheet-close" id="srs-words-close-btn">✕</button>
+            </div>
+            
+            <div style="display: flex; gap: 8px; margin: 8px 0 12px 0;">
+              <select id="srs-words-sort" style="flex: 1; background: var(--surface); border: 1px solid var(--border2); color: var(--text); padding: 10px 14px; border-radius: 10px; font-size: 14px; font-family: inherit; font-weight: 600; outline: none;">
+                <option value="time-asc" data-i18n="srs_sort_time_asc">Süreye Göre Artan (En Yakın)</option>
+                <option value="time-desc" data-i18n="srs_sort_time_desc">Süreye Göre Azalan (En Uzak)</option>
+                <option value="alphabetical" data-i18n="srs_sort_alphabetical">Kelime (A → Z)</option>
+                <option value="learned-first" data-i18n="srs_sort_learned_first">Öğrenilenler Önce</option>
+                <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
+              </select>
+            </div>
+            
+            <div class="bottom-sheet-body" id="srs-words-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
           </div>
-          <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <select id="srs-words-sort" style="flex: 1; background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-family: inherit; font-weight: 600; outline: none;">
-              <option value="time-asc" data-i18n="srs_sort_time_asc">Süreye Göre Artan (En Yakın)</option>
-              <option value="time-desc" data-i18n="srs_sort_time_desc">Süreye Göre Azalan (En Uzak)</option>
-              <option value="alphabetical" data-i18n="srs_sort_alphabetical">Kelime (A → Z)</option>
-              <option value="learned-first" data-i18n="srs_sort_learned_first">Öğrenilenler Önce</option>
-              <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
-            </select>
-          </div>
-          <div id="srs-words-list" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto;"></div>
         </div>
       </div>
 
@@ -1275,6 +1204,85 @@
         </div>
         <h2 class="achievements-page-title" data-i18n="achievements_title">Başarımlar</h2>
         <div id="achievements-grid" class="achievements-grid"></div>
+      </div>
+    </div>
+
+    <!-- ── PROFİL PANELİ ── -->
+    <div class="panel" id="panel-profile">
+      <div class="mobile-settings-card-title">👤 Profil ve İlerleme</div>
+      <div class="mobile-settings-card" style="padding: 20px 16px;">
+        <div class="profile-body" style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: var(--text-dim); line-height: 1.5; padding: 4px 0 0 0; font-family: var(--font);">
+          <div style="text-align: center; margin-bottom: 8px;">
+            <div id="profile-avatar-container" style="font-size: 56px; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 64px;">👤</div>
+            <h3 style="margin: 0; font-size: 18px; color: var(--text); font-weight: 700;" id="profile-username" data-i18n="profile_user_title">Kullanıcı</h3>
+            <small style="color: var(--text-muted); font-size: 13px; font-weight: 500; display: block; margin-top: 2px;" id="profile-email" data-i18n="profile_local_user">Yerel Kullanıcı</small>
+            <div id="profile-membership-badge" style="margin-top: 6px; font-size: 11px; font-weight: 700; display: inline-block; padding: 3px 10px; border-radius: 12px; background: var(--border);">FREE</div>
+          </div>
+          
+          <hr style="border: none; border-top: 1px solid var(--border2); margin: 6px 0;">
+          
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="profile_total_words">Toplam Kelime:</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-total-words">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="profile_streak">Çalışma Serisi:</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-streak">0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: var(--text-muted);" data-i18n="profile_exp">Toplam EXP (Deneyim):</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-exp">0</span>
+            </div>
+            
+            <!-- Seviye ve İlerleme Barı -->
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                <span style="color: var(--text-muted);" data-i18n="profile_level_label">Mevcut Seviye:</span>
+                <span style="font-weight: 700; color: var(--accent);" id="profile-level">Level 1</span>
+              </div>
+              <div style="width: 100%; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border2);">
+                <div id="profile-level-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #818cf8, #a5b4fc); transition: width 0.3s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Bugünkü Aktivite -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+              <span style="color: var(--text-muted);" data-i18n="profile_today_activity_label">Bugünkü Aktivite:</span>
+              <span style="font-weight: 600; color: var(--text);" id="profile-today-activity">0 kelime</span>
+            </div>
+
+            <!-- Kazanılan Başarımlar -->
+            <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-muted);" data-i18n="profile_achievements_label">Başarımlar:</span>
+                <span style="font-weight: 600; color: var(--text);" id="profile-achievements-ratio">0 / 0</span>
+              </div>
+              <div id="profile-achievements-badges" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; min-height: 24px;"></div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 8px;">
+              <!-- Google ile Giriş Yap -->
+              <button id="profile-login-btn" class="toolbar-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #6366f1 !important; border: none !important; color: white !important; padding: 12px !important; border-radius: 10px !important; font-size: 14px !important; font-weight: 700 !important; cursor: pointer; transition: all 0.2s;" data-i18n="profile_login_btn">
+                <span>🔑</span> Google ile Giriş Yap
+              </button>
+
+              <div id="profile-sync-status-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted);">
+                <span id="profile-sync-status" data-i18n="profile_sync_status_unlinked">Senkronizasyon Kapalı</span>
+                <button id="profile-sync-now-btn" class="toolbar-btn" style="display: none; background: var(--accent-dim) !important; border: 1px solid var(--border) !important; color: #818cf8 !important; padding: 6px 12px !important; border-radius: 6px !important; font-size: 12px !important; font-weight: 600 !important;" data-i18n="profile_sync_now">Şimdi Eşitle</button>
+              </div>
+              
+              <div id="profile-last-sync-row" style="font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                <span data-i18n="profile_last_sync_label">Son Eşitleme:</span>
+                <span id="profile-last-sync-time" style="font-weight: 600; color: var(--text);" data-i18n="profile_last_sync_never">Henüz Yapılmadı</span>
+              </div>
+              
+              <div id="profile-logout-row" style="display: flex; justify-content: flex-end; margin-top: 4px;">
+                <button id="profile-logout-btn" class="toolbar-btn" style="display: none; background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; color: #ef4444 !important; padding: 10px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 700 !important; width: 100%; text-align: center;" data-i18n="profile_logout">Çıkış Yap</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 

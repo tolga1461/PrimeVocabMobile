@@ -520,6 +520,13 @@ if (srsWordsBtn)
     srsWordsBtn.addEventListener('click', () => { srsWordsOverlay.style.display = 'flex'; srsLoadWords(); });
 if (srsWordsCloseBtn)
     srsWordsCloseBtn.addEventListener('click', () => { srsWordsOverlay.style.display = 'none'; });
+if (srsWordsOverlay) {
+    srsWordsOverlay.addEventListener('click', (e) => {
+        if (e.target === srsWordsOverlay) {
+            srsWordsOverlay.style.display = 'none';
+        }
+    });
+}
 if (srsWordsSort)
     srsWordsSort.addEventListener('change', () => { srsLoadWords(); });
 function srsLoadWords() {
