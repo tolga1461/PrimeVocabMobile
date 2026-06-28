@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PrimeVocab Authentication</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background-color: #0d0e12;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .loader {
+            border: 4px solid #1a1c23;
+            border-top: 4px solid #a15df2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h2 {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        p {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <h2>Kimlik Doğrulanıyor...</h2>
+        <p>Lütfen bekleyin, uygulamaya yönlendiriliyorsunuz.</p>
+    </div>
+    <script>
+        // Parse Hash parameters (Google OAuth implicit flow returns token in hash fragment)
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        const expiresIn = params.get('expires_in');
+        
+        // Also parse query parameters (e.g. state can be in query or hash depending on redirect flow)
+        const urlParams = new URLSearchParams(window.location.search);
+        const state = urlParams.get('state') || params.get('state');
+
+        if (accessToken) {
+            const expiresAt = Date.now() + (parseInt(expiresIn || '3600') * 1000);
+            
+            // Check if this was triggered from the native Android app
+            if (state === 'android') {
+                // Redirect to native app using custom URL scheme
+                const deepLinkUrl = `primevocab://auth?token=${accessToken}&expires_in=${expiresIn}`;
+                window.location.href = deepLinkUrl;
+                
+                // Fallback helper in case custom scheme doesn't auto-trigger
+                setTimeout(() => {
+                    document.querySelector('p').innerHTML = 
+                        'Uygulama otomatik açılmadıysa <a href="' + deepLinkUrl + '" style="color: #a15df2; text-decoration: underline; font-weight: bold;">buraya tıklayın</a> veya pencereyi kapatın.';
+                }, 2000);
+            } else {
+                // Web PWA fallback - write to localStorage and redirect to app root
+                localStorage.setItem('google_sync_token', accessToken);
+                localStorage.setItem('google_sync_token_expires', expiresAt);
+                window.location.href = './index.html';
+            }
+        } else {
+            document.querySelector('h2').innerText = "Giriş Başarısız";
+            document.querySelector('p').innerText = "Google ile kimlik doğrulaması yapılamadı. Lütfen tekrar deneyin.";
+            document.querySelector('.loader').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

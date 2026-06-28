@@ -1,0 +1,9 @@
+{
+  "appId": "app.primevocab.mobile",
+  "appName": "PrimeVocab",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": []
+  }
+}

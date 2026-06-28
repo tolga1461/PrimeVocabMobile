@@ -39,8 +39,6 @@ function initGoogleAuthClient() {
  * @returns {Promise<string>} Access Token
  */
 function getGoogleAuthToken(interactive = false) {
-    initGoogleAuthClient();
-    
     const cachedToken = localStorage.getItem('google_sync_token');
     const cachedExpires = localStorage.getItem('google_sync_token_expires');
     const isTokenValid = cachedToken && cachedExpires && parseInt(cachedExpires) > Date.now();
@@ -53,6 +51,61 @@ function getGoogleAuthToken(interactive = false) {
         return Promise.reject(new Error("No valid cached token, interactive login required"));
     }
     
+    // Check if running in Capacitor Native Environment
+    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+        return new Promise((resolve, reject) => {
+            window.onOAuthSuccess = (token) => {
+                resolve(token);
+            };
+            window.onOAuthError = (err) => {
+                reject(err);
+            };
+            
+            // Build the standard OAuth login URL targeting our deployed Vercel callback helper
+            const clientId = window.CONFIG.GOOGLE_CLIENT_ID;
+            const scopes = encodeURIComponent(window.CONFIG.GOOGLE_SCOPES);
+            const redirectUri = encodeURIComponent("https://prime-vocab-mobile.vercel.app/oauth_callback.html");
+            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scopes}&state=android`;
+            
+            // Listen for Capacitor App Deep Link URL open
+            if (window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+                window.Capacitor.Plugins.App.addListener('appUrlOpen', function handleDeepLink(data) {
+                    console.log("[PV-Sync] App opened with deep link URL:", data.url);
+                    if (data.url && data.url.startsWith("primevocab://auth")) {
+                        const rawParams = data.url.split("?")[1];
+                        if (rawParams) {
+                            const params = new URLSearchParams(rawParams);
+                            const token = params.get("token");
+                            const expiresIn = params.get("expires_in") || "3600";
+                            if (token) {
+                                const expiresAt = Date.now() + (parseInt(expiresIn) * 1000);
+                                localStorage.setItem('google_sync_token', token);
+                                localStorage.setItem('google_sync_token_expires', expiresAt);
+                                
+                                if (window.Capacitor.Plugins.Browser) {
+                                    window.Capacitor.Plugins.Browser.close().catch(() => {});
+                                }
+                                
+                                if (window.onOAuthSuccess) {
+                                    window.onOAuthSuccess(token);
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Open system browser for Google OAuth Login
+            if (window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+                window.Capacitor.Plugins.Browser.open({ url: authUrl });
+            } else {
+                window.open(authUrl, '_system');
+            }
+        });
+    }
+    
+    // Web / PWA Flow using GIS Client
+    initGoogleAuthClient();
     return new Promise((resolve, reject) => {
         window.onOAuthSuccess = (token) => {
             resolve(token);
