@@ -885,6 +885,10 @@
     }
 
     /* ── Collapsible Dictionary Header Transitions ── */
+    #panel-archive {
+      position: relative !important;
+    }
+
     .archive-sticky-search-wrap {
       position: sticky !important;
       top: -2px !important;
@@ -896,12 +900,34 @@
 
     .archive-header-wrap {
       position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 4px !important;
-      height: 176px !important;
-      z-index: 10 !important;
-      overflow: hidden !important;
+      top: 50px !important; /* right below sticky search banner */
+      left: 10px !important;
+      right: 10px !important;
+      z-index: 80 !important;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), 
+                  opacity 0.35s ease !important;
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+      will-change: transform, opacity;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #panel-archive.scrolled .archive-header-wrap {
+      opacity: 0 !important;
+      transform: translateY(-130px) !important;
+      pointer-events: none !important;
+    }
+
+    /* Word list padding-top collapses in sync with the header translation to prevent layout jumps */
+    #word-list {
+      padding-top: 120px !important; /* height of header + margin */
+      transition: padding-top 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+
+    #panel-archive.scrolled #word-list {
+      padding-top: 10px !important;
     }
 
     /* Perfect vertical alignment for word list items */
@@ -1012,7 +1038,65 @@
         <input type="text" id="archive-search" class="archive-search" placeholder="Kelime ara…" autocomplete="off" />
       </div>
 
+      <!-- Collapsible header tools containing big buttons, filter chips, and sheet triggers -->
+      <div class="archive-header-wrap" id="archive-header-wrap">
+        
+        <!-- Card 1: Active Tools -->
+        <div class="glass-tool-card">
+          <!-- Big 3 Actions Grid (Toggle State Buttons) -->
+          <div class="top-actions-grid">
+            <button type="button" class="glass-action-btn" id="toggle-family-btn" title="Kelimeleri Köklerine Göre Grupla">
+              <span class="glass-action-icon">📚</span>
+            </button>
+            <button type="button" class="glass-action-btn" id="toggle-tags-btn" title="Etiketleri Göster/Gizle">
+              <span class="glass-action-icon">🏷️</span>
+            </button>
+            <button type="button" class="glass-action-btn" id="toggle-expand-all-btn" title="Tüm Kelime Ayrıntılarını Göster/Gizle">
+              <span class="glass-action-icon">↕️</span>
+            </button>
+          </div>
 
+          <!-- Bottom Sheet Triggers Row (Filters) -->
+          <div style="display: flex; gap: 8px; margin-top: 4px;">
+            <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn" style="flex: 1; padding: 10px !important;">
+              <span class="trigger-icon">⇅</span>
+              <span class="trigger-label" id="sort-trigger-label" style="font-size: 12px; font-weight: 700;">En Yeni</span>
+            </button>
+            <button type="button" class="bottom-sheet-trigger" id="filter-trigger-btn" style="flex: 1; padding: 10px !important;">
+              <span class="trigger-icon">🎓</span>
+              <span class="trigger-label" id="filter-trigger-label" style="font-size: 12px; font-weight: 700;">Seviye: Tümü</span>
+            </button>
+            <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
+              <span class="trigger-icon">📹</span>
+              <span class="trigger-label" id="source-trigger-label" style="font-size: 12px; font-weight: 700;">Kaynaklar</span>
+            </button>
+            <button type="button" class="bottom-sheet-trigger" id="tag-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
+              <span class="trigger-icon">🏷️</span>
+              <span class="trigger-label" id="tag-trigger-label" style="font-size: 12px; font-weight: 700;">Etiket Filtresi</span>
+            </button>
+          </div>
+
+          <!-- Action Buttons Row (Combined) -->
+          <div style="display: flex; gap: 8px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+            <button type="button" class="bottom-sheet-trigger" id="flashcard-btn" style="flex: 2; background: rgba(129, 140, 248, 0.2); border-color: rgba(129, 140, 248, 0.4); justify-content: center; gap: 8px;" title="Kelimeleri Tekrar Et / Kart Çalış">
+              <span>🃏</span>
+              <span style="font-weight: 700; color: #a5b4fc;">Tekrar Et</span>
+            </button>
+            
+            <button type="button" class="bottom-sheet-trigger" id="refresh-families-btn" style="flex: 1; justify-content: center; gap: 6px;" title="Kök Verileri Güncelle">
+              <span>🔄</span>
+              <span style="font-size: 11px; font-weight: 700;">Güncelle</span>
+            </button>
+            
+            <button type="button" class="bottom-sheet-trigger" id="clear-btn" style="flex: 1; justify-content: center; gap: 6px; border-color: rgba(239, 68, 68, 0.2);" title="Tüm Kelimeleri Sil">
+              <span style="color: #ef4444;">🗑️</span>
+              <span style="font-size: 11px; font-weight: 700; color: #ef4444;">Temizle</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
 
       <!-- Hidden legacy selects (JS compatibility) -->
       <select id="archive-sort" style="display:none !important">
@@ -1043,66 +1127,6 @@
 
       <!-- Kelime Listesi -->
       <div class="word-list" id="word-list">
-        
-        <!-- Header tools inside the scroll list -->
-        <div class="archive-header-wrap" id="archive-header-wrap">
-          
-          <!-- Card 1: Active Tools -->
-          <div class="glass-tool-card">
-            <!-- Big 3 Actions Grid (Toggle State Buttons) -->
-            <div class="top-actions-grid">
-              <button type="button" class="glass-action-btn" id="toggle-family-btn" title="Kelimeleri Köklerine Göre Grupla">
-                <span class="glass-action-icon">📚</span>
-              </button>
-              <button type="button" class="glass-action-btn" id="toggle-tags-btn" title="Etiketleri Göster/Gizle">
-                <span class="glass-action-icon">🏷️</span>
-              </button>
-              <button type="button" class="glass-action-btn" id="toggle-expand-all-btn" title="Tüm Kelime Ayrıntılarını Göster/Gizle">
-                <span class="glass-action-icon">↕️</span>
-              </button>
-            </div>
-
-            <!-- Bottom Sheet Triggers Row (Filters) -->
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn" style="flex: 1; padding: 10px !important;">
-                <span class="trigger-icon">⇅</span>
-                <span class="trigger-label" id="sort-trigger-label" style="font-size: 12px; font-weight: 700;">En Yeni</span>
-              </button>
-              <button type="button" class="bottom-sheet-trigger" id="filter-trigger-btn" style="flex: 1; padding: 10px !important;">
-                <span class="trigger-icon">🎓</span>
-                <span class="trigger-label" id="filter-trigger-label" style="font-size: 12px; font-weight: 700;">Seviye: Tümü</span>
-              </button>
-              <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
-                <span class="trigger-icon">📹</span>
-                <span class="trigger-label" id="source-trigger-label" style="font-size: 12px; font-weight: 700;">Kaynaklar</span>
-              </button>
-              <button type="button" class="bottom-sheet-trigger" id="tag-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
-                <span class="trigger-icon">🏷️</span>
-                <span class="trigger-label" id="tag-trigger-label" style="font-size: 12px; font-weight: 700;">Etiket Filtresi</span>
-              </button>
-            </div>
-
-            <!-- Action Buttons Row (Combined) -->
-            <div style="display: flex; gap: 8px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
-              <button type="button" class="bottom-sheet-trigger" id="flashcard-btn" style="flex: 2; background: rgba(129, 140, 248, 0.2); border-color: rgba(129, 140, 248, 0.4); justify-content: center; gap: 8px;" title="Kelimeleri Tekrar Et / Kart Çalış">
-                <span>🃏</span>
-                <span style="font-weight: 700; color: #a5b4fc;">Tekrar Et</span>
-              </button>
-              
-              <button type="button" class="bottom-sheet-trigger" id="refresh-families-btn" style="flex: 1; justify-content: center; gap: 6px;" title="Kök Verileri Güncelle">
-                <span>🔄</span>
-                <span style="font-size: 11px; font-weight: 700;">Güncelle</span>
-              </button>
-              
-              <button type="button" class="bottom-sheet-trigger" id="clear-btn" style="flex: 1; justify-content: center; gap: 6px; border-color: rgba(239, 68, 68, 0.2);" title="Tüm Kelimeleri Sil">
-                <span style="color: #ef4444;">🗑️</span>
-                <span style="font-size: 11px; font-weight: 700; color: #ef4444;">Temizle</span>
-              </button>
-            </div>
-
-          </div>
-
-        </div>
         <div class="empty-state" id="empty-archive">
           <div class="empty-icon">📚</div>
           <p data-i18n="empty_archive_title">Henüz kelime eklenmedi</p>
