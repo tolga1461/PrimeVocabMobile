@@ -424,18 +424,6 @@ function bindAuthButtons() {
     if (settingsLogoutBtn) settingsLogoutBtn.addEventListener('click', handleLogout);
 }
 
-// ── Reset local data option ──
-const resetDataBtn = document.getElementById('reset-data-btn');
-if (resetDataBtn) {
-    resetDataBtn.addEventListener('click', () => {
-        if (confirm("Tüm yerel kelimelerinizi, oyun istatistiklerinizi ve başarımlarınızı sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz!")) {
-            chrome.storage.local.clear(() => {
-                alert("Tüm veriler sıfırlandı!");
-                window.location.reload();
-            });
-        }
-    });
-}
 
 // ── Service Worker PWA Installation prompt ──
 let deferredInstallPrompt = null;
