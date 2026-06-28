@@ -772,26 +772,26 @@
       background: rgba(30, 41, 59, 0.45) !important;
       border: 1px solid rgba(255, 255, 255, 0.08) !important;
       border-radius: 16px !important;
-      padding: 16px !important;
+      padding: 10px 12px !important;
       backdrop-filter: blur(12px) !important;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
       display: flex !important;
       flex-direction: column !important;
-      gap: 12px !important;
-      margin-bottom: 12px !important;
+      gap: 10px !important;
+      margin-bottom: 8px !important;
     }
 
     .top-actions-grid {
       display: grid !important;
       grid-template-columns: 1fr 1fr 1fr !important;
-      gap: 12px !important;
+      gap: 10px !important;
     }
 
     .glass-action-btn {
       background: rgba(255, 255, 255, 0.03) !important;
       border: 1px solid rgba(255, 255, 255, 0.08) !important;
       border-radius: 12px !important;
-      height: 68px !important;
+      height: 52px !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
@@ -812,7 +812,7 @@
     }
 
     .glass-action-icon {
-      font-size: 28px !important;
+      font-size: 22px !important;
     }
 
     .glass-card-section-label {
@@ -891,6 +891,18 @@
       margin-bottom: 0 !important;
       padding: 0 !important;
       pointer-events: none !important;
+    }
+
+    /* Perfect vertical alignment for word list items */
+    .word-item-header {
+      display: flex !important;
+      align-items: center !important;
+      min-height: 38px !important;
+    }
+    .word-item-header > span,
+    .word-item-header > div,
+    .word-item-header > button {
+      align-self: center !important;
     }
   </style>
 </head>
@@ -991,8 +1003,6 @@
               <span class="glass-action-icon">↕️</span>
             </button>
           </div>
-
-          <div class="glass-card-section-label">Active Tools</div>
 
           <!-- Bottom Sheet Triggers Row (Filters) -->
           <div style="display: flex; gap: 8px; margin-top: 4px;">
