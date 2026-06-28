@@ -405,6 +405,14 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
             updateVirtualScroll();
+            const archivePanel = document.getElementById('panel-archive');
+            if (archivePanel) {
+                if (wordList.scrollTop > 35) {
+                    archivePanel.classList.add('scrolled');
+                } else {
+                    archivePanel.classList.remove('scrolled');
+                }
+            }
         }, 50));
         scrollListenerAttached = true;
     }
