@@ -840,7 +840,8 @@ const backupBtn = document.getElementById('backup-btn');
 if (backupBtn) {
     backupBtn.addEventListener('click', () => {
         chrome.storage.local.get({ licenseType: 'FREE', isPremium: false, googleSyncEmail: '' }, ({ licenseType, isPremium, googleSyncEmail }) => {
-            const hasPremium = !!googleSyncEmail && (isPremium === true || licenseType !== 'FREE');
+            // Bypass premium checks on native/mobile environment
+            const hasPremium = true;
             if (!hasPremium) {
                 showPremiumModal(
                     getMessage("premium_modal_title") || "Premium Özellik",
@@ -869,7 +870,8 @@ const restoreInput = document.getElementById('restore-input');
 if (restoreBtn && restoreInput) {
     restoreBtn.addEventListener('click', () => {
         chrome.storage.local.get({ licenseType: 'FREE', isPremium: false, googleSyncEmail: '' }, ({ licenseType, isPremium, googleSyncEmail }) => {
-            const hasPremium = !!googleSyncEmail && (isPremium === true || licenseType !== 'FREE');
+            // Bypass premium checks on native/mobile environment
+            const hasPremium = true;
             if (!hasPremium) {
                 showPremiumModal(
                     getMessage("premium_modal_title") || "Premium Özellik",
@@ -1120,5 +1122,18 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
         });
     }
 });
+
+// Wire up full data reset button for mobile
+const resetDataBtn = document.getElementById('reset-data-btn');
+if (resetDataBtn) {
+    resetDataBtn.addEventListener('click', () => {
+        showCustomConfirm("Tüm kayıtlı kelimelerinizi, ayarlarınızı ve ilerlemenizi tamamen sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz!", () => {
+            chrome.storage.local.clear(() => {
+                showToast("Tüm veriler başarıyla sıfırlandı!");
+                setTimeout(() => window.location.reload(), 1000);
+            });
+        }, "Sıfırla", "Vazgeç");
+    });
+}
 
 

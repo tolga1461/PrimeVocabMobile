@@ -428,6 +428,183 @@
       flex: 1 !important;
       width: 100% !important;
     }
+
+    /* ── Bottom Sheet Drawer Styles ── */
+    .bottom-sheet-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 3000;
+      display: none;
+      align-items: flex-end; /* Align sheet to the bottom */
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      background: var(--surface2);
+      border-radius: 20px 20px 0 0;
+      padding: 12px 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+      animation: slideUpSheet 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94) forwards;
+      display: flex;
+      flex-direction: column;
+      max-height: 75vh; /* Prevent overflowing screen height */
+    }
+
+    @keyframes slideUpSheet {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .bottom-sheet-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border2);
+      margin-bottom: 8px;
+    }
+
+    .bottom-sheet-handle {
+      width: 40px;
+      height: 5px;
+      background: var(--text-muted);
+      border-radius: 3px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .bottom-sheet-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .bottom-sheet-close {
+      position: absolute;
+      right: 4px;
+      top: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .bottom-sheet-body {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .bottom-sheet-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dim);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .bottom-sheet-option:last-child {
+      border-bottom: none;
+    }
+
+    .bottom-sheet-option.active {
+      color: var(--text-brand, #a5b4fc);
+    }
+
+    .bottom-sheet-option.active::after {
+      content: "✓";
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-brand, #a5b4fc);
+    }
+
+    /* Custom trigger button styling */
+    .bottom-sheet-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface2) !important;
+      border: 1px solid var(--border2) !important;
+      color: var(--text) !important;
+      padding: 12px 14px !important;
+      border-radius: 10px !important;
+      font-size: 14px !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      flex: 1 !important;
+      min-width: 0 !important;
+      justify-content: center !important;
+      text-align: center !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .bottom-sheet-trigger .trigger-icon {
+      font-size: 15px;
+      color: var(--text-brand, #a5b4fc);
+    }
+
+    .bottom-sheet-trigger .trigger-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Premium Mobile Toggle Switch ── */
+    .switch-container {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+    }
+
+    .switch-container input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border2, #2c2d3a);
+      transition: .3s;
+      border-radius: 34px;
+    }
+
+    .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .switch-slider {
+      background-color: var(--text-brand, #a5b4fc);
+    }
+
+    input:checked + .switch-slider:before {
+      transform: translateX(22px);
+    }
   </style>
 </head>
 
@@ -959,68 +1136,84 @@
 
     <!-- ── AYARLAR PANELİ ── -->
     <div class="panel" id="panel-settings">
-      <!-- Alt Sekmeler (Settings) -->
-      <div class="review-subtabs" id="settings-subtabs" style="margin-bottom: 12px;">
-        <button class="review-subtab active" id="settings-subtab-general" data-settings-subtab="general">
-          <span>⚙️ Genel</span>
-        </button>
-      </div>
-
-      <div id="settings-tab-general" style="display: flex; flex-direction: column; gap: 12px;">
-        <!-- Senkronizasyon Ayarları -->
-        <div class="settings-section">
-          <div class="settings-section-title" data-i18n="settings_sync_title">🔄 Google Drive Senkronizasyonu</div>
-          <div class="settings-group">
-            <div style="padding: 10px; font-size: 12px; color: var(--text-dim); line-height: 1.5;">
-              Kelimelerinizi ve ilerlemenizi tüm cihazlarınızla senkronize edin. 
-              Giriş yaptığınızda verileriniz güvenli bir şekilde kendi Google Drive hesabınızda saklanır.
-            </div>
-            <div style="padding: 8px 12px;">
-              <button id="settings-login-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #6366f1; border: none; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 13px;" data-i18n="profile_login_btn">
-                <span>🔑</span> Google ile Giriş Yap
-              </button>
-              <div id="settings-sync-status-container" style="display:none; margin-top: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                  <div id="settings-user-avatar" style="width:32px; height:32px; border-radius:50%; background:var(--surface2); display:flex; justify-content:center; align-items:center; font-size:16px;">👤</div>
-                  <div>
-                    <div id="settings-user-email" style="font-weight:600; font-size:12px;">email@gmail.com</div>
-                    <div style="font-size:10px; color:var(--text-muted);" id="settings-sync-status-text">Bağlandı</div>
-                  </div>
-                </div>
-                <button id="settings-sync-now-btn" style="width:100%; background:var(--accent-dim); border:1px solid var(--border); color:#818cf8; padding:8px; border-radius:6px; font-weight:600; margin-bottom:8px; cursor:pointer;" data-i18n="profile_sync_now">Şimdi Eşitle</button>
-                <button id="settings-logout-btn" style="width:100%; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); color:#ef4444; padding:8px; border-radius:6px; font-weight:600; cursor:pointer;" data-i18n="profile_logout">Çıkış Yap</button>
-              </div>
-            </div>
+      
+      <!-- Uygulama Ayarları Grubu -->
+      <div class="settings-section">
+        <div class="settings-section-title">⚙️ Uygulama Ayarları</div>
+        <div class="settings-group" style="padding: 4px 0;">
+          
+          <!-- Uygulama Dili -->
+          <div class="setting-row" style="padding: 12px 14px; border-bottom: 1px solid var(--border2); display: flex; align-items: center; justify-content: space-between;">
+            <span class="setting-label" style="font-size: 14px; font-weight: 600;">🌐 Uygulama Dili</span>
+            <select id="app-lang-select" class="setting-select-inline">
+              <option value="auto" data-i18n="settings_lang_auto">Otomatik</option>
+              <option value="tr">Türkçe</option>
+              <option value="en">English</option>
+              <option value="de">Deutsch</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+            </select>
           </div>
-        </div>
 
-        <!-- Anki Aktar -->
-        <div class="settings-section">
-          <div class="settings-section-title">📦 Veri Yönetimi</div>
-          <div class="settings-group" style="padding: 10px; display: flex; flex-direction: column; gap: 8px;">
-            <button class="toolbar-btn" id="anki-export-btn" data-i18n="settings_anki_export_btn" style="width:100%; justify-content:center; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b; font-weight:600; padding:10px; border-radius:8px;">⭐ Anki Aktar</button>
-            <button id="reset-data-btn" style="width:100%; background:rgba(239,68,68,0.05); border:1px dashed rgba(239,68,68,0.3); color:#ef4444; padding:10px; border-radius:8px; font-weight:600; cursor:pointer;">⚠️ Verileri Sıfırla (Reset)</button>
+          <!-- Uygulama Sesleri -->
+          <div class="setting-row" style="padding: 12px 14px; display: flex; align-items: center; justify-content: space-between;">
+            <span class="setting-label" style="font-size: 14px; font-weight: 600;">🔊 Uygulama Sesleri</span>
+            <label class="switch-container">
+              <input type="checkbox" id="games-sound-toggle">
+              <span class="switch-slider"></span>
+            </label>
           </div>
-        </div>
 
-        <!-- Eklenti Dili -->
-        <div class="settings-section">
-          <div class="settings-section-title" data-i18n="settings_app_lang">Eklenti Dili</div>
-          <div class="settings-group">
-            <div class="setting-row">
-              <span class="setting-label" data-i18n="settings_app_lang">Eklenti Dili</span>
-              <select id="app-lang-select" class="setting-select-inline">
-                <option value="auto" data-i18n="settings_lang_auto">Otomatik (Tarayıcı Dili)</option>
-                <option value="tr">Türkçe</option>
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-                <option value="fr">Français</option>
-                <option value="es">Español</option>
-              </select>
-            </div>
-          </div>
         </div>
       </div>
+
+      <!-- Veri Yönetimi Grubu -->
+      <div class="settings-section">
+        <div class="settings-section-title">📦 Veri Yönetimi</div>
+        <div class="settings-group" style="padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+          
+          <!-- Yedekleme & Geri Yükleme Butonları -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <button id="backup-btn" class="toolbar-btn" style="background: rgba(16, 185, 129, 0.1) !important; border: 1px solid rgba(16, 185, 129, 0.3) !important; color: #10b981 !important;">
+              📥 Yedek Al
+            </button>
+            <button id="restore-btn" class="toolbar-btn" style="background: rgba(99, 102, 241, 0.1) !important; border: 1px solid rgba(99, 102, 241, 0.3) !important; color: #818cf8 !important;">
+              📤 Yedek Yükle
+            </button>
+            <input type="file" id="restore-input" accept=".json" style="display: none;">
+          </div>
+
+          <button class="toolbar-btn" id="anki-export-btn" data-i18n="settings_anki_export_btn" style="width: 100%; justify-content: center; background: rgba(245, 158, 11, 0.1) !important; border: 1px solid rgba(245, 158, 11, 0.3) !important; color: #f59e0b !important;">
+            ⭐ Anki'ye Aktar
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Sıfırlama Grubu -->
+      <div class="settings-section">
+        <div class="settings-section-title" style="color: #ef4444 !important;">⚠️ Tehlikeli Bölge (Sıfırlama)</div>
+        <div class="settings-group" style="padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+          
+          <button id="reset-srs-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.05) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; color: #ef4444 !important; width: 100%; justify-content: center;">
+            🔁 SRS İlerlemesini Sıfırla
+          </button>
+          
+          <button id="reset-streak-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.05) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; color: #ef4444 !important; width: 100%; justify-content: center;">
+            🔥 Günlük Seriyi (Streak) Sıfırla
+          </button>
+          
+          <button id="reset-games-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.05) !important; border: 1px solid rgba(239, 68, 68, 0.2) !important; color: #ef4444 !important; width: 100%; justify-content: center;">
+            🏆 Oyun ve Başarımları Sıfırla
+          </button>
+
+          <button id="reset-data-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.1) !important; border: 1px dashed rgba(239, 68, 68, 0.4) !important; color: #ef4444 !important; width: 100%; justify-content: center; font-weight: 800 !important;">
+            ☠️ TÜM KELİMELERİ VE VERİLERİ SIFIRLA
+          </button>
+          
+        </div>
+      </div>
+
     </div>
 
     <!-- Achievement Toast -->
