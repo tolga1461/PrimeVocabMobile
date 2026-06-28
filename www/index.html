@@ -884,50 +884,58 @@
       letter-spacing: 0.01em !important;
     }
 
-    /* ── Collapsible Dictionary Header Transitions ── */
+    /* ── Layout Shift Free absolute header & scrolling ── */
     #panel-archive {
+      padding: 0 !important;
       position: relative !important;
+      height: 100% !important;
+      overflow: hidden !important;
     }
 
     .archive-sticky-search-wrap {
-      position: sticky !important;
-      top: -2px !important;
-      z-index: 90 !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 14px !important;
+      right: 4px !important;
+      height: 52px !important;
+      z-index: 95 !important;
       background: var(--bg) !important;
-      padding: 10px 4px 6px 4px !important;
-      margin-bottom: 2px !important;
+      padding: 10px 0 6px 0 !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
     }
 
     .archive-header-wrap {
       position: absolute !important;
-      top: 50px !important; /* right below sticky search banner */
-      left: 10px !important;
-      right: 10px !important;
-      z-index: 80 !important;
+      top: 52px !important;
+      left: 14px !important;
+      right: 4px !important;
+      z-index: 90 !important;
       transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), 
                   opacity 0.35s ease !important;
-      opacity: 1 !important;
       transform: translateY(0) !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
       will-change: transform, opacity;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    #panel-archive.scrolled .archive-header-wrap {
-      opacity: 0 !important;
-      transform: translateY(-130px) !important;
-      pointer-events: none !important;
-    }
+    /* JS will handle fluid translation of .archive-header-wrap on scroll */
 
-    /* Word list padding-top collapses in sync with the header translation to prevent layout jumps */
     #word-list {
-      padding-top: 120px !important; /* height of header + margin */
-      transition: padding-top 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
-    }
-
-    #panel-archive.scrolled #word-list {
-      padding-top: 10px !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 14px !important;
+      right: 4px !important;
+      bottom: 0 !important;
+      z-index: 10 !important;
+      padding-top: 200px !important; /* search height + header height + gap */
+      overflow-y: auto !important;
+      box-sizing: border-box !important;
+      margin: 0 !important;
+      display: block !important;
     }
 
     /* Perfect vertical alignment for word list items */

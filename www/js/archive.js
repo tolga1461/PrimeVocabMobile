@@ -410,9 +410,25 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
             updateVirtualScroll();
+            
+            const scrollTop = wordList.scrollTop;
+
+            // Fluid header sliding on scroll to avoid layout gaps and shifts
+            const headerWrap = document.getElementById('archive-header-wrap');
+            if (headerWrap) {
+                // Slide up in sync with scroll, max 165px
+                const translateVal = Math.min(scrollTop, 165);
+                headerWrap.style.transform = `translateY(-${translateVal}px)`;
+                
+                // Adjust opacity in sync with scroll (fade out over the 130px range)
+                const opacityVal = Math.max(0, 1 - (scrollTop / 130));
+                headerWrap.style.opacity = opacityVal;
+                headerWrap.style.pointerEvents = scrollTop > 130 ? 'none' : 'auto';
+            }
+
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
-                if (wordList.scrollTop > 35) {
+                if (scrollTop > 35) {
                     archivePanel.classList.add('scrolled');
                 } else {
                     archivePanel.classList.remove('scrolled');
@@ -422,17 +438,16 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
             const appContainer = document.querySelector('.app');
             if (appContainer) {
-                const currentScrollTop = wordList.scrollTop;
-                if (currentScrollTop <= 10) {
+                if (scrollTop <= 10) {
                     appContainer.classList.remove('nav-hidden');
-                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
-                    if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
+                } else if (Math.abs(scrollTop - lastScrollTop) > 8) {
+                    if (scrollTop > lastScrollTop && scrollTop > 60) {
                         appContainer.classList.add('nav-hidden');
                     } else {
                         appContainer.classList.remove('nav-hidden');
                     }
                 }
-                lastScrollTop = currentScrollTop;
+                lastScrollTop = scrollTop;
             }
         }, 50));
         scrollListenerAttached = true;
