@@ -617,18 +617,34 @@
 
       <!-- Sıralama + Kaynak filtresi -->
       <div class="archive-sort-source-row">
-        <select id="archive-sort" class="archive-source-select">
+        <!-- Hidden legacy selects -->
+        <select id="archive-sort" class="archive-source-select" style="display:none !important">
           <option value="newest" data-i18n="sort_newest">En Yeni</option>
           <option value="oldest" data-i18n="sort_oldest">En Eski</option>
           <option value="az" data-i18n="sort_az">A → Z</option>
           <option value="za" data-i18n="sort_za">Z → A</option>
         </select>
-        <select id="archive-source-select" class="archive-source-select" style="display:none">
+        <select id="archive-source-select" class="archive-source-select" style="display:none !important">
           <option value="all" data-i18n="select_all_sources">Tüm kaynaklar</option>
         </select>
-        <select id="archive-tag-select" class="archive-source-select" style="display:none">
+        <select id="archive-tag-select" class="archive-source-select" style="display:none !important">
           <option value="all">🏷️ Tüm etiketler</option>
         </select>
+
+        <!-- New custom Bottom Sheet trigger buttons -->
+        <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn">
+          <span class="trigger-icon">⇅</span>
+          <span class="trigger-label" id="sort-trigger-label">En Yeni</span>
+        </button>
+        <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn" style="display:none">
+          <span class="trigger-icon">🎬</span>
+          <span class="trigger-label" id="source-trigger-label">Tüm Kaynaklar</span>
+        </button>
+        <button type="button" class="bottom-sheet-trigger" id="tag-trigger-btn" style="display:none">
+          <span class="trigger-icon">🏷️</span>
+          <span class="trigger-label" id="tag-trigger-label">Tüm Etiketler</span>
+        </button>
+
         <datalist id="global-tags-datalist"></datalist>
       </div>
 
@@ -1056,6 +1072,20 @@
         <div class="custom-confirm-actions">
           <button class="custom-confirm-btn cancel" id="custom-confirm-cancel" data-i18n="game_btn_cancel">Vazgeç</button>
           <button class="custom-confirm-btn confirm" id="custom-confirm-ok" data-i18n="game_btn_quit">Çık</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── BOTTOM SHEET DRAWER ── -->
+    <div class="bottom-sheet-overlay" id="bottom-sheet-overlay" style="display:none">
+      <div class="bottom-sheet">
+        <div class="bottom-sheet-header">
+          <div class="bottom-sheet-handle"></div>
+          <span class="bottom-sheet-title" id="bottom-sheet-title">Seçenekler</span>
+          <button class="bottom-sheet-close" id="bottom-sheet-close">✕</button>
+        </div>
+        <div class="bottom-sheet-body" id="bottom-sheet-options">
+          <!-- Dynamic options will be injected here -->
         </div>
       </div>
     </div>

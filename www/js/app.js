@@ -561,3 +561,111 @@ chrome.storage.onChanged.addListener((changes, area) => {
         }
     }
 });
+
+// ── Bottom Sheet Drawer Controller ──
+function initBottomSheetController() {
+    const overlay = document.getElementById('bottom-sheet-overlay');
+    const optionsContainer = document.getElementById('bottom-sheet-options');
+    const titleEl = document.getElementById('bottom-sheet-title');
+    const closeBtn = document.getElementById('bottom-sheet-close');
+
+    if (!overlay || !optionsContainer || !titleEl) return;
+
+    // Open bottom sheet populated by hidden select
+    window.openBottomSheet = function(selectId, titleText) {
+        const selectEl = document.getElementById(selectId);
+        if (!selectEl) return;
+
+        titleEl.textContent = titleText;
+        optionsContainer.innerHTML = '';
+
+        // Generate option rows
+        Array.from(selectEl.options).forEach(opt => {
+            const row = document.createElement('div');
+            row.className = 'bottom-sheet-option';
+            if (opt.value === selectEl.value) {
+                row.classList.add('active');
+            }
+            row.textContent = opt.textContent || opt.value;
+            
+            // Set option on click
+            row.addEventListener('click', () => {
+                selectEl.value = opt.value;
+                selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+                closeBottomSheet();
+            });
+            optionsContainer.appendChild(row);
+        });
+
+        overlay.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; // Lock scrolling
+    };
+
+    function closeBottomSheet() {
+        overlay.style.display = 'none';
+        document.body.style.overflow = ''; // Unlock scrolling
+    }
+
+    // Bind close events
+    if (closeBtn) closeBtn.addEventListener('click', closeBottomSheet);
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeBottomSheet();
+    });
+
+    // Bind triggers to open bottom sheet
+    const sortTrigger = document.getElementById('sort-trigger-btn');
+    if (sortTrigger) {
+        sortTrigger.addEventListener('click', () => {
+            openBottomSheet('archive-sort', 'Kelime Sıralaması');
+        });
+    }
+
+    const sourceTrigger = document.getElementById('source-trigger-btn');
+    if (sourceTrigger) {
+        sourceTrigger.addEventListener('click', () => {
+            openBottomSheet('archive-source-select', 'Kaynağa Göre Filtrele');
+        });
+    }
+
+    const tagTrigger = document.getElementById('tag-trigger-btn');
+    if (tagTrigger) {
+        tagTrigger.addEventListener('click', () => {
+            openBottomSheet('archive-tag-select', 'Etikete Göre Filtrele');
+        });
+    }
+
+    // Synchronize legacy selects state with our custom buttons
+    function syncSelectsToTriggers() {
+        const selects = [
+            { id: 'archive-sort', btnId: 'sort-trigger-btn', labelId: 'sort-trigger-label' },
+            { id: 'archive-source-select', btnId: 'source-trigger-btn', labelId: 'source-trigger-label' },
+            { id: 'archive-tag-select', btnId: 'tag-trigger-btn', labelId: 'tag-trigger-label' }
+        ];
+
+        selects.forEach(item => {
+            const selectEl = document.getElementById(item.id);
+            const btnEl = document.getElementById(item.btnId);
+            const labelEl = document.getElementById(item.labelId);
+
+            if (!selectEl || !btnEl || !labelEl) return;
+
+            // Mirror display visibility (since source/tag selects are hidden if empty)
+            const style = window.getComputedStyle(selectEl);
+            const isSelectVisible = selectEl.style.display !== 'none' && style.display !== 'none';
+            btnEl.style.display = isSelectVisible ? 'flex' : 'none';
+
+            // Mirror label text
+            if (selectEl.selectedIndex >= 0) {
+                const selectedOptText = selectEl.options[selectEl.selectedIndex].textContent;
+                labelEl.textContent = selectedOptText;
+            }
+        });
+    }
+
+    // Check periodically for changes (very cheap, maintains 100% reactive parity)
+    setInterval(syncSelectsToTriggers, 300);
+}
+
+// Initialize bottom sheet controller
+initBottomSheetController();
+
