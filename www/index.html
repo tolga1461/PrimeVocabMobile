@@ -297,6 +297,80 @@
       font-size: 14px !important;
       border-radius: 10px !important;
     }
+
+    /* ── Touch-Friendly Native Dropdowns & Button Segmented Controls ── */
+    .setting-select-inline, .archive-source-select, #srs-words-sort {
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      background: var(--surface2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a5b4fc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center !important;
+      background-size: 14px !important;
+      padding: 10px 36px 10px 14px !important;
+      border-radius: 10px !important;
+      font-size: 14px !important;
+      color: var(--text) !important;
+      border: 1px solid var(--border2) !important;
+      min-width: 140px !important;
+      font-weight: 600 !important;
+      font-family: inherit !important;
+      outline: none !important;
+      cursor: pointer !important;
+    }
+
+    /* Enlarge all action buttons across settings and profile */
+    #settings-login-btn,
+    #settings-sync-now-btn,
+    #settings-logout-btn,
+    #anki-export-btn,
+    #reset-data-btn,
+    #profile-login-btn,
+    #profile-sync-now-btn,
+    #profile-logout-btn,
+    .custom-confirm-btn {
+      padding: 14px 20px !important;
+      font-size: 14px !important;
+      border-radius: 10px !important;
+      height: auto !important;
+      font-weight: 700 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      cursor: pointer !important;
+    }
+
+    /* Modern Segmented Tab Controllers */
+    .review-subtabs, #settings-subtabs {
+      display: flex !important;
+      gap: 4px !important;
+      background: var(--surface2) !important;
+      padding: 4px !important;
+      border-radius: 10px !important;
+      border: 1px solid var(--border2) !important;
+      margin-bottom: 16px !important;
+    }
+
+    .review-subtab {
+      padding: 10px 16px !important;
+      font-size: 13px !important;
+      border-radius: 8px !important;
+      border: none !important;
+      background: transparent !important;
+      color: var(--text-muted) !important;
+      flex: 1 !important;
+      text-align: center !important;
+      font-weight: 700 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 6px !important;
+      cursor: pointer !important;
+    }
+
+    .review-subtab.active {
+      background: var(--bg) !important;
+      color: var(--text-brand, #a5b4fc) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    }
   </style>
 </head>
 
