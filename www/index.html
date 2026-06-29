@@ -986,6 +986,71 @@
       transform: translateY(95px) !important;
     }
 
+    /* ── Study List (Çalışma Listesi) Collapsible Header CSS ── */
+    .srs-words-overlay {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      background: var(--bg) !important;
+      z-index: 100 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 0 !important; /* Remove original padding to allow full-width masking */
+      overflow: hidden !important;
+    }
+
+    .srs-words-sticky-title-wrap {
+      position: sticky !important;
+      top: 0 !important;
+      padding: 16px 16px 10px 16px !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      background: var(--bg) !important;
+      z-index: 99 !important;
+    }
+
+    .srs-words-header-wrap {
+      position: absolute !important;
+      top: 56px !important; /* right below sticky title bar */
+      left: 16px !important;
+      right: 16px !important;
+      z-index: 95 !important;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      transform: translateY(0) !important;
+      will-change: transform;
+      background: var(--bg) !important;
+    }
+
+    .srs-words-overlay.scrolled .srs-words-header-wrap {
+      transform: translateY(-110%) !important;
+      pointer-events: none !important;
+    }
+
+    .srs-words-list {
+      flex: 1 !important;
+      overflow-y: auto !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+      padding: 110px 16px 85px 16px !important; /* 85px bottom padding to clear navigation bar when visible */
+      transition: padding-top 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  padding-bottom 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      box-sizing: border-box !important;
+    }
+
+    .srs-words-overlay.scrolled .srs-words-list {
+      padding-top: 56px !important; /* only clear the sticky title bar when collapsed */
+    }
+
+    /* When bottom nav is hidden, let the study list scroll all the way to the bottom edge */
+    .app.nav-hidden .srs-words-list {
+      padding-bottom: 12px !important;
+    }
+
     /* Perfect vertical alignment for word list items */
     .word-item-header {
       display: flex !important;
@@ -1405,33 +1470,33 @@
         </div>
 
         <!-- Çalışma Listesi Popup/Overlay -->
-        <div id="srs-words-overlay"
-          style="display:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 100; flex-direction: column; padding: 15px; overflow-y: auto;">
-          <div
-            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
-            <span
-              style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;"
-              data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
-            <button id="srs-words-close-btn"
-              style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
+        <div id="srs-words-overlay" class="srs-words-overlay" style="display:none;">
+          
+          <!-- Sticky Header (Title & Close Button) -->
+          <div class="srs-words-sticky-title-wrap">
+            <span style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;" data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
+            <button id="srs-words-close-btn" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
           </div>
 
-          <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <!-- Modern bottom sheet trigger button for study list sorting -->
-            <button type="button" class="bottom-sheet-trigger" id="srs-words-sort-trigger" style="width: 100%;">
-              <span class="trigger-icon">📅</span>
-              <span class="trigger-label" id="srs-words-sort-label">Süreye Göre Artan (En Yakın)</span>
-            </button>
-            <select id="srs-words-sort" style="display:none !important;">
-              <option value="time-asc" data-i18n="srs_sort_time_asc">Süreye Göre Artan (En Yakın)</option>
-              <option value="time-desc" data-i18n="srs_sort_time_desc">Süreye Göre Azalan (En Uzak)</option>
-              <option value="alphabetical" data-i18n="srs_sort_alphabetical">Kelime (A → Z)</option>
-              <option value="learned-first" data-i18n="srs_sort_learned_first">Öğrenilenler Önce</option>
-              <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
-            </select>
+          <!-- Collapsible Header Wrapper (Sorting row) -->
+          <div class="srs-words-header-wrap" id="srs-words-header-wrap">
+            <div style="display: flex; gap: 8px;">
+              <!-- Modern bottom sheet trigger button for study list sorting -->
+              <button type="button" class="bottom-sheet-trigger" id="srs-words-sort-trigger" style="width: 100%;">
+                <span class="trigger-icon">📅</span>
+                <span class="trigger-label" id="srs-words-sort-label">Süreye Göre Artan (En Yakın)</span>
+              </button>
+              <select id="srs-words-sort" style="display:none !important;">
+                <option value="time-asc" data-i18n="srs_sort_time_asc">Süreye Göre Artan (En Yakın)</option>
+                <option value="time-desc" data-i18n="srs_sort_time_desc">Süreye Göre Azalan (En Uzak)</option>
+                <option value="alphabetical" data-i18n="srs_sort_alphabetical">Kelime (A → Z)</option>
+                <option value="learned-first" data-i18n="srs_sort_learned_first">Öğrenilenler Önce</option>
+                <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
+              </select>
+            </div>
           </div>
 
-          <div id="srs-words-list" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto;">
+          <div id="srs-words-list" class="srs-words-list">
           </div>
         </div>
       </div>

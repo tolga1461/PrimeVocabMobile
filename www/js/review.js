@@ -516,14 +516,89 @@ const srsWordsBtn = document.getElementById('srs-words-btn');
 const srsWordsOverlay = document.getElementById('srs-words-overlay');
 const srsWordsCloseBtn = document.getElementById('srs-words-close-btn');
 const srsWordsSort = document.getElementById('srs-words-sort');
+
+let srsScrollListenerAttached = false;
+let srsLastScrollTop = 0;
+let srsHeaderCollapsed = false;
+
+function srsThrottle(fn, ms) {
+    let last = 0;
+    return function (...args) {
+        const now = Date.now();
+        if (now - last >= ms) {
+            last = now;
+            fn(...args);
+        }
+    };
+}
+
+function attachSrsScrollListener() {
+    const srsWordsList = document.getElementById('srs-words-list');
+    if (!srsWordsList || !srsWordsOverlay || srsScrollListenerAttached) return;
+
+    srsWordsList.addEventListener('scroll', srsThrottle(() => {
+        const currentScrollTop = srsWordsList.scrollTop;
+        
+        // Auto-hiding header (Twitter style) toggling on .scrolled class
+        if (currentScrollTop <= 10) {
+            if (srsHeaderCollapsed) {
+                srsWordsOverlay.classList.remove('scrolled');
+                srsHeaderCollapsed = false;
+            }
+        } else if (Math.abs(currentScrollTop - srsLastScrollTop) > 8) {
+            if (currentScrollTop > srsLastScrollTop && currentScrollTop > 40) {
+                if (!srsHeaderCollapsed) {
+                    srsWordsOverlay.classList.add('scrolled');
+                    srsHeaderCollapsed = true;
+                }
+            } else {
+                if (srsHeaderCollapsed) {
+                    srsWordsOverlay.classList.remove('scrolled');
+                    srsHeaderCollapsed = false;
+                }
+            }
+        }
+        
+        // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
+        const appContainer = document.querySelector('.app');
+        if (appContainer) {
+            if (currentScrollTop <= 10) {
+                appContainer.classList.remove('nav-hidden');
+            } else if (Math.abs(currentScrollTop - srsLastScrollTop) > 8) {
+                if (currentScrollTop > srsLastScrollTop && currentScrollTop > 60) {
+                    appContainer.classList.add('nav-hidden');
+                } else {
+                    appContainer.classList.remove('nav-hidden');
+                }
+            }
+        }
+        srsLastScrollTop = currentScrollTop;
+    }, 50));
+    srsScrollListenerAttached = true;
+}
+
 if (srsWordsBtn)
-    srsWordsBtn.addEventListener('click', () => { srsWordsOverlay.style.display = 'flex'; srsLoadWords(); });
+    srsWordsBtn.addEventListener('click', () => { 
+        srsWordsOverlay.style.display = 'flex'; 
+        srsLoadWords(); 
+        attachSrsScrollListener();
+    });
 if (srsWordsCloseBtn)
-    srsWordsCloseBtn.addEventListener('click', () => { srsWordsOverlay.style.display = 'none'; });
+    srsWordsCloseBtn.addEventListener('click', () => { 
+        srsWordsOverlay.style.display = 'none'; 
+        srsWordsOverlay.classList.remove('scrolled');
+        srsHeaderCollapsed = false;
+        const appContainer = document.querySelector('.app');
+        if (appContainer) appContainer.classList.remove('nav-hidden');
+    });
 if (srsWordsOverlay) {
     srsWordsOverlay.addEventListener('click', (e) => {
         if (e.target === srsWordsOverlay) {
             srsWordsOverlay.style.display = 'none';
+            srsWordsOverlay.classList.remove('scrolled');
+            srsHeaderCollapsed = false;
+            const appContainer = document.querySelector('.app');
+            if (appContainer) appContainer.classList.remove('nav-hidden');
         }
     });
 }
