@@ -177,7 +177,8 @@ function srsCalcNext(item, rating) {
 }
 function updateStudyStreak() {
     const today = new Date().toDateString();
-    chrome.storage.local.get({ srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 } }, ({ srsStreakStats }) => {
+    chrome.storage.local.get({ srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 } }, (data) => {
+        const srsStreakStats = data.srsStreakStats || { currentStreak: 0, lastStudyDate: '', bestStreak: 0 };
         let { currentStreak, lastStudyDate, bestStreak } = srsStreakStats;
         if (lastStudyDate === today)
             return;
@@ -919,7 +920,9 @@ function srsShowResult() {
   `;
 }
 function updateReviewBadge() {
-    chrome.storage.local.get({ savedWords: [], srsSettings: { newLimit: 10 } }, ({ savedWords, srsSettings }) => {
+    chrome.storage.local.get({ savedWords: [], srsSettings: { newLimit: 10 } }, (data) => {
+        const savedWords = data.savedWords || [];
+        const srsSettings = data.srsSettings || { newLimit: 10 };
         const now = Date.now(), today = new Date().toDateString();
         const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
@@ -933,7 +936,8 @@ function updateReviewBadge() {
     });
 }
 function saveSrsSettings(key, value) {
-    chrome.storage.local.get({ srsSettings: { newLimit: 10, sessionLimit: 20 } }, ({ srsSettings }) => {
+    chrome.storage.local.get({ srsSettings: { newLimit: 10, sessionLimit: 20 } }, (data) => {
+        const srsSettings = data.srsSettings || { newLimit: 10, sessionLimit: 20 };
         srsSettings[key] = value;
         srsSettings.timestamp = Date.now();
         chrome.storage.local.set({ srsSettings }, () => srsLoadHome());

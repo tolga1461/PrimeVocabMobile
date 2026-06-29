@@ -29,6 +29,12 @@
   <link rel="apple-touch-icon" href="icons/icon192.png">
 
   <script>
+    // Global error listener for visual debugging
+    window.onerror = function (message, source, lineno, colno, error) {
+      alert("Hata oluştu:\n" + message + "\nDosya: " + source + "\nSatır: " + lineno);
+      return false;
+    };
+
     // Force unregister service worker to clear stale cache during development
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (registrations) {
