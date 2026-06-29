@@ -18,6 +18,7 @@ let itemOffsets = [];
 let totalScrollHeight = 0;
 let scrollListenerAttached = false;
 let lastScrollTop = 0;
+let headerCollapsed = false;
 
 function throttle(fn, ms) {
     let last = 0;
@@ -56,7 +57,7 @@ function estimateItemHeight(item, showFamily, showTags, isExpanded) {
 
 function recalculateOffsets() {
     itemOffsets = [];
-    let currentOffset = 210; // Start at 210px to leave clean space for absolute header
+    let currentOffset = 0;
     virtualWords.forEach((item) => {
         itemOffsets.push(currentOffset);
         const isExpanded = virtualExpandAll ? !collapsedIndices.has(item.originalIndex) : expandedIndices.has(item.originalIndex);
@@ -410,44 +411,35 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
             updateVirtualScroll();
-            
-            const scrollTop = wordList.scrollTop;
-
-            // Fluid header sliding on scroll to avoid layout gaps and shifts
-            const headerWrap = document.getElementById('archive-header-wrap');
-            if (headerWrap) {
-                // Slide up in sync with scroll, max 158px
-                const translateVal = Math.min(scrollTop, 158);
-                headerWrap.style.transform = `translateY(-${translateVal}px)`;
-                
-                // Adjust opacity in sync with scroll (fade out over the 120px range)
-                const opacityVal = Math.max(0, 1 - (scrollTop / 120));
-                headerWrap.style.opacity = opacityVal;
-                headerWrap.style.pointerEvents = scrollTop > 120 ? 'none' : 'auto';
-            }
-
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
-                if (scrollTop > 35) {
+                const currentScrollTop = wordList.scrollTop;
+                if (!headerCollapsed && currentScrollTop > 30) {
                     archivePanel.classList.add('scrolled');
-                } else {
-                    archivePanel.classList.remove('scrolled');
+                    headerCollapsed = true;
+                    wordList.scrollTop = 0;
+                } else if (headerCollapsed && currentScrollTop === 0) {
+                    if (lastScrollTop <= 10) {
+                        archivePanel.classList.remove('scrolled');
+                        headerCollapsed = false;
+                    }
                 }
             }
             
             // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
             const appContainer = document.querySelector('.app');
             if (appContainer) {
-                if (scrollTop <= 10) {
+                const currentScrollTop = wordList.scrollTop;
+                if (currentScrollTop <= 10) {
                     appContainer.classList.remove('nav-hidden');
-                } else if (Math.abs(scrollTop - lastScrollTop) > 8) {
-                    if (scrollTop > lastScrollTop && scrollTop > 60) {
+                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
+                    if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
                         appContainer.classList.add('nav-hidden');
                     } else {
                         appContainer.classList.remove('nav-hidden');
                     }
                 }
-                lastScrollTop = scrollTop;
+                lastScrollTop = currentScrollTop;
             }
         }, 50));
         scrollListenerAttached = true;

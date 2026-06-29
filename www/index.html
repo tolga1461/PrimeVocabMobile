@@ -884,58 +884,39 @@
       letter-spacing: 0.01em !important;
     }
 
-    /* ── Layout Shift Free absolute header & scrolling ── */
-    #panel-archive {
-      padding: 0 !important;
-      position: relative !important;
-      height: 100% !important;
-      overflow: hidden !important;
-    }
-
+    /* ── Collapsible Dictionary Header Transitions ── */
     .archive-sticky-search-wrap {
-      position: absolute !important;
-      top: 0 !important;
-      left: 14px !important;
-      right: 4px !important;
-      height: 52px !important;
-      z-index: 95 !important;
+      position: sticky !important;
+      top: -2px !important;
+      z-index: 90 !important;
       background: var(--bg) !important;
-      padding: 10px 0 6px 0 !important;
-      box-sizing: border-box !important;
-      margin: 0 !important;
+      padding: 10px 4px 6px 4px !important;
+      margin-bottom: 2px !important;
     }
 
     .archive-header-wrap {
-      position: absolute !important;
-      top: 52px !important;
-      left: 14px !important;
-      right: 4px !important;
-      z-index: 90 !important;
       transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), 
-                  opacity 0.35s ease !important;
-      transform: translateY(0) !important;
+                  opacity 0.35s ease, 
+                  max-height 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                  margin 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      max-height: 250px !important; /* Tight size limit matching new compact height */
       opacity: 1 !important;
-      pointer-events: auto !important;
-      will-change: transform, opacity;
+      overflow: hidden !important;
+      transform: translateY(0) !important;
+      will-change: transform, opacity, max-height;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* JS will handle fluid translation of .archive-header-wrap on scroll */
-
-    #word-list {
-      position: absolute !important;
-      top: 0 !important;
-      left: 14px !important;
-      right: 4px !important;
-      bottom: 0 !important;
-      z-index: 10 !important;
-      padding-top: 0px !important;
-      overflow-y: auto !important;
-      box-sizing: border-box !important;
-      margin: 0 !important;
-      display: block !important;
+    #panel-archive.scrolled .archive-header-wrap {
+      max-height: 0 !important;
+      opacity: 0 !important;
+      transform: translateY(-30px) !important;
+      margin-top: -10px !important;
+      margin-bottom: 0 !important;
+      padding: 0 !important;
+      pointer-events: none !important;
     }
 
     /* Perfect vertical alignment for word list items */
