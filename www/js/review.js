@@ -234,7 +234,10 @@ function srsLoadHome() {
         savedWords: [],
         srsSettings: { newLimit: 10, sessionLimit: 20 },
         srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 }
-    }, ({ savedWords, srsSettings, srsStreakStats }) => {
+    }, (data) => {
+        const savedWords = data.savedWords || [];
+        const srsSettings = data.srsSettings || { newLimit: 10, sessionLimit: 20 };
+        const srsStreakStats = data.srsStreakStats || { currentStreak: 0, lastStudyDate: '', bestStreak: 0 };
         const now = Date.now();
         const today = new Date().toDateString();
         const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
@@ -452,7 +455,11 @@ document.getElementById('srs-start-btn').addEventListener('click', () => {
         srsSettings: { newLimit: 10, sessionLimit: 20 },
         licenseType: 'FREE',
         srsDailySessions: { date: '', count: 0 }
-    }, ({ savedWords, srsSettings, licenseType, srsDailySessions }) => {
+    }, (data) => {
+        const savedWords = data.savedWords || [];
+        const srsSettings = data.srsSettings || { newLimit: 10, sessionLimit: 20 };
+        const licenseType = data.licenseType || 'FREE';
+        const srsDailySessions = data.srsDailySessions || { date: '', count: 0 };
         const now = Date.now(), today = new Date().toDateString();
         
         if (licenseType === 'FREE') {
