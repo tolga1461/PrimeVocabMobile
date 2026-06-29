@@ -895,25 +895,32 @@
     }
 
     .archive-header-wrap {
-      transition: max-height 0.38s cubic-bezier(0.22, 1, 0.36, 1), 
-                  opacity 0.35s ease,
-                  margin 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
-      max-height: 250px !important; /* Tight size limit matching new compact height */
+      position: absolute !important;
+      top: 56px !important; /* right below sticky search bar */
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 95 !important;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), 
+                  opacity 0.35s ease !important;
       opacity: 1 !important;
-      overflow: hidden !important;
-      will-change: max-height, opacity;
+      transform: translateY(0) !important;
+      will-change: transform, opacity;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       -webkit-font-smoothing: antialiased;
+      pointer-events: auto !important;
     }
 
     #panel-archive.scrolled .archive-header-wrap {
-      max-height: 0 !important;
       opacity: 0 !important;
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-      padding: 0 !important;
+      transform: translateY(-110%) !important;
       pointer-events: none !important;
+    }
+
+    /* Padding offset to keep first word exactly below absolute header at scroll 0 */
+    #word-list {
+      padding-top: 185px !important;
+      box-sizing: border-box !important;
     }
 
     /* Perfect vertical alignment for word list items */

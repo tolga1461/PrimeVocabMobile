@@ -411,10 +411,6 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
 
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
-            if (isResettingScroll) {
-                isResettingScroll = false;
-                return;
-            }
             updateVirtualScroll();
             const currentScrollTop = wordList.scrollTop;
             
@@ -431,8 +427,6 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                         if (!headerCollapsed) {
                             archivePanel.classList.add('scrolled');
                             headerCollapsed = true;
-                            isResettingScroll = true;
-                            wordList.scrollTop = 0;
                         }
                     } else {
                         if (headerCollapsed) {
