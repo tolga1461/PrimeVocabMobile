@@ -19,6 +19,7 @@ let totalScrollHeight = 0;
 let scrollListenerAttached = false;
 let lastScrollTop = 0;
 let headerCollapsed = false;
+let isResettingScroll = false;
 
 function throttle(fn, ms) {
     let last = 0;
@@ -410,6 +411,10 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
 
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
+            if (isResettingScroll) {
+                isResettingScroll = false;
+                return;
+            }
             updateVirtualScroll();
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
@@ -417,12 +422,11 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                 if (!headerCollapsed && currentScrollTop > 30) {
                     archivePanel.classList.add('scrolled');
                     headerCollapsed = true;
+                    isResettingScroll = true;
                     wordList.scrollTop = 0;
                 } else if (headerCollapsed && currentScrollTop === 0) {
-                    if (lastScrollTop <= 10) {
-                        archivePanel.classList.remove('scrolled');
-                        headerCollapsed = false;
-                    }
+                    archivePanel.classList.remove('scrolled');
+                    headerCollapsed = false;
                 }
             }
             
