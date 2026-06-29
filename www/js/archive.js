@@ -58,7 +58,7 @@ function estimateItemHeight(item, showFamily, showTags, isExpanded) {
 
 function recalculateOffsets() {
     itemOffsets = [];
-    let currentOffset = 0;
+    let currentOffset = 8;
     virtualWords.forEach((item) => {
         itemOffsets.push(currentOffset);
         const isExpanded = virtualExpandAll ? !collapsedIndices.has(item.originalIndex) : expandedIndices.has(item.originalIndex);
