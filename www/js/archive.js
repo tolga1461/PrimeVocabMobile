@@ -411,6 +411,10 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
 
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
+            if (isResettingScroll) {
+                isResettingScroll = false;
+                return;
+            }
             updateVirtualScroll();
             const currentScrollTop = wordList.scrollTop;
             
@@ -418,15 +422,23 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
                 if (currentScrollTop <= 10) {
-                    archivePanel.classList.remove('scrolled');
-                    headerCollapsed = false;
-                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
-                    if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
-                        archivePanel.classList.add('scrolled');
-                        headerCollapsed = true;
-                    } else {
+                    if (headerCollapsed) {
                         archivePanel.classList.remove('scrolled');
                         headerCollapsed = false;
+                    }
+                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
+                    if (currentScrollTop > lastScrollTop && currentScrollTop > 40) {
+                        if (!headerCollapsed) {
+                            archivePanel.classList.add('scrolled');
+                            headerCollapsed = true;
+                            isResettingScroll = true;
+                            wordList.scrollTop = 0;
+                        }
+                    } else {
+                        if (headerCollapsed) {
+                            archivePanel.classList.remove('scrolled');
+                            headerCollapsed = false;
+                        }
                     }
                 }
             }
