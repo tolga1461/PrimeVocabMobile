@@ -33,7 +33,7 @@ function throttle(fn, ms) {
 }
 
 function estimateItemHeight(item, showFamily, showTags, isExpanded) {
-    let height = 48; // Header base height on mobile
+    let height = 56; // Header base height on mobile
     if (isExpanded) {
         if (item.context) {
             const charCount = item.context.length;
