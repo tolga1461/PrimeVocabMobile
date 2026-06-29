@@ -218,8 +218,8 @@ function switchMainTab(tabName) {
         const activeSubtab = document.querySelector('.review-subtab.active');
         if (activeSubtab) {
             const subtab = activeSubtab.dataset.subtab;
-            if (subtab === 'srs' && typeof initSrsHome === 'function') {
-                initSrsHome();
+            if (subtab === 'srs' && typeof srsLoadHome === 'function') {
+                srsLoadHome();
             } else if (subtab === 'games' && typeof loadGamesHub === 'function') {
                 loadGamesHub();
             } else if (subtab === 'achievements' && typeof initAchievements === 'function') {
