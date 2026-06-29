@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <script>
-    window.addEventListener('error', function(e) {
+    window.addEventListener('error', function (e) {
       console.error("DOM ERROR LOG:", e.message, e.filename, e.lineno);
       setTimeout(() => {
         let errDiv = document.createElement('div');
@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css?v=3">
-  
+
   <!-- Add support for PWA -->
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,8 +31,8 @@
   <script>
     // Force unregister service worker to clear stale cache during development
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) {
           registration.unregister();
         }
       });
@@ -52,7 +52,7 @@
       width: 100%;
       height: 100%;
     }
-    
+
     .app {
       display: flex;
       flex-direction: column;
@@ -66,12 +66,12 @@
       padding: 12px 16px 8px 16px;
       border-bottom: 1px solid var(--border);
     }
-    
+
     .header-actions {
       display: flex;
       gap: 12px;
     }
-    
+
     .tabs {
       position: fixed;
       bottom: 0;
@@ -83,11 +83,11 @@
       justify-content: space-around;
       padding: 8px 0 (safe-area-inset-bottom);
       z-index: 1000;
-      box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
-    
+
     .tab {
       flex: 1;
       padding: 8px 0;
@@ -107,18 +107,29 @@
       font-size: 20px;
       margin-bottom: 2px;
     }
-    
-    #tab-archive::before { content: "📚"; }
-    #tab-review::before { content: "⚡"; }
-    #tab-settings::before { content: "⚙️"; }
-    #tab-profile::before { content: "👤"; }
+
+    #tab-archive::before {
+      content: "📚";
+    }
+
+    #tab-review::before {
+      content: "⚡";
+    }
+
+    #tab-settings::before {
+      content: "⚙️";
+    }
+
+    #tab-profile::before {
+      content: "👤";
+    }
 
     .tab.active {
       color: var(--accent);
       background: transparent;
       border: none;
     }
-    
+
     .tab.active::after {
       display: none;
     }
@@ -126,7 +137,8 @@
     .panel {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 16px 80px 16px; /* 80px padding-bottom to avoid overlaying with the bottom tab bar */
+      padding: 16px 16px 80px 16px;
+      /* 80px padding-bottom to avoid overlaying with the bottom tab bar */
       height: calc(100vh - 140px);
     }
 
@@ -154,9 +166,17 @@
     }
 
     @keyframes slideDown {
-      from { transform: translateY(-100px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(-100px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
+
     /* Fullscreen Profile Overlay & Modern Tab Sizing */
     #profile-overlay {
       position: fixed;
@@ -172,8 +192,13 @@
     }
 
     @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
     }
 
     #profile-overlay .shortcuts-modal {
@@ -198,7 +223,8 @@
     }
 
     #profile-overlay .profile-body {
-      font-size: 15px !important; /* Larger readable size on mobile */
+      font-size: 15px !important;
+      /* Larger readable size on mobile */
       gap: 20px !important;
     }
 
@@ -215,7 +241,8 @@
       z-index: 100 !important;
       padding: 12px 0 calc(12px + env(safe-area-inset-bottom)) !important;
       height: auto !important;
-      border-radius: 16px 16px 0 0 !important; /* Premium rounded top corner bottom tab bar */
+      border-radius: 16px 16px 0 0 !important;
+      /* Premium rounded top corner bottom tab bar */
       transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
     }
 
@@ -234,19 +261,22 @@
     }
 
     .tab {
-      font-size: 12px !important; /* More readable label */
+      font-size: 12px !important;
+      /* More readable label */
       gap: 6px !important;
-      flex-direction: column !important; /* Ensure vertical icon stack */
+      flex-direction: column !important;
+      /* Ensure vertical icon stack */
       align-items: center !important;
     }
 
     .tab::before {
-      font-size: 24px !important; /* Larger, clearer emoji icons */
+      font-size: 24px !important;
+      /* Larger, clearer emoji icons */
       margin-bottom: 0px !important;
     }
 
     /* ── Mobile UI Sizing Scaling & Accessibility Improvements ── */
-    
+
     /* Spacious list items in Word Archive */
     .word-item {
       padding: 10px 14px !important;
@@ -263,14 +293,16 @@
       font-size: 14px !important;
     }
 
-    .word-item-context, .word-item-family {
+    .word-item-context,
+    .word-item-family {
       font-size: 13.5px !important;
       line-height: 1.6 !important;
       margin-top: 8px !important;
     }
 
     /* Search inputs touch targets */
-    .search-input, .search-container input {
+    .search-input,
+    .search-container input {
       font-size: 15px !important;
       padding: 12px 16px !important;
       height: auto !important;
@@ -283,7 +315,9 @@
       font-size: 15px !important;
     }
 
-    .settings-row select, .settings-row input[type="text"], .settings-row input[type="password"] {
+    .settings-row select,
+    .settings-row input[type="text"],
+    .settings-row input[type="password"] {
       padding: 10px 14px !important;
       font-size: 14px !important;
       border-radius: 8px !important;
@@ -324,7 +358,9 @@
     }
 
     /* ── Touch-Friendly Native Dropdowns & Button Segmented Controls ── */
-    .setting-select-inline, .archive-source-select, #srs-words-sort {
+    .setting-select-inline,
+    .archive-source-select,
+    #srs-words-sort {
       appearance: none !important;
       -webkit-appearance: none !important;
       background: var(--surface2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a5b4fc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 12px center !important;
@@ -364,7 +400,8 @@
     }
 
     /* Modern Segmented Tab Controllers */
-    .review-subtabs, #settings-subtabs {
+    .review-subtabs,
+    #settings-subtabs {
       display: flex !important;
       gap: 4px !important;
       background: var(--surface2) !important;
@@ -419,9 +456,11 @@
     }
 
     .archive-btns .toolbar-btn {
-      flex: 1 0 calc(25% - 8px) !important; /* Touch-friendly block buttons in grid style */
+      flex: 1 0 calc(25% - 8px) !important;
+      /* Touch-friendly block buttons in grid style */
       padding: 12px 8px !important;
-      font-size: 16px !important; /* Larger emoji icons */
+      font-size: 16px !important;
+      /* Larger emoji icons */
       border-radius: 10px !important;
       display: flex !important;
       align-items: center !important;
@@ -437,7 +476,8 @@
     }
 
     .filter-chip {
-      padding: 8px 14px !important; /* Larger hit target */
+      padding: 8px 14px !important;
+      /* Larger hit target */
       font-size: 13px !important;
       border-radius: 24px !important;
     }
@@ -464,7 +504,8 @@
       background: rgba(0, 0, 0, 0.6);
       z-index: 3000;
       display: none;
-      align-items: flex-end; /* Align sheet to the bottom */
+      align-items: flex-end;
+      /* Align sheet to the bottom */
     }
 
     .bottom-sheet {
@@ -472,16 +513,22 @@
       background: var(--surface2);
       border-radius: 20px 20px 0 0;
       padding: 12px 16px calc(16px + env(safe-area-inset-bottom)) 16px;
-      box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
       animation: slideUpSheet 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94) forwards;
       display: flex;
       flex-direction: column;
-      max-height: 75vh; /* Prevent overflowing screen height */
+      max-height: 75vh;
+      /* Prevent overflowing screen height */
     }
 
     @keyframes slideUpSheet {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
     }
 
     .bottom-sheet-header {
@@ -623,16 +670,17 @@
       border-radius: 50%;
     }
 
-    input:checked + .switch-slider {
+    input:checked+.switch-slider {
       background-color: var(--text-brand, #a5b4fc);
     }
 
-    input:checked + .switch-slider:before {
+    input:checked+.switch-slider:before {
       transform: translateX(22px);
     }
 
     /* ── Hyper-Premium Mobile Settings Layout ── */
-    #panel-settings, #panel-profile {
+    #panel-settings,
+    #panel-profile {
       display: none;
       padding: 16px 16px 100px 16px !important;
       flex-direction: column;
@@ -641,7 +689,9 @@
       height: calc(100vh - 80px) !important;
     }
 
-    .panel.active, #panel-settings.active, #panel-profile.active {
+    .panel.active,
+    #panel-settings.active,
+    #panel-profile.active {
       display: flex !important;
       animation: tabFadeIn 0.22s cubic-bezier(0.33, 1, 0.68, 1) forwards;
     }
@@ -651,6 +701,7 @@
         opacity: 0;
         transform: scale(0.985) translateY(4px);
       }
+
       to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -697,7 +748,8 @@
       color: #818cf8 !important;
     }
 
-    .mobile-settings-row, .mobile-settings-action-row {
+    .mobile-settings-row,
+    .mobile-settings-action-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -706,12 +758,14 @@
       transition: background-color 0.2s;
     }
 
-    .mobile-settings-row:last-child, .mobile-settings-action-row:last-child {
+    .mobile-settings-row:last-child,
+    .mobile-settings-action-row:last-child {
       border-bottom: none;
     }
 
     .mobile-settings-action-row:active {
-      background-color: rgba(255, 255, 255, 0.05); /* Tap effect */
+      background-color: rgba(255, 255, 255, 0.05);
+      /* Tap effect */
     }
 
     .settings-row-left {
@@ -888,7 +942,7 @@
     .archive-sticky-search-wrap {
       position: sticky !important;
       top: -2px !important;
-      z-index: 90 !important;
+      z-index: 99 !important;
       background: var(--bg) !important;
       padding: 10px 4px 6px 4px !important;
       margin-bottom: 2px !important;
@@ -896,12 +950,13 @@
 
     .archive-header-wrap {
       position: absolute !important;
-      top: 56px !important; /* right below sticky search bar */
+      top: 60px !important;
+      /* right below sticky search bar */
       left: 14px !important;
-      right: 8px !important;
+      right: 30px !important;
       z-index: 95 !important;
-      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1), 
-                  opacity 0.35s ease !important;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.35s ease !important;
       opacity: 1 !important;
       transform: translateY(0) !important;
       will-change: transform, opacity;
@@ -942,6 +997,7 @@
       line-height: normal !important;
       min-height: auto !important;
     }
+
     .word-item-word,
     .word-item-trans,
     .expand-toggle-icon {
@@ -950,6 +1006,7 @@
       margin: 0 !important;
       line-height: 1 !important;
     }
+
     .cefr-badge,
     .hard-badge,
     .inactive-sub-badge {
@@ -969,8 +1026,10 @@
       <div style="font-size: 11px; opacity: 0.9;">Ana ekrana ekleyerek uygulama gibi kullanın.</div>
     </div>
     <div style="display: flex; gap: 8px;">
-      <button id="install-close-btn" style="background:transparent; border:none; color:white; font-size:16px;">✕</button>
-      <button id="install-action-btn" style="background:white; border:none; color:#4f46e5; padding:6px 12px; border-radius:6px; font-weight:700; font-size:12px;">Yükle</button>
+      <button id="install-close-btn"
+        style="background:transparent; border:none; color:white; font-size:16px;">✕</button>
+      <button id="install-action-btn"
+        style="background:white; border:none; color:#4f46e5; padding:6px 12px; border-radius:6px; font-weight:700; font-size:12px;">Yükle</button>
     </div>
   </div>
 
@@ -980,7 +1039,8 @@
     <header class="header">
       <div class="header-top">
         <div class="logo">
-          <span class="logo-text" style="font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #818cf8, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PrimeVocab</span>
+          <span class="logo-text"
+            style="font-size: 20px; font-weight: 800; background: linear-gradient(90deg, #818cf8, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PrimeVocab</span>
         </div>
         <div class="header-actions">
           <button class="profile-btn" id="profile-btn" title="Profil" style="display:none;">👤</button>
@@ -1011,7 +1071,8 @@
 
           <p style="margin: 0; text-align: center; font-family: var(--font);" data-i18n="info_desc">
             PrimeVocab, video izlerken çift altyazı ve aralıklı tekrar yöntemiyle dil öğrenmenizi sağlayan akıllı bir
-            eklentidir. Bu mobil uygulama, masaüstünden eklediğiniz kelimeleri tekrar etmenizi ve oyun oynamanızı sağlar.
+            eklentidir. Bu mobil uygulama, masaüstünden eklediğiniz kelimeleri tekrar etmenizi ve oyun oynamanızı
+            sağlar.
           </p>
 
           <hr style="border: none; border-top: 1px solid var(--border2); margin: 2px 0;">
@@ -1034,7 +1095,7 @@
 
     <!-- ── SÖZLÜK PANELİ ── -->
     <div class="panel active" id="panel-archive">
-      
+
       <!-- Sticky Search Header (Always visible at top of panel) -->
       <div class="archive-sticky-search-wrap">
         <input type="text" id="archive-search" class="archive-search" placeholder="Kelime ara…" autocomplete="off" />
@@ -1042,55 +1103,71 @@
 
       <!-- Collapsible header tools containing big buttons, filter chips, and sheet triggers -->
       <div class="archive-header-wrap" id="archive-header-wrap">
-        
+
         <!-- Card 1: Active Tools -->
         <div class="glass-tool-card">
           <!-- Big 3 Actions Grid (Toggle State Buttons) -->
           <div class="top-actions-grid">
-            <button type="button" class="glass-action-btn" id="toggle-family-btn" title="Kelimeleri Köklerine Göre Grupla">
+            <button type="button" class="glass-action-btn" id="toggle-family-btn"
+              title="Kelimeleri Köklerine Göre Grupla">
               <span class="glass-action-icon">📚</span>
             </button>
             <button type="button" class="glass-action-btn" id="toggle-tags-btn" title="Etiketleri Göster/Gizle">
               <span class="glass-action-icon">🏷️</span>
             </button>
-            <button type="button" class="glass-action-btn" id="toggle-expand-all-btn" title="Tüm Kelime Ayrıntılarını Göster/Gizle">
+            <button type="button" class="glass-action-btn" id="toggle-expand-all-btn"
+              title="Tüm Kelime Ayrıntılarını Göster/Gizle">
               <span class="glass-action-icon">↕️</span>
             </button>
           </div>
 
           <!-- Bottom Sheet Triggers Row (Filters) -->
           <div style="display: flex; gap: 8px; margin-top: 4px;">
-            <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn" style="flex: 1; padding: 10px !important;">
+            <button type="button" class="bottom-sheet-trigger" id="sort-trigger-btn"
+              style="flex: 1; padding: 10px !important;">
               <span class="trigger-icon">⇅</span>
-              <span class="trigger-label" id="sort-trigger-label" style="font-size: 12px; font-weight: 700;">En Yeni</span>
+              <span class="trigger-label" id="sort-trigger-label" style="font-size: 12px; font-weight: 700;">En
+                Yeni</span>
             </button>
-            <button type="button" class="bottom-sheet-trigger" id="filter-trigger-btn" style="flex: 1; padding: 10px !important;">
+            <button type="button" class="bottom-sheet-trigger" id="filter-trigger-btn"
+              style="flex: 1; padding: 10px !important;">
               <span class="trigger-icon">🎓</span>
-              <span class="trigger-label" id="filter-trigger-label" style="font-size: 12px; font-weight: 700;">Seviye: Tümü</span>
+              <span class="trigger-label" id="filter-trigger-label" style="font-size: 12px; font-weight: 700;">Seviye:
+                Tümü</span>
             </button>
-            <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
+            <button type="button" class="bottom-sheet-trigger" id="source-trigger-btn"
+              style="display:none; flex: 1; padding: 10px !important;">
               <span class="trigger-icon">📹</span>
-              <span class="trigger-label" id="source-trigger-label" style="font-size: 12px; font-weight: 700;">Kaynaklar</span>
+              <span class="trigger-label" id="source-trigger-label"
+                style="font-size: 12px; font-weight: 700;">Kaynaklar</span>
             </button>
-            <button type="button" class="bottom-sheet-trigger" id="tag-trigger-btn" style="display:none; flex: 1; padding: 10px !important;">
+            <button type="button" class="bottom-sheet-trigger" id="tag-trigger-btn"
+              style="display:none; flex: 1; padding: 10px !important;">
               <span class="trigger-icon">🏷️</span>
-              <span class="trigger-label" id="tag-trigger-label" style="font-size: 12px; font-weight: 700;">Etiket Filtresi</span>
+              <span class="trigger-label" id="tag-trigger-label" style="font-size: 12px; font-weight: 700;">Etiket
+                Filtresi</span>
             </button>
           </div>
 
           <!-- Action Buttons Row (Combined) -->
-          <div style="display: flex; gap: 8px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
-            <button type="button" class="bottom-sheet-trigger" id="flashcard-btn" style="flex: 2; background: rgba(129, 140, 248, 0.2); border-color: rgba(129, 140, 248, 0.4); justify-content: center; gap: 8px;" title="Kelimeleri Tekrar Et / Kart Çalış">
+          <div
+            style="display: flex; gap: 8px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+            <button type="button" class="bottom-sheet-trigger" id="flashcard-btn"
+              style="flex: 2; background: rgba(129, 140, 248, 0.2); border-color: rgba(129, 140, 248, 0.4); justify-content: center; gap: 8px;"
+              title="Kelimeleri Tekrar Et / Kart Çalış">
               <span>🃏</span>
               <span style="font-weight: 700; color: #a5b4fc;">Tekrar Et</span>
             </button>
-            
-            <button type="button" class="bottom-sheet-trigger" id="refresh-families-btn" style="flex: 1; justify-content: center; gap: 6px;" title="Kök Verileri Güncelle">
+
+            <button type="button" class="bottom-sheet-trigger" id="refresh-families-btn"
+              style="flex: 1; justify-content: center; gap: 6px;" title="Kök Verileri Güncelle">
               <span>🔄</span>
               <span style="font-size: 11px; font-weight: 700;">Güncelle</span>
             </button>
-            
-            <button type="button" class="bottom-sheet-trigger" id="clear-btn" style="flex: 1; justify-content: center; gap: 6px; border-color: rgba(239, 68, 68, 0.2);" title="Tüm Kelimeleri Sil">
+
+            <button type="button" class="bottom-sheet-trigger" id="clear-btn"
+              style="flex: 1; justify-content: center; gap: 6px; border-color: rgba(239, 68, 68, 0.2);"
+              title="Tüm Kelimeleri Sil">
               <span style="color: #ef4444;">🗑️</span>
               <span style="font-size: 11px; font-weight: 700; color: #ef4444;">Temizle</span>
             </button>
@@ -1169,7 +1246,9 @@
             <div class="srs-stat-card" id="srs-stat-streak" style="position: relative;">
               <div class="srs-stat-num" id="srs-streak-count">0</div>
               <div class="srs-stat-label" data-i18n="srs_stat_streak">Gün serisi 🔥</div>
-              <div class="srs-stat-best" id="srs-best-streak-container" style="position: absolute; top: 4px; right: 6px; font-size: 9px; color: var(--text-muted); font-weight: 700; display: none;"></div>
+              <div class="srs-stat-best" id="srs-best-streak-container"
+                style="position: absolute; top: 4px; right: 6px; font-size: 9px; color: var(--text-muted); font-weight: 700; display: none;">
+              </div>
             </div>
           </div>
 
@@ -1201,7 +1280,9 @@
           </div>
 
           <button class="srs-start-btn" id="srs-start-btn" data-i18n="srs_start_btn">Çalışmaya Başla</button>
-          <button class="srs-words-btn" id="srs-words-btn" style="margin-top: 10px; width: 100%; padding: 12px; background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.4); color: #818cf8; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 14px; transition: all 0.2s;" data-i18n="srs_study_list_btn">📋 Kelimeler & İlerleme</button>
+          <button class="srs-words-btn" id="srs-words-btn"
+            style="margin-top: 10px; width: 100%; padding: 12px; background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.4); color: #818cf8; border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; font-size: 14px; transition: all 0.2s;"
+            data-i18n="srs_study_list_btn">📋 Kelimeler & İlerleme</button>
 
           <div class="srs-empty" id="srs-empty" style="display:none">
             <div class="empty-icon">🎉</div>
@@ -1216,7 +1297,8 @@
               <div class="srs-settings-row">
                 <div>
                   <div class="srs-settings-label" data-i18n="srs_settings_new_limit">Günlük Yeni Kart Limiti</div>
-                  <div class="srs-settings-help" data-i18n="srs_settings_new_limit_help">Günde en fazla bu kadar yeni kart çalışılır.</div>
+                  <div class="srs-settings-help" data-i18n="srs_settings_new_limit_help">Günde en fazla bu kadar yeni
+                    kart çalışılır.</div>
                 </div>
               </div>
               <div class="btn-group" id="srs-new-limit-group">
@@ -1231,7 +1313,8 @@
               <div class="srs-settings-row">
                 <div>
                   <div class="srs-settings-label" data-i18n="srs_settings_session_limit">Oturum Süresi</div>
-                  <div class="srs-settings-help" data-i18n="srs_settings_session_limit_help">Oturum başına maksimum kart sayısı.</div>
+                  <div class="srs-settings-help" data-i18n="srs_settings_session_limit_help">Oturum başına maksimum kart
+                    sayısı.</div>
                 </div>
               </div>
               <div class="btn-group" id="srs-session-limit-group">
@@ -1262,13 +1345,20 @@
               </div>
               <div class="srs-card-word" id="srs-card-word"></div>
               <div class="srs-card-context" id="srs-card-context"></div>
-              <div id="srs-card-hint-container" style="display:none; margin: 15px 0 5px 0; display: flex; flex-direction: column; align-items: center;">
-                <button class="srs-hint-btn" id="srs-hint-btn" style="background: rgba(99, 102, 241, 0.15); border: 1px dashed #6366f1; color: #818cf8; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; font-family: inherit; transition: all 0.2s;" data-i18n="srs_card_hint_btn">💡 İpucu Göster</button>
-                <div id="srs-card-hint-emoji" style="display:none; margin-top: 10px; animation: primevocab-fade-in 0.2s ease-out;">
-                  <img id="srs-card-hint-img" src="" style="width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" alt="İpucu Çizimi">
+              <div id="srs-card-hint-container"
+                style="display:none; margin: 15px 0 5px 0; display: flex; flex-direction: column; align-items: center;">
+                <button class="srs-hint-btn" id="srs-hint-btn"
+                  style="background: rgba(99, 102, 241, 0.15); border: 1px dashed #6366f1; color: #818cf8; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; font-family: inherit; transition: all 0.2s;"
+                  data-i18n="srs_card_hint_btn">💡 İpucu Göster</button>
+                <div id="srs-card-hint-emoji"
+                  style="display:none; margin-top: 10px; animation: primevocab-fade-in 0.2s ease-out;">
+                  <img id="srs-card-hint-img" src=""
+                    style="width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));"
+                    alt="İpucu Çizimi">
                 </div>
               </div>
-              <button class="srs-reveal-btn" id="srs-reveal-btn" data-i18n="srs_card_reveal_btn">Çeviriyi Göster</button>
+              <button class="srs-reveal-btn" id="srs-reveal-btn" data-i18n="srs_card_reveal_btn">Çeviriyi
+                Göster</button>
             </div>
 
             <div class="srs-card-back" id="srs-card-back" style="display:none">
@@ -1295,9 +1385,12 @@
                   <span class="srs-rate-label" data-i18n="srs_rate_easy">Kolay</span>
                   <span class="srs-rate-interval" id="srs-int-easy">7g</span>
                 </button>
-                <button class="srs-rate-btn srs-rate-learned" id="srs-rate-learned" style="background: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important;">
-                  <span class="srs-rate-label" style="color: #10b981 !important;" data-i18n="srs_rate_learned">Öğrendim</span>
-                  <span class="srs-rate-interval" style="color: #a7f3d0 !important;" data-i18n="srs_rate_learned_interval">Sorma 🎓</span>
+                <button class="srs-rate-btn srs-rate-learned" id="srs-rate-learned"
+                  style="background: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important;">
+                  <span class="srs-rate-label" style="color: #10b981 !important;"
+                    data-i18n="srs_rate_learned">Öğrendim</span>
+                  <span class="srs-rate-interval" style="color: #a7f3d0 !important;"
+                    data-i18n="srs_rate_learned_interval">Sorma 🎓</span>
                 </button>
               </div>
             </div>
@@ -1313,12 +1406,17 @@
         </div>
 
         <!-- Çalışma Listesi Popup/Overlay -->
-        <div id="srs-words-overlay" style="display:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 100; flex-direction: column; padding: 15px; overflow-y: auto;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
-            <span style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;" data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
-            <button id="srs-words-close-btn" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
+        <div id="srs-words-overlay"
+          style="display:none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg); z-index: 100; flex-direction: column; padding: 15px; overflow-y: auto;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px;">
+            <span
+              style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;"
+              data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
+            <button id="srs-words-close-btn"
+              style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
           </div>
-          
+
           <div style="display: flex; gap: 8px; margin-bottom: 15px;">
             <!-- Modern bottom sheet trigger button for study list sorting -->
             <button type="button" class="bottom-sheet-trigger" id="srs-words-sort-trigger" style="width: 100%;">
@@ -1333,8 +1431,9 @@
               <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
             </select>
           </div>
-          
-          <div id="srs-words-list" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto;"></div>
+
+          <div id="srs-words-list" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto;">
+          </div>
         </div>
       </div>
 
@@ -1344,8 +1443,10 @@
           <div class="resume-game-icon">⏳</div>
           <div id="resume-game-title" class="resume-game-title" data-i18n="game_resume_title">Devam Eden Oyun</div>
           <p id="resume-game-desc" class="resume-game-desc"></p>
-          <button class="srs-start-btn" id="resume-game-btn" style="width: 100%;" data-i18n="game_resume_btn">Kaldığım Yerden Devam Et</button>
-          <button class="srs-start-btn resume-discard-btn" id="discard-game-btn" data-i18n="game_discard_btn">Yeni Oyun Başlat</button>
+          <button class="srs-start-btn" id="resume-game-btn" style="width: 100%;" data-i18n="game_resume_btn">Kaldığım
+            Yerden Devam Et</button>
+          <button class="srs-start-btn resume-discard-btn" id="discard-game-btn" data-i18n="game_discard_btn">Yeni Oyun
+            Başlat</button>
         </div>
 
         <div id="games-hub" style="display: flex; flex-direction: column; gap: 12px;">
@@ -1358,12 +1459,14 @@
             <div class="game-card" data-game="fill_blank">
               <span class="game-card-icon">📝</span>
               <span class="game-card-title" data-i18n="game_blank_title">Boşluk Doldurma</span>
-              <span class="game-card-desc" data-i18n="game_blank_desc">Cümledeki boşluğa gelecek doğru kelimeyi bulun.</span>
+              <span class="game-card-desc" data-i18n="game_blank_desc">Cümledeki boşluğa gelecek doğru kelimeyi
+                bulun.</span>
             </div>
             <div class="game-card" data-game="scramble">
               <span class="game-card-icon">🧩</span>
               <span class="game-card-title" data-i18n="game_scramble_title">Kelime Karıştırma</span>
-              <span class="game-card-desc" data-i18n="game_scramble_desc">Karışık harflerden doğru kelimeyi oluşturun.</span>
+              <span class="game-card-desc" data-i18n="game_scramble_desc">Karışık harflerden doğru kelimeyi
+                oluşturun.</span>
             </div>
             <div class="game-card" data-game="match">
               <span class="game-card-icon">🔗</span>
@@ -1373,7 +1476,8 @@
             <div class="game-card" data-game="dictation">
               <span class="game-card-icon">🎧</span>
               <span class="game-card-title" data-i18n="game_dictation_title">Dikte</span>
-              <span class="game-card-desc" data-i18n="game_dictation_desc">Duyduğunuz kelimeyi doğru şekilde yazın.</span>
+              <span class="game-card-desc" data-i18n="game_dictation_desc">Duyduğunuz kelimeyi doğru şekilde
+                yazın.</span>
             </div>
             <div class="game-card" data-game="context_choice">
               <span class="game-card-icon">🎬</span>
@@ -1447,16 +1551,23 @@
     <div class="panel" id="panel-profile">
       <div class="mobile-settings-card-title">👤 Profil ve İlerleme</div>
       <div class="mobile-settings-card" style="padding: 20px 16px;">
-        <div class="profile-body" style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: var(--text-dim); line-height: 1.5; padding: 4px 0 0 0; font-family: var(--font);">
+        <div class="profile-body"
+          style="display: flex; flex-direction: column; gap: 16px; font-size: 14px; color: var(--text-dim); line-height: 1.5; padding: 4px 0 0 0; font-family: var(--font);">
           <div style="text-align: center; margin-bottom: 8px;">
-            <div id="profile-avatar-container" style="font-size: 56px; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 64px;">👤</div>
-            <h3 style="margin: 0; font-size: 18px; color: var(--text); font-weight: 700;" id="profile-username" data-i18n="profile_user_title">Kullanıcı</h3>
-            <small style="color: var(--text-muted); font-size: 13px; font-weight: 500; display: block; margin-top: 2px;" id="profile-email" data-i18n="profile_local_user">Yerel Kullanıcı</small>
-            <div id="profile-membership-badge" style="margin-top: 6px; font-size: 11px; font-weight: 700; display: inline-block; padding: 3px 10px; border-radius: 12px; background: var(--border);">FREE</div>
+            <div id="profile-avatar-container"
+              style="font-size: 56px; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; min-height: 64px;">
+              👤</div>
+            <h3 style="margin: 0; font-size: 18px; color: var(--text); font-weight: 700;" id="profile-username"
+              data-i18n="profile_user_title">Kullanıcı</h3>
+            <small style="color: var(--text-muted); font-size: 13px; font-weight: 500; display: block; margin-top: 2px;"
+              id="profile-email" data-i18n="profile_local_user">Yerel Kullanıcı</small>
+            <div id="profile-membership-badge"
+              style="margin-top: 6px; font-size: 11px; font-weight: 700; display: inline-block; padding: 3px 10px; border-radius: 12px; background: var(--border);">
+              FREE</div>
           </div>
-          
+
           <hr style="border: none; border-top: 1px solid var(--border2); margin: 6px 0;">
-          
+
           <div style="display: flex; flex-direction: column; gap: 10px;">
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span style="color: var(--text-muted);" data-i18n="profile_total_words">Toplam Kelime:</span>
@@ -1470,15 +1581,18 @@
               <span style="color: var(--text-muted);" data-i18n="profile_exp">Toplam EXP (Deneyim):</span>
               <span style="font-weight: 600; color: var(--text);" id="profile-exp">0</span>
             </div>
-            
+
             <!-- Seviye ve İlerleme Barı -->
             <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
               <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
                 <span style="color: var(--text-muted);" data-i18n="profile_level_label">Mevcut Seviye:</span>
                 <span style="font-weight: 700; color: var(--accent);" id="profile-level">Level 1</span>
               </div>
-              <div style="width: 100%; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border2);">
-                <div id="profile-level-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #818cf8, #a5b4fc); transition: width 0.3s ease;"></div>
+              <div
+                style="width: 100%; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; border: 1px solid var(--border2);">
+                <div id="profile-level-bar"
+                  style="width: 0%; height: 100%; background: linear-gradient(90deg, #818cf8, #a5b4fc); transition: width 0.3s ease;">
+                </div>
               </div>
             </div>
 
@@ -1494,27 +1608,37 @@
                 <span style="color: var(--text-muted);" data-i18n="profile_achievements_label">Başarımlar:</span>
                 <span style="font-weight: 600; color: var(--text);" id="profile-achievements-ratio">0 / 0</span>
               </div>
-              <div id="profile-achievements-badges" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; min-height: 24px;"></div>
+              <div id="profile-achievements-badges"
+                style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; min-height: 24px;"></div>
             </div>
-            
+
             <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 8px;">
               <!-- Google ile Giriş Yap -->
-              <button id="profile-login-btn" class="toolbar-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #6366f1 !important; border: none !important; color: white !important; padding: 12px !important; border-radius: 10px !important; font-size: 14px !important; font-weight: 700 !important; cursor: pointer; transition: all 0.2s;" data-i18n="profile_login_btn">
+              <button id="profile-login-btn" class="toolbar-btn"
+                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: #6366f1 !important; border: none !important; color: white !important; padding: 12px !important; border-radius: 10px !important; font-size: 14px !important; font-weight: 700 !important; cursor: pointer; transition: all 0.2s;"
+                data-i18n="profile_login_btn">
                 <span>🔑</span> Google ile Giriş Yap
               </button>
 
-              <div id="profile-sync-status-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted);">
+              <div id="profile-sync-status-row"
+                style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted);">
                 <span id="profile-sync-status" data-i18n="profile_sync_status_unlinked">Senkronizasyon Kapalı</span>
-                <button id="profile-sync-now-btn" class="toolbar-btn" style="display: none; background: var(--accent-dim) !important; border: 1px solid var(--border) !important; color: #818cf8 !important; padding: 6px 12px !important; border-radius: 6px !important; font-size: 12px !important; font-weight: 600 !important;" data-i18n="profile_sync_now">Şimdi Eşitle</button>
+                <button id="profile-sync-now-btn" class="toolbar-btn"
+                  style="display: none; background: var(--accent-dim) !important; border: 1px solid var(--border) !important; color: #818cf8 !important; padding: 6px 12px !important; border-radius: 6px !important; font-size: 12px !important; font-weight: 600 !important;"
+                  data-i18n="profile_sync_now">Şimdi Eşitle</button>
               </div>
-              
-              <div id="profile-last-sync-row" style="font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+
+              <div id="profile-last-sync-row"
+                style="font-size: 13px; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
                 <span data-i18n="profile_last_sync_label">Son Eşitleme:</span>
-                <span id="profile-last-sync-time" style="font-weight: 600; color: var(--text);" data-i18n="profile_last_sync_never">Henüz Yapılmadı</span>
+                <span id="profile-last-sync-time" style="font-weight: 600; color: var(--text);"
+                  data-i18n="profile_last_sync_never">Henüz Yapılmadı</span>
               </div>
-              
+
               <div id="profile-logout-row" style="display: flex; justify-content: flex-end; margin-top: 4px;">
-                <button id="profile-logout-btn" class="toolbar-btn" style="display: none; background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; color: #ef4444 !important; padding: 10px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 700 !important; width: 100%; text-align: center;" data-i18n="profile_logout">Çıkış Yap</button>
+                <button id="profile-logout-btn" class="toolbar-btn"
+                  style="display: none; background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; color: #ef4444 !important; padding: 10px !important; border-radius: 8px !important; font-size: 13px !important; font-weight: 700 !important; width: 100%; text-align: center;"
+                  data-i18n="profile_logout">Çıkış Yap</button>
               </div>
             </div>
           </div>
@@ -1524,10 +1648,10 @@
 
     <!-- ── AYARLAR PANELİ ── -->
     <div class="panel" id="panel-settings">
-      
+
       <!-- Uygulama Ayarları Grubu -->
       <div class="mobile-settings-card">
-        
+
         <!-- Uygulama Dili (Bottom Sheet Trigger Row) -->
         <div class="mobile-settings-row" id="lang-trigger-row" style="cursor: pointer;">
           <div class="settings-row-left">
@@ -1574,7 +1698,7 @@
       <!-- Veri Yönetimi Grubu -->
       <div class="mobile-settings-card-title">📦 Veri Yönetimi</div>
       <div class="mobile-settings-card">
-        
+
         <!-- Anki'ye Aktar -->
         <div class="mobile-settings-action-row" id="anki-export-btn" style="cursor: pointer;">
           <div class="settings-row-left">
@@ -1623,7 +1747,7 @@
       <!-- Sıfırlama İşlemleri (Danger Zone) -->
       <div class="mobile-settings-card-title color-red">⚠️ Tehlikeli Bölge (Sıfırlama)</div>
       <div class="mobile-settings-card border-red">
-        
+
         <!-- SRS Sıfırla -->
         <div class="mobile-settings-action-row danger-row" id="reset-srs-btn">
           <div class="settings-row-left">
@@ -1708,8 +1832,10 @@
         <div class="fc-done" id="fc-done" style="display:none">
           <div style="font-size: 50px; margin-bottom: 12px;">🎉</div>
           <h3 data-i18n="fc_done_title" style="margin: 0 0 6px 0; color:var(--text); font-weight:700;">Tebrikler!</h3>
-          <div class="fc-done-sub" id="fc-done-sub" style="margin: 0 0 16px 0; font-size:12px; color:var(--text-muted);"></div>
-          <button class="fc-restart-btn" id="fc-restart-btn" data-i18n="fc_restart_btn" style="margin:0; width:100%">Tekrar Başlat</button>
+          <div class="fc-done-sub" id="fc-done-sub"
+            style="margin: 0 0 16px 0; font-size:12px; color:var(--text-muted);"></div>
+          <button class="fc-restart-btn" id="fc-restart-btn" data-i18n="fc_restart_btn"
+            style="margin:0; width:100%">Tekrar Başlat</button>
         </div>
       </div>
     </div>
@@ -1717,9 +1843,11 @@
     <!-- ── CUSTOM CONFIRM MODAL ── -->
     <div class="custom-confirm-overlay" id="custom-confirm-overlay" style="display:none">
       <div class="custom-confirm-modal">
-        <div class="custom-confirm-body" id="custom-confirm-message" data-i18n="game_quit_confirm">Oyundan çıkmak istediğinize emin misiniz? İlerlemeniz silinecek.</div>
+        <div class="custom-confirm-body" id="custom-confirm-message" data-i18n="game_quit_confirm">Oyundan çıkmak
+          istediğinize emin misiniz? İlerlemeniz silinecek.</div>
         <div class="custom-confirm-actions">
-          <button class="custom-confirm-btn cancel" id="custom-confirm-cancel" data-i18n="game_btn_cancel">Vazgeç</button>
+          <button class="custom-confirm-btn cancel" id="custom-confirm-cancel"
+            data-i18n="game_btn_cancel">Vazgeç</button>
           <button class="custom-confirm-btn confirm" id="custom-confirm-ok" data-i18n="game_btn_quit">Çık</button>
         </div>
       </div>
@@ -1739,22 +1867,22 @@
       </div>
     </div>
 
-      <!-- Bottom Navigation bar -->
-      <div class="tabs">
-        <button class="tab" id="tab-subtitle" data-tab="subtitle" style="display:none;"></button>
-        <button class="tab active" id="tab-archive" data-tab="archive">
-          <span data-i18n="tab_archive">Sözlük</span>
-          <span class="badge" id="archive-badge" style="display:none">0</span>
-        </button>
-        <button class="tab" id="tab-review" data-tab="review">
-          <span data-i18n="tab_review">Çalışma</span>
-          <span class="badge badge-due" id="review-badge" style="display:none">0</span>
-        </button>
-        <button class="tab" id="tab-settings" data-tab="settings" data-i18n="tab_settings">Ayarlar</button>
-        <button class="tab" id="tab-profile" data-tab="profile" data-i18n="tab_profile">Profil</button>
-      </div>
+    <!-- Bottom Navigation bar -->
+    <div class="tabs">
+      <button class="tab" id="tab-subtitle" data-tab="subtitle" style="display:none;"></button>
+      <button class="tab active" id="tab-archive" data-tab="archive">
+        <span data-i18n="tab_archive">Sözlük</span>
+        <span class="badge" id="archive-badge" style="display:none">0</span>
+      </button>
+      <button class="tab" id="tab-review" data-tab="review">
+        <span data-i18n="tab_review">Çalışma</span>
+        <span class="badge badge-due" id="review-badge" style="display:none">0</span>
+      </button>
+      <button class="tab" id="tab-settings" data-tab="settings" data-i18n="tab_settings">Ayarlar</button>
+      <button class="tab" id="tab-profile" data-tab="profile" data-i18n="tab_profile">Profil</button>
+    </div>
 
-    </div> <!-- Closes .app -->
+  </div> <!-- Closes .app -->
 
   <!-- Load PWA polyfills and scripts -->
   <script src="capacitor.js"></script>
@@ -1771,7 +1899,7 @@
   <script src="js/settings.js?v=3"></script>
   <script src="js/sync.js?v=3"></script>
   <script src="js/app.js?v=3"></script>
-  
+
   <!-- Register PWA Service Worker (disabled on localhost) -->
   <script>
     if ('serviceWorker' in navigator) {
@@ -1784,7 +1912,7 @@
       } else {
         console.log("Localhost detected - Service Worker registration skipped for development.");
         navigator.serviceWorker.getRegistrations().then(regs => {
-          for(let reg of regs) {
+          for (let reg of regs) {
             reg.unregister().then(() => {
               console.log("Stale Service Worker unregistered.");
               // Clear cache storage too to force fresh assets
