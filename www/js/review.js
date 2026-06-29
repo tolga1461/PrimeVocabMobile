@@ -451,6 +451,7 @@ function srsRenderWeeklyChart(savedWords) {
 }
 // ── SRS Başlatma & Kart Gösterimi ─────────────────────────────────────────────
 document.getElementById('srs-start-btn').addEventListener('click', () => {
+    alert("review.js click listener starting!");
     chrome.storage.local.get({
         savedWords: [],
         srsSettings: { newLimit: 10, sessionLimit: 20 },
