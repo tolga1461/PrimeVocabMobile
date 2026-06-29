@@ -917,16 +917,19 @@
       pointer-events: none !important;
     }
 
-    /* Padding offset to keep first word exactly below absolute header at scroll 0 */
+    /* Translate absolute items down to clear header without shifting container layouts */
     #word-list {
       position: relative !important;
-      padding-top: 185px !important;
       box-sizing: border-box !important;
-      transition: padding-top 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
     }
 
-    #panel-archive.scrolled #word-list {
-      padding-top: 12px !important;
+    .word-item {
+      transform: translateY(185px) !important;
+      transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+
+    #panel-archive.scrolled .word-item {
+      transform: translateY(12px) !important;
     }
 
     /* Perfect vertical alignment for word list items */
