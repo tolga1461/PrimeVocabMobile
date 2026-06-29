@@ -49,9 +49,11 @@
     ::-webkit-scrollbar {
       display: none !important;
     }
+
     * {
       scrollbar-width: none !important;
     }
+
     body {
       overflow-x: hidden;
       position: fixed;
@@ -961,7 +963,7 @@
       top: 60px !important;
       /* right below sticky search bar */
       left: 14px !important;
-      right: 30px !important;
+      right: 16px !important;
       z-index: 95 !important;
       transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
       transform: translateY(0) !important;
@@ -1227,25 +1229,25 @@
 
           <!-- Action Buttons Row (Combined) -->
           <div
-            style="display: flex; gap: 8px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+            style="display: flex; gap: 8px; margin-top: 8px;">
             <button type="button" class="bottom-sheet-trigger" id="flashcard-btn"
               style="flex: 2; background: rgba(129, 140, 248, 0.2); border-color: rgba(129, 140, 248, 0.4); justify-content: center; gap: 8px;"
               title="Kelimeleri Tekrar Et / Kart Çalış">
               <span>🃏</span>
-              <span style="font-weight: 700; color: #a5b4fc;">Tekrar Et</span>
+              <span style="font-size: 12px; font-weight: 700; color: #a5b4fc;">Tekrar Et</span>
             </button>
 
             <button type="button" class="bottom-sheet-trigger" id="refresh-families-btn"
               style="flex: 1; justify-content: center; gap: 6px;" title="Kök Verileri Güncelle">
               <span>🔄</span>
-              <span style="font-size: 11px; font-weight: 700;">Güncelle</span>
+              <span style="font-size: 12px; font-weight: 700;">Güncelle</span>
             </button>
 
             <button type="button" class="bottom-sheet-trigger" id="clear-btn"
               style="flex: 1; justify-content: center; gap: 6px; border-color: rgba(239, 68, 68, 0.2);"
               title="Tüm Kelimeleri Sil">
               <span style="color: #ef4444;">🗑️</span>
-              <span style="font-size: 11px; font-weight: 700; color: #ef4444;">Temizle</span>
+              <span style="font-size: 12px; font-weight: 700; color: #ef4444;">Temizle</span>
             </button>
           </div>
 
