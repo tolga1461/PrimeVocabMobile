@@ -474,8 +474,10 @@ document.getElementById('srs-start-btn').addEventListener('click', () => {
         const newSlots = newLimit === 0 ? newCards.length : Math.max(0, newLimit - introducedToday);
         const newToday = newCards.slice(0, newSlots);
         let deck = [...reviewDue, ...newToday];
-        if (!deck.length)
+        if (!deck.length) {
+            alert(getMessage("alert_no_words_due") || "Şu an antrenman yapacak yeni veya tekrar edilecek kelimeniz bulunmuyor. Lütfen önce sözlüğünüze kelime ekleyin.");
             return;
+        }
 
         // If not Premium, increment daily session count
         if (licenseType === 'FREE') {
@@ -944,3 +946,34 @@ document.querySelectorAll('#srs-session-limit-group .setting-btn').forEach(btn =
         saveSrsSettings('sessionLimit', parseInt(btn.dataset.value));
     });
 });
+
+let reviewScrollListenerAttached = false;
+let reviewLastScrollTop = 0;
+
+function attachReviewScrollListener() {
+    const reviewPanel = document.getElementById('panel-review');
+    if (!reviewPanel || reviewScrollListenerAttached) return;
+
+    reviewPanel.addEventListener('scroll', srsThrottle(() => {
+        const currentScrollTop = reviewPanel.scrollTop;
+        
+        // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
+        const appContainer = document.querySelector('.app');
+        if (appContainer) {
+            if (currentScrollTop <= 10) {
+                appContainer.classList.remove('nav-hidden');
+            } else if (Math.abs(currentScrollTop - reviewLastScrollTop) > 8) {
+                if (currentScrollTop > reviewLastScrollTop && currentScrollTop > 60) {
+                    appContainer.classList.add('nav-hidden');
+                } else {
+                    appContainer.classList.remove('nav-hidden');
+                }
+            }
+        }
+        reviewLastScrollTop = currentScrollTop;
+    }, 50));
+    reviewScrollListenerAttached = true;
+}
+
+// Attach scroll listener immediately on script load
+attachReviewScrollListener();
