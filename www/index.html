@@ -994,6 +994,61 @@
       transform: translateY(95px) !important;
     }
 
+    /* Modern, larger touch targets for word item action buttons */
+    .header-actions-right {
+      gap: 6px !important;
+    }
+
+    .header-actions-right button {
+      position: static !important;
+      width: 32px !important;
+      height: 32px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
+      background: rgba(255, 255, 255, 0.03) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      transition: all 0.2s ease !important;
+      opacity: 0.85 !important;
+    }
+
+    .header-actions-right button:active {
+      opacity: 1 !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+      transform: scale(0.9) !important;
+    }
+
+    .header-actions-right .delete-btn {
+      font-size: 19px !important;
+    }
+
+    .header-actions-right .delete-btn:active {
+      background: rgba(239, 68, 68, 0.15) !important;
+      border-color: rgba(239, 68, 68, 0.3) !important;
+      color: var(--red) !important;
+    }
+
+    .header-actions-right .speak-btn {
+      font-size: 14px !important;
+    }
+
+    .header-actions-right .speak-btn:active {
+      background: rgba(99, 102, 241, 0.15) !important;
+      border-color: rgba(99, 102, 241, 0.3) !important;
+    }
+
+    .header-actions-right .source-btn {
+      font-size: 14px !important;
+      color: #818cf8 !important;
+    }
+
+    .header-actions-right .source-btn:active {
+      background: rgba(99, 102, 241, 0.15) !important;
+      border-color: rgba(99, 102, 241, 0.3) !important;
+    }
+
     /* ── Study List (Çalışma Listesi) Collapsible Header CSS ── */
     .srs-words-overlay {
       position: absolute !important;
