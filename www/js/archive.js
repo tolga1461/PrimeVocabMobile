@@ -411,29 +411,29 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
 
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
-            if (isResettingScroll) {
-                isResettingScroll = false;
-                return;
-            }
             updateVirtualScroll();
+            const currentScrollTop = wordList.scrollTop;
+            
+            // Auto-hiding header (Twitter style) toggling on .scrolled class
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
-                const currentScrollTop = wordList.scrollTop;
-                if (!headerCollapsed && currentScrollTop > 30) {
-                    archivePanel.classList.add('scrolled');
-                    headerCollapsed = true;
-                    isResettingScroll = true;
-                    wordList.scrollTop = 0;
-                } else if (headerCollapsed && currentScrollTop === 0) {
+                if (currentScrollTop <= 10) {
                     archivePanel.classList.remove('scrolled');
                     headerCollapsed = false;
+                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
+                    if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
+                        archivePanel.classList.add('scrolled');
+                        headerCollapsed = true;
+                    } else {
+                        archivePanel.classList.remove('scrolled');
+                        headerCollapsed = false;
+                    }
                 }
             }
             
             // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
             const appContainer = document.querySelector('.app');
             if (appContainer) {
-                const currentScrollTop = wordList.scrollTop;
                 if (currentScrollTop <= 10) {
                     appContainer.classList.remove('nav-hidden');
                 } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
@@ -443,8 +443,8 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                         appContainer.classList.remove('nav-hidden');
                     }
                 }
-                lastScrollTop = currentScrollTop;
             }
+            lastScrollTop = currentScrollTop;
         }, 50));
         scrollListenerAttached = true;
     }
