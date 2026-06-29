@@ -997,13 +997,16 @@
       z-index: 100 !important;
       display: flex;
       flex-direction: column !important;
-      padding: 0 !important; /* Remove original padding to allow full-width masking */
+      padding: 0 !important;
+      /* Remove original padding to allow full-width masking */
       overflow: hidden !important;
     }
 
     .srs-words-sticky-title-wrap {
       position: sticky !important;
       top: 0 !important;
+      height: 65px !important;
+      box-sizing: border-box !important;
       padding: 16px 16px 10px 16px !important;
       display: flex !important;
       justify-content: space-between !important;
@@ -1015,7 +1018,8 @@
 
     .srs-words-header-wrap {
       position: absolute !important;
-      top: 56px !important; /* right below sticky title bar */
+      top: 65px !important;
+      /* right below sticky title bar */
       left: 16px !important;
       right: 16px !important;
       z-index: 95 !important;
@@ -1026,7 +1030,7 @@
     }
 
     .srs-words-overlay.scrolled .srs-words-header-wrap {
-      transform: translateY(-110%) !important;
+      transform: translateY(-125%) !important;
       pointer-events: none !important;
     }
 
@@ -1036,14 +1040,16 @@
       display: flex !important;
       flex-direction: column !important;
       gap: 8px !important;
-      padding: 110px 16px 85px 16px !important; /* 85px bottom padding to clear navigation bar when visible */
+      padding: 70px 16px 85px 16px !important;
+      /* 85px bottom padding to clear navigation bar when visible */
       transition: padding-top 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-                  padding-bottom 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
+        padding-bottom 0.38s cubic-bezier(0.22, 1, 0.36, 1) !important;
       box-sizing: border-box !important;
     }
 
     .srs-words-overlay.scrolled .srs-words-list {
-      padding-top: 56px !important; /* only clear the sticky title bar when collapsed */
+      padding-top: 56px !important;
+      /* only clear the sticky title bar when collapsed */
     }
 
     /* When bottom nav is hidden, let the study list scroll all the way to the bottom edge */
@@ -1471,11 +1477,14 @@
 
         <!-- Çalışma Listesi Popup/Overlay -->
         <div id="srs-words-overlay" class="srs-words-overlay" style="display:none;">
-          
+
           <!-- Sticky Header (Title & Close Button) -->
           <div class="srs-words-sticky-title-wrap">
-            <span style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;" data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
-            <button id="srs-words-close-btn" style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
+            <span
+              style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;"
+              data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
+            <button id="srs-words-close-btn"
+              style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
           </div>
 
           <!-- Collapsible Header Wrapper (Sorting row) -->
