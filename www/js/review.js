@@ -565,13 +565,14 @@ function attachSrsScrollListener() {
         }
         
         // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
+        const isNearBottom = (currentScrollTop + srsWordsList.clientHeight >= srsWordsList.scrollHeight - 30);
         if (appContainer) {
             if (currentScrollTop <= 10) {
                 appContainer.classList.remove('nav-hidden');
             } else if (Math.abs(currentScrollTop - srsLastScrollTop) > 8) {
                 if (currentScrollTop > srsLastScrollTop && currentScrollTop > 60) {
                     appContainer.classList.add('nav-hidden');
-                } else {
+                } else if (!isNearBottom) {
                     appContainer.classList.remove('nav-hidden');
                 }
             }
@@ -969,13 +970,15 @@ function attachReviewScrollListener() {
             return;
         }
 
+        const isNearBottom = (currentScrollTop + panelReview.clientHeight >= panelReview.scrollHeight - 30);
+
         if (appContainer) {
             if (currentScrollTop <= 10) {
                 appContainer.classList.remove('nav-hidden');
             } else if (Math.abs(currentScrollTop - reviewLastScrollTop) > 8) {
                 if (currentScrollTop > reviewLastScrollTop && currentScrollTop > 60) {
                     appContainer.classList.add('nav-hidden');
-                } else {
+                } else if (!isNearBottom) {
                     appContainer.classList.remove('nav-hidden');
                 }
             }
