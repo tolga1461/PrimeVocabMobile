@@ -271,6 +271,39 @@ chrome.runtime = {
       }
       if (callback) callback({ level });
       return true;
+    } else if (message.action === "get_word_family") {
+      const rawWord = (message.word || '').toLowerCase().trim();
+      let family = [];
+      if (rawWord && typeof CEFR_MAP !== 'undefined') {
+        // Kelimenin kökünü bul (IRREGULAR_FORMS + temel stemming)
+        let root = rawWord;
+        if (typeof IRREGULAR_FORMS !== 'undefined' && IRREGULAR_FORMS[root]) {
+          root = IRREGULAR_FORMS[root];
+        }
+        // Suffix soyma: -ing, -ed, -er, -est, -ly, -s, -es, -tion, -ness, -ment
+        const suffixes = ['tion','ness','ment','ing','est','ed','er','ly','es','s'];
+        for (const suf of suffixes) {
+          if (root.endsWith(suf) && root.length - suf.length >= 4) {
+            const candidate = root.slice(0, -suf.length);
+            if (CEFR_MAP[candidate] || CEFR_MAP[candidate + 'e']) {
+              root = CEFR_MAP[candidate + 'e'] ? candidate + 'e' : candidate;
+              break;
+            }
+          }
+        }
+        // Kök en az 4 karakter olsun, CEFR_MAP içindeki eşleşenleri topla
+        if (root.length >= 4) {
+          for (const w of Object.keys(CEFR_MAP)) {
+            if (w !== rawWord && w.startsWith(root.slice(0, 4)) &&
+                (w.startsWith(root) || root.startsWith(w.slice(0, Math.min(w.length, root.length))))) {
+              family.push(w);
+              if (family.length >= 10) break;
+            }
+          }
+        }
+      }
+      if (callback) callback({ success: true, family });
+      return true;
     } else {
       if (callback) callback({ success: true });
     }
