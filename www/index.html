@@ -1631,39 +1631,6 @@
           <button class="srs-start-btn" id="srs-back-btn" data-i18n="srs_result_back_btn">Ana Sayfaya Dön</button>
         </div>
 
-        <!-- Çalışma Listesi Popup/Overlay -->
-        <div id="srs-words-overlay" class="srs-words-overlay" style="display:none;">
-
-          <!-- Sticky Header (Title & Close Button) -->
-          <div class="srs-words-sticky-title-wrap">
-            <span
-              style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;"
-              data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
-            <button id="srs-words-close-btn"
-              style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
-          </div>
-
-          <!-- Collapsible Header Wrapper (Sorting row) -->
-          <div class="srs-words-header-wrap" id="srs-words-header-wrap">
-            <div style="display: flex; gap: 8px;">
-              <!-- Modern bottom sheet trigger button for study list sorting -->
-              <button type="button" class="bottom-sheet-trigger" id="srs-words-sort-trigger" style="width: 100%;">
-                <span class="trigger-icon">📅</span>
-                <span class="trigger-label" id="srs-words-sort-label">Süreye Göre Artan (En Yakın)</span>
-              </button>
-              <select id="srs-words-sort" style="display:none !important;">
-                <option value="time-asc" data-i18n="srs_sort_time_asc">Süreye Göre Artan (En Yakın)</option>
-                <option value="time-desc" data-i18n="srs_sort_time_desc">Süreye Göre Azalan (En Uzak)</option>
-                <option value="alphabetical" data-i18n="srs_sort_alphabetical">Kelime (A → Z)</option>
-                <option value="learned-first" data-i18n="srs_sort_learned_first">Öğrenilenler Önce</option>
-                <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
-              </select>
-            </div>
-          </div>
-
-          <div id="srs-words-list" class="srs-words-list">
-          </div>
-        </div>
       </div>
 
       <!-- Oyunlar Alanı -->
@@ -2109,6 +2076,40 @@
       </button>
       <button class="tab" id="tab-settings" data-tab="settings" data-i18n="tab_settings">Ayarlar</button>
       <button class="tab" id="tab-profile" data-tab="profile" data-i18n="tab_profile">Profil</button>
+    </div>
+
+    <!-- Çalışma Listesi Popup/Overlay (Moved to App Root) -->
+    <div id="srs-words-overlay" class="srs-words-overlay" style="display:none;">
+
+      <!-- Sticky Header (Title & Close Button) -->
+      <div class="srs-words-sticky-title-wrap">
+        <span
+          style="font-size: 16px; font-weight: 700; color: #818cf8; display: flex; align-items: center; gap: 6px;"
+          data-i18n="srs_overlay_title">📋 Çalışma Listesi</span>
+        <button id="srs-words-close-btn"
+          style="background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0 5px;">✕</button>
+      </div>
+
+      <!-- Collapsible Header Wrapper (Sorting row) -->
+      <div class="srs-words-header-wrap" id="srs-words-header-wrap">
+        <div style="display: flex; gap: 8px;">
+          <!-- Modern bottom sheet trigger button for study list sorting -->
+          <button type="button" class="bottom-sheet-trigger" id="srs-words-sort-trigger" style="width: 100%;">
+            <span class="trigger-icon">📅</span>
+            <span class="trigger-label" id="srs-words-sort-label">Süreye Göre Artan (En Yakın)</span>
+          </button>
+          <select id="srs-words-sort" style="display:none !important;">
+            <option value="time-asc" data-i18n="srs_sort_time_asc">Süreye Göre Artan (En Yakın)</option>
+            <option value="time-desc" data-i18n="srs_sort_time_desc">Süreye Göre Azalan (En Uzak)</option>
+            <option value="alphabetical" data-i18n="srs_sort_alphabetical">Kelime (A → Z)</option>
+            <option value="learned-first" data-i18n="srs_sort_learned_first">Öğrenilenler Önce</option>
+            <option value="new-first" data-i18n="srs_sort_new_first">Yeni Kartlar Önce</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="srs-words-list" class="srs-words-list">
+      </div>
     </div>
 
   </div> <!-- Closes .app -->
