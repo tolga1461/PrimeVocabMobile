@@ -471,7 +471,7 @@
     }
 
     .srs-settings-help {
-      font-size: 12px !important;
+      font-size: 11px !important;
     }
 
     .srs-settings-group .setting-btn {
@@ -1006,7 +1006,7 @@
     }
 
     .bottom-sheet-title {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--text);
     }
@@ -1032,8 +1032,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px 12px;
-      font-size: 15px;
+      padding: 14px 12px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--text-dim);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -1141,7 +1141,8 @@
       flex-direction: column;
       gap: 16px;
       overflow-y: auto;
-      height: calc(100vh - 80px) !important;
+      flex: 1 !important;
+      min-height: 0;
     }
 
     .panel.active,
@@ -1164,13 +1165,14 @@
     }
 
     .mobile-settings-card-title {
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
       margin-left: 8px;
       margin-top: 8px;
+      flex-shrink: 0;
     }
 
     .mobile-settings-card {
@@ -1181,6 +1183,7 @@
       display: flex;
       flex-direction: column;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
     }
 
     .border-red {
@@ -1208,7 +1211,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border2);
       transition: background-color 0.2s;
     }
@@ -1226,36 +1229,36 @@
     .settings-row-left {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 10px;
       flex: 1;
       min-width: 0;
     }
 
     .settings-row-icon {
-      font-size: 22px;
+      font-size: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
     }
 
     .settings-row-text {
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 2px;
       flex: 1;
       min-width: 0;
     }
 
     .settings-row-label {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--text);
     }
 
     .settings-row-sublabel {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       line-height: 1.3;
     }
@@ -1268,13 +1271,13 @@
     }
 
     .settings-row-value {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-brand, #a5b4fc);
     }
 
     .settings-row-chevron {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       opacity: 0.7;
     }

@@ -1,3 +1,77 @@
+// ── Yardımcı: TTS (Sesli Okuma) ───────────────────────────────────────────────
+function speakWord(word, lang) {
+    if (!word) return;
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(word);
+    utter.lang = lang || 'en';
+    utter.rate = 0.9;
+    window.speechSynthesis.speak(utter);
+}
+
+// ── Yardımcı: Kaynak Popup (ⓘ butonu) ────────────────────────────────────────
+function showSourcePopup(anchorEl, item) {
+    // Varsa eski popup'ı kaldır
+    const existing = document.getElementById('source-popup-bubble');
+    if (existing) {
+        existing.remove();
+        return;
+    }
+
+    const src = item.source;
+    if (!src) return;
+
+    let lines = [];
+    if (src.showTitle) lines.push(`📺 <strong>${esc(src.showTitle)}</strong>`);
+    if (src.title && src.title !== src.showTitle) lines.push(`🎬 ${esc(src.title)}`);
+    if (src.season != null && src.episode != null) {
+        lines.push(`📂 S${String(src.season).padStart(2,'0')} E${String(src.episode).padStart(2,'0')}`);
+    } else if (src.season != null) {
+        lines.push(`📂 Sezon ${src.season}`);
+    }
+    if (src.time != null) {
+        const totalSec = Math.floor(src.time);
+        const m = Math.floor(totalSec / 60).toString().padStart(2,'0');
+        const s = (totalSec % 60).toString().padStart(2,'0');
+        lines.push(`⏱️ ${m}:${s}`);
+    }
+    if (lines.length === 0) return;
+
+    const popup = document.createElement('div');
+    popup.id = 'source-popup-bubble';
+    popup.innerHTML = lines.join('<br>');
+    popup.style.cssText = `
+        position: fixed;
+        background: var(--card-bg, #1e293b);
+        color: var(--text-primary, #f1f5f9);
+        border: 1px solid var(--border-color, #334155);
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 13px;
+        line-height: 1.6;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        z-index: 9999;
+        max-width: 240px;
+        pointer-events: none;
+    `;
+    document.body.appendChild(popup);
+
+    // Konumlandır
+    const rect = anchorEl.getBoundingClientRect();
+    const pw = popup.offsetWidth || 200;
+    let left = rect.left - pw + rect.width;
+    let top = rect.bottom + 6;
+    if (left < 8) left = 8;
+    if (top + 120 > window.innerHeight) top = rect.top - 120;
+    popup.style.left = `${left}px`;
+    popup.style.top = `${top}px`;
+
+    // Dışarı tıklayınca veya 4 saniye sonra kapat
+    const close = () => { popup.remove(); document.removeEventListener('click', close, true); };
+    setTimeout(() => document.addEventListener('click', close, true), 10);
+    setTimeout(close, 4000);
+}
+
 // ── Arşiv state ───────────────────────────────────────────────────────────────
 let archiveFilter = 'all';
 let archiveSort = 'newest';
