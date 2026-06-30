@@ -691,7 +691,7 @@ function srsLoadWords() {
                 div.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:14px;font-weight:700;color:#818cf8;">${esc(item.word)}</span>
+            <span style="font-size:17px;font-weight:700;color:#818cf8;">${esc(item.word)}</span>
             ${badgeHtml} ${reviewBadgeHtml}
           </div>
           <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted);cursor:pointer;user-select:none;">
@@ -699,7 +699,7 @@ function srsLoadWords() {
             ${getMessage("srs_rate_learned") || 'Öğrendim'}
           </label>
         </div>
-        <div style="font-size:12px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.translation || '—')}</div>
+        <div style="font-size:17px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.translation || '—')}</div>
       `;
                 const chk = div.querySelector('.srs-learned-chk');
                 if (chk)
