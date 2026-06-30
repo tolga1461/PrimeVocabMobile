@@ -1,3 +1,4 @@
+alert("review.js file loaded!");
 // ── SRS Sabitleri ─────────────────────────────────────────────────────────────
 const SRS_NEW_INTERVAL = 1;
 const SRS_AGAIN_INTERVAL = 0.007; // ~10 dakika
