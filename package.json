@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "sw.js",
   "scripts": {
-    "build": "npx cap sync",
+    "build": "npx cap sync && git add . && git commit -m \"build: cap sync\" --allow-empty && git push origin main",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
