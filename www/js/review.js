@@ -529,7 +529,21 @@ function attachSrsScrollListener() {
 
     srsWordsList.addEventListener('scroll', srsThrottle(() => {
         const currentScrollTop = srsWordsList.scrollTop;
+        const appContainer = document.querySelector('.app');
         
+        // Prevent scroll bounce / feedback loops on short pages
+        const scrollableHeight = srsWordsList.scrollHeight - srsWordsList.clientHeight;
+        if (scrollableHeight <= 100) {
+            if (appContainer && appContainer.classList.contains('nav-hidden')) {
+                appContainer.classList.remove('nav-hidden');
+            }
+            if (srsHeaderCollapsed) {
+                srsWordsOverlay.classList.remove('scrolled');
+                srsHeaderCollapsed = false;
+            }
+            return;
+        }
+
         // Auto-hiding header (Twitter style) toggling on .scrolled class
         if (currentScrollTop <= 10) {
             if (srsHeaderCollapsed) {
@@ -551,7 +565,6 @@ function attachSrsScrollListener() {
         }
         
         // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
-        const appContainer = document.querySelector('.app');
         if (appContainer) {
             if (currentScrollTop <= 10) {
                 appContainer.classList.remove('nav-hidden');
@@ -947,6 +960,15 @@ function attachReviewScrollListener() {
         const currentScrollTop = panelReview.scrollTop;
         const appContainer = document.querySelector('.app');
         
+        // Prevent scroll bounce / feedback loops on short pages
+        const scrollableHeight = panelReview.scrollHeight - panelReview.clientHeight;
+        if (scrollableHeight <= 100) {
+            if (appContainer && appContainer.classList.contains('nav-hidden')) {
+                appContainer.classList.remove('nav-hidden');
+            }
+            return;
+        }
+
         if (appContainer) {
             if (currentScrollTop <= 10) {
                 appContainer.classList.remove('nav-hidden');
