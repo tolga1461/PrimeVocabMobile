@@ -407,6 +407,19 @@
       cursor: pointer !important;
     }
 
+    .review-sticky-header {
+      position: sticky !important;
+      top: -16px !important;
+      margin-top: -16px !important;
+      margin-left: -16px !important;
+      margin-right: -16px !important;
+      padding: 16px 16px 12px 16px !important;
+      background: var(--bg) !important;
+      z-index: 99 !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      margin-bottom: 12px !important;
+    }
+
     /* Modern Segmented Tab Controllers */
     .review-subtabs,
     #settings-subtabs {
@@ -1149,128 +1162,6 @@
       margin: 0 !important;
       line-height: 1 !important;
     }
-
-    /* ── SRS Training Panel UI Overrides ── */
-    #srs-session {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 16px !important;
-      height: 100% !important;
-    }
-
-    .srs-session-header {
-      gap: 12px !important;
-      margin-bottom: 4px !important;
-    }
-
-    .srs-session-bar-wrap {
-      height: 8px !important;
-      border-radius: 6px !important;
-      background: var(--surface2) !important;
-    }
-
-    .srs-session-progress {
-      font-size: 13px !important;
-    }
-
-    .srs-quit-btn {
-      width: 30px !important;
-      height: 30px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      border-radius: 50% !important;
-      background: rgba(255, 255, 255, 0.04) !important;
-      border: 1px solid rgba(255, 255, 255, 0.06) !important;
-      font-size: 14px !important;
-      color: var(--text-dim) !important;
-      padding: 0 !important;
-      transition: all 0.2s ease !important;
-    }
-
-    .srs-quit-btn:active {
-      background: rgba(255, 255, 255, 0.1) !important;
-      color: var(--text) !important;
-      transform: scale(0.9) !important;
-    }
-
-    .srs-card {
-      background: var(--surface) !important;
-      border: 1px solid rgba(255, 255, 255, 0.07) !important;
-      border-radius: 16px !important;
-      padding: 24px 20px !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-      min-height: 280px !important;
-    }
-
-    .srs-card-front,
-    .srs-card-back {
-      gap: 14px !important;
-    }
-
-    .srs-card-word {
-      font-size: 34px !important;
-      font-weight: 800 !important;
-      color: #818cf8 !important;
-      letter-spacing: -0.01em !important;
-      margin-bottom: 4px !important;
-    }
-
-    .srs-card-translation {
-      font-size: 24px !important;
-      font-weight: 700 !important;
-      color: var(--green) !important;
-      margin-bottom: 4px !important;
-    }
-
-    .srs-card-context {
-      font-size: 14px !important;
-      color: var(--text-dim) !important;
-      line-height: 1.6 !important;
-      font-style: normal !important;
-      margin-top: 6px !important;
-      display: block !important;
-      overflow: visible !important;
-      text-overflow: clip !important;
-      white-space: normal !important;
-    }
-
-    .srs-reveal-btn {
-      width: 100% !important;
-      padding: 14px !important;
-      border-radius: 12px !important;
-      font-size: 15px !important;
-      font-weight: 700 !important;
-      background: var(--accent) !important;
-      color: #fff !important;
-      box-shadow: 0 4px 14px var(--accent-glow) !important;
-      border: none !important;
-      margin-top: auto !important;
-      transition: all 0.2s ease !important;
-    }
-
-    .srs-reveal-btn:active {
-      transform: scale(0.97) !important;
-      background: #4f46e5 !important;
-    }
-
-    .srs-rate-btn {
-      padding: 10px 6px !important;
-      border-radius: 10px !important;
-      transition: all 0.2s ease !important;
-    }
-
-    .srs-rate-btn:active {
-      transform: scale(0.93) !important;
-    }
-
-    .srs-rate-label {
-      font-size: 12px !important;
-    }
-
-    .srs-rate-interval {
-      font-size: 10px !important;
-    }
   </style>
 </head>
 
@@ -1473,17 +1364,19 @@
     <!-- ── ÇALIŞMA PANELİ (SRS) ── -->
     <div class="panel" id="panel-review">
 
-      <!-- Alt Sekmeler -->
-      <div class="review-subtabs" id="review-subtabs">
-        <button class="review-subtab active" id="subtab-srs" data-subtab="srs">
-          <span data-i18n="subtab_srs">⚡ Antrenman</span>
-        </button>
-        <button class="review-subtab" id="subtab-games" data-subtab="games">
-          <span data-i18n="subtab_games">🎮 Oyunlar</span>
-        </button>
-        <button class="review-subtab" id="subtab-achievements" data-subtab="achievements">
-          <span data-i18n="subtab_achievements">🏆 Başarımlar</span>
-        </button>
+      <!-- Alt Sekmeler (Sticky Header Wrapper) -->
+      <div class="review-sticky-header">
+        <div class="review-subtabs" id="review-subtabs" style="margin-bottom: 0 !important;">
+          <button class="review-subtab active" id="subtab-srs" data-subtab="srs">
+            <span data-i18n="subtab_srs">⚡ Antrenman</span>
+          </button>
+          <button class="review-subtab" id="subtab-games" data-subtab="games">
+            <span data-i18n="subtab_games">🎮 Oyunlar</span>
+          </button>
+          <button class="review-subtab" id="subtab-achievements" data-subtab="achievements">
+            <span data-i18n="subtab_achievements">🏆 Başarımlar</span>
+          </button>
+        </div>
       </div>
 
       <!-- Antrenman (SRS) Alanı -->
@@ -1624,30 +1517,28 @@
               <div class="srs-card-word" id="srs-card-word-back"></div>
               <div class="srs-card-translation" id="srs-card-translation"></div>
               <div class="srs-card-context" id="srs-card-context-back"></div>
-              <div class="srs-rating-container" style="display: flex; flex-direction: column; gap: 8px; width: 100%; margin-top: auto;">
-                <div class="srs-rating-row" style="display: flex; gap: 6px; width: 100%;">
-                  <button class="srs-rate-btn srs-rate-again" id="srs-rate-again">
-                    <span class="srs-rate-label" data-i18n="srs_rate_again">Bilmedim</span>
-                    <span class="srs-rate-interval" id="srs-int-again">10dk</span>
-                  </button>
-                  <button class="srs-rate-btn srs-rate-hard" id="srs-rate-hard">
-                    <span class="srs-rate-label" data-i18n="srs_rate_hard">Zor</span>
-                    <span class="srs-rate-interval" id="srs-int-hard">1g</span>
-                  </button>
-                  <button class="srs-rate-btn srs-rate-good" id="srs-rate-good">
-                    <span class="srs-rate-label" data-i18n="srs_rate_good">İyi</span>
-                    <span class="srs-rate-interval" id="srs-int-good">3g</span>
-                  </button>
-                  <button class="srs-rate-btn srs-rate-easy" id="srs-rate-easy">
-                    <span class="srs-rate-label" data-i18n="srs_rate_easy">Kolay</span>
-                    <span class="srs-rate-interval" id="srs-int-easy">7g</span>
-                  </button>
-                </div>
+              <div class="srs-rating-row">
+                <button class="srs-rate-btn srs-rate-again" id="srs-rate-again">
+                  <span class="srs-rate-label" data-i18n="srs_rate_again">Bilmedim</span>
+                  <span class="srs-rate-interval" id="srs-int-again">10dk</span>
+                </button>
+                <button class="srs-rate-btn srs-rate-hard" id="srs-rate-hard">
+                  <span class="srs-rate-label" data-i18n="srs_rate_hard">Zor</span>
+                  <span class="srs-rate-interval" id="srs-int-hard">1g</span>
+                </button>
+                <button class="srs-rate-btn srs-rate-good" id="srs-rate-good">
+                  <span class="srs-rate-label" data-i18n="srs_rate_good">İyi</span>
+                  <span class="srs-rate-interval" id="srs-int-good">3g</span>
+                </button>
+                <button class="srs-rate-btn srs-rate-easy" id="srs-rate-easy">
+                  <span class="srs-rate-label" data-i18n="srs_rate_easy">Kolay</span>
+                  <span class="srs-rate-interval" id="srs-int-easy">7g</span>
+                </button>
                 <button class="srs-rate-btn srs-rate-learned" id="srs-rate-learned"
-                  style="width: 100%; flex-direction: row; justify-content: center; gap: 8px; padding: 10px !important; background: rgba(16, 185, 129, 0.08) !important; border-color: rgba(16, 185, 129, 0.25) !important;">
-                  <span class="srs-rate-label" style="color: #10b981 !important; font-size: 13px !important;"
+                  style="background: rgba(16, 185, 129, 0.1) !important; border-color: rgba(16, 185, 129, 0.3) !important;">
+                  <span class="srs-rate-label" style="color: #10b981 !important;"
                     data-i18n="srs_rate_learned">Öğrendim</span>
-                  <span class="srs-rate-interval" style="color: #a7f3d0 !important; font-size: 12px !important;"
+                  <span class="srs-rate-interval" style="color: #a7f3d0 !important;"
                     data-i18n="srs_rate_learned_interval">Sorma 🎓</span>
                 </button>
               </div>

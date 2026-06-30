@@ -230,6 +230,7 @@ let srsQueueIndex = 0;
 let srsSessionStats = { again: 0, hard: 0, good: 0, easy: 0, learned: 0 };
 // ── SRS Ana Sayfa ─────────────────────────────────────────────────────────────
 function srsLoadHome() {
+    attachReviewScrollListener();
     chrome.storage.local.get({
         savedWords: [],
         srsSettings: { newLimit: 10, sessionLimit: 20 },
@@ -934,3 +935,30 @@ document.querySelectorAll('#srs-session-limit-group .setting-btn').forEach(btn =
         saveSrsSettings('sessionLimit', parseInt(btn.dataset.value));
     });
 });
+
+let reviewScrollListenerAttached = false;
+let reviewLastScrollTop = 0;
+
+function attachReviewScrollListener() {
+    const panelReview = document.getElementById('panel-review');
+    if (!panelReview || reviewScrollListenerAttached) return;
+
+    panelReview.addEventListener('scroll', srsThrottle(() => {
+        const currentScrollTop = panelReview.scrollTop;
+        const appContainer = document.querySelector('.app');
+        
+        if (appContainer) {
+            if (currentScrollTop <= 10) {
+                appContainer.classList.remove('nav-hidden');
+            } else if (Math.abs(currentScrollTop - reviewLastScrollTop) > 8) {
+                if (currentScrollTop > reviewLastScrollTop && currentScrollTop > 60) {
+                    appContainer.classList.add('nav-hidden');
+                } else {
+                    appContainer.classList.remove('nav-hidden');
+                }
+            }
+        }
+        reviewLastScrollTop = currentScrollTop;
+    }, 50));
+    reviewScrollListenerAttached = true;
+}
