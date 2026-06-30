@@ -194,6 +194,13 @@ function updateProfileUI() {
 function switchMainTab(tabName) {
     console.log(`[PV-core] Switching to main tab: ${tabName}`);
     
+    // Auto-hide study list overlay on tab switch since it is fixed at the root level
+    const srsWordsOverlay = document.getElementById('srs-words-overlay');
+    if (srsWordsOverlay) {
+        srsWordsOverlay.style.display = 'none';
+        srsWordsOverlay.classList.remove('scrolled');
+    }
+
     // Deactivate all tabs and panels
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
