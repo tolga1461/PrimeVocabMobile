@@ -1006,17 +1006,22 @@ body {
   transform: translateX(-50%) translateY(8px);
 }
 
-/* ── Dönen animasyon (toolbar btn) ── */
+/* ── Dönen animasyon (toolbar btn + bottom-sheet-trigger) ── */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
-.toolbar-btn.spinning {
+.toolbar-btn.spinning,
+.bottom-sheet-trigger.spinning {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   pointer-events: none;
   opacity: 0.7;
-  color: transparent; /* emoji'yi gizle */
+  position: relative;
+}
+.toolbar-btn.spinning span,
+.bottom-sheet-trigger.spinning span {
+  visibility: hidden; /* metin/emoji gizle, yer koru */
 }
 .toolbar-btn.spinning::before {
   content: '';
@@ -1024,6 +1029,16 @@ body {
   width: 13px;
   height: 13px;
   border: 2px solid var(--accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.bottom-sheet-trigger.spinning::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid var(--accent);
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
