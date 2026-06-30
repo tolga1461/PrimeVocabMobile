@@ -1,4 +1,3 @@
-alert("review.js file loaded!");
 // ── SRS Sabitleri ─────────────────────────────────────────────────────────────
 const SRS_NEW_INTERVAL = 1;
 const SRS_AGAIN_INTERVAL = 0.007; // ~10 dakika
@@ -178,8 +177,7 @@ function srsCalcNext(item, rating) {
 }
 function updateStudyStreak() {
     const today = new Date().toDateString();
-    chrome.storage.local.get({ srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 } }, (data) => {
-        const srsStreakStats = data.srsStreakStats || { currentStreak: 0, lastStudyDate: '', bestStreak: 0 };
+    chrome.storage.local.get({ srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 } }, ({ srsStreakStats }) => {
         let { currentStreak, lastStudyDate, bestStreak } = srsStreakStats;
         if (lastStudyDate === today)
             return;
@@ -236,10 +234,7 @@ function srsLoadHome() {
         savedWords: [],
         srsSettings: { newLimit: 10, sessionLimit: 20 },
         srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 }
-    }, (data) => {
-        const savedWords = data.savedWords || [];
-        const srsSettings = data.srsSettings || { newLimit: 10, sessionLimit: 20 };
-        const srsStreakStats = data.srsStreakStats || { currentStreak: 0, lastStudyDate: '', bestStreak: 0 };
+    }, ({ savedWords, srsSettings, srsStreakStats }) => {
         const now = Date.now();
         const today = new Date().toDateString();
         const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
@@ -452,30 +447,15 @@ function srsRenderWeeklyChart(savedWords) {
 }
 // ── SRS Başlatma & Kart Gösterimi ─────────────────────────────────────────────
 document.getElementById('srs-start-btn').addEventListener('click', () => {
-    alert("review.js click listener starting!");
     chrome.storage.local.get({
         savedWords: [],
         srsSettings: { newLimit: 10, sessionLimit: 20 },
         licenseType: 'FREE',
         srsDailySessions: { date: '', count: 0 }
-    }, (data) => {
-        const savedWords = data.savedWords || [];
-        const srsSettings = data.srsSettings || { newLimit: 10, sessionLimit: 20 };
-        const licenseType = data.licenseType || 'FREE';
-        const srsDailySessions = data.srsDailySessions || { date: '', count: 0 };
+    }, ({ savedWords, srsSettings, licenseType, srsDailySessions }) => {
         const now = Date.now(), today = new Date().toDateString();
         
-        if (licenseType === 'FREE') {
-            if (srsDailySessions.date === today && srsDailySessions.count >= 2) {
-                if (typeof showPremiumModal === 'function') {
-                    showPremiumModal(
-                        getMessage("premium_modal_title") || "Premium Özellik",
-                        "Ücretsiz sürümde günlük en fazla 2 antrenman yapabilirsiniz. Sınırsız antrenman ve diğer premium özellikler için Premium üyeliğe yükseltin."
-                    );
-                }
-                return;
-            }
-        }
+
 
         const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
@@ -484,10 +464,8 @@ document.getElementById('srs-start-btn').addEventListener('click', () => {
         const newSlots = newLimit === 0 ? newCards.length : Math.max(0, newLimit - introducedToday);
         const newToday = newCards.slice(0, newSlots);
         let deck = [...reviewDue, ...newToday];
-        if (!deck.length) {
-            alert(getMessage("alert_no_words_due") || "Şu an antrenman yapacak yeni veya tekrar edilecek kelimeniz bulunmuyor. Lütfen önce sözlüğünüze kelime ekleyin.");
+        if (!deck.length)
             return;
-        }
 
         // If not Premium, increment daily session count
         if (licenseType === 'FREE') {
@@ -922,9 +900,7 @@ function srsShowResult() {
   `;
 }
 function updateReviewBadge() {
-    chrome.storage.local.get({ savedWords: [], srsSettings: { newLimit: 10 } }, (data) => {
-        const savedWords = data.savedWords || [];
-        const srsSettings = data.srsSettings || { newLimit: 10 };
+    chrome.storage.local.get({ savedWords: [], srsSettings: { newLimit: 10 } }, ({ savedWords, srsSettings }) => {
         const now = Date.now(), today = new Date().toDateString();
         const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
@@ -938,8 +914,7 @@ function updateReviewBadge() {
     });
 }
 function saveSrsSettings(key, value) {
-    chrome.storage.local.get({ srsSettings: { newLimit: 10, sessionLimit: 20 } }, (data) => {
-        const srsSettings = data.srsSettings || { newLimit: 10, sessionLimit: 20 };
+    chrome.storage.local.get({ srsSettings: { newLimit: 10, sessionLimit: 20 } }, ({ srsSettings }) => {
         srsSettings[key] = value;
         srsSettings.timestamp = Date.now();
         chrome.storage.local.set({ srsSettings }, () => srsLoadHome());
@@ -959,34 +934,3 @@ document.querySelectorAll('#srs-session-limit-group .setting-btn').forEach(btn =
         saveSrsSettings('sessionLimit', parseInt(btn.dataset.value));
     });
 });
-
-let reviewScrollListenerAttached = false;
-let reviewLastScrollTop = 0;
-
-function attachReviewScrollListener() {
-    const reviewPanel = document.getElementById('panel-review');
-    if (!reviewPanel || reviewScrollListenerAttached) return;
-
-    reviewPanel.addEventListener('scroll', srsThrottle(() => {
-        const currentScrollTop = reviewPanel.scrollTop;
-        
-        // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
-        const appContainer = document.querySelector('.app');
-        if (appContainer) {
-            if (currentScrollTop <= 10) {
-                appContainer.classList.remove('nav-hidden');
-            } else if (Math.abs(currentScrollTop - reviewLastScrollTop) > 8) {
-                if (currentScrollTop > reviewLastScrollTop && currentScrollTop > 60) {
-                    appContainer.classList.add('nav-hidden');
-                } else {
-                    appContainer.classList.remove('nav-hidden');
-                }
-            }
-        }
-        reviewLastScrollTop = currentScrollTop;
-    }, 50));
-    reviewScrollListenerAttached = true;
-}
-
-// Attach scroll listener immediately on script load
-attachReviewScrollListener();
