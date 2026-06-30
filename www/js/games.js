@@ -374,7 +374,7 @@ function renderScrambleQuestion() {
     const scrDiv = document.createElement('div');
     scrDiv.className = 'scramble-stage';
     scrDiv.innerHTML = `
-    ${hintSentence ? `<div class="blank-sentence" style="font-size:12px;padding:10px;min-height:unset;">"${hintSentence}"</div>` : ''}
+    ${hintSentence ? `<div class="blank-sentence" style="min-height:unset;">"${hintSentence}"</div>` : ''}
     <div class="blank-hint" style="margin-bottom:4px;">Türkçe Çeviri: <strong>"${target.translation}"</strong></div>
     <div class="scramble-input-box" id="scramble-input-box"></div>
     <div class="scramble-tiles" id="scramble-tiles">${scrambled.map((char, index) => `<button class="scramble-tile" data-index="${index}" data-char="${char}">${char}</button>`).join('')}</div>

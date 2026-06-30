@@ -672,6 +672,102 @@
       font-size: 11px !important;
     }
 
+    /* Game Exit Button (same style as srs-quit-btn for consistency) */
+    .game-exit-btn {
+      width: 32px !important;
+      height: 32px !important;
+      border-radius: 50% !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid var(--border2) !important;
+      color: var(--text-muted) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    }
+
+    .game-exit-btn:active {
+      transform: scale(0.85) !important;
+      background: rgba(239, 68, 68, 0.15) !important;
+      color: #ef4444 !important;
+      border-color: rgba(239, 68, 68, 0.3) !important;
+    }
+
+    .game-play-header {
+      margin-bottom: 16px !important;
+    }
+
+    /* Scramble stage hint sentence override */
+    .scramble-stage .blank-sentence {
+      font-size: 14px !important;
+      padding: 10px !important;
+    }
+
+    /* Dictation game overrides */
+    .dictation-hint {
+      font-size: 15px !important;
+      font-weight: 600 !important;
+      color: var(--text-dim) !important;
+      font-style: normal !important;
+    }
+
+    .dictation-listen-btn {
+      font-size: 16px !important;
+      font-weight: 700 !important;
+    }
+
+    .dictation-check-btn {
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      padding: 12px 16px !important;
+    }
+
+    .dictation-skip-btn {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      padding: 12px 14px !important;
+    }
+
+    .dictation-result-msg {
+      font-size: 15px !important;
+      font-weight: 700 !important;
+    }
+
+    .dictation-input {
+      font-size: 18px !important;
+      font-weight: 700 !important;
+    }
+
+    /* Game Result screen */
+    .game-result-title {
+      font-size: 20px !important;
+      font-weight: 800 !important;
+    }
+
+    .game-result-desc {
+      font-size: 15px !important;
+      line-height: 1.5 !important;
+    }
+
+    .game-result-score-num {
+      font-size: 26px !important;
+      font-weight: 800 !important;
+    }
+
+    .game-result-score-lbl {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+    }
+
+    /* Scramble correct/wrong result text */
+    .scramble-correct-answer {
+      font-size: 15px !important;
+    }
+
     /* Modern Segmented Tab Controllers */
     .review-subtabs,
     #settings-subtabs {
