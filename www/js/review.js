@@ -585,6 +585,17 @@ function attachSrsScrollListener() {
 if (srsWordsBtn)
     srsWordsBtn.addEventListener('click', () => { 
         srsWordsOverlay.style.display = 'flex'; 
+        
+        // Reset scroll position and header state on open
+        const srsWordsList = document.getElementById('srs-words-list');
+        if (srsWordsList) srsWordsList.scrollTop = 0;
+        srsWordsOverlay.classList.remove('scrolled');
+        srsHeaderCollapsed = false;
+        
+        // Always ensure bottom navigation bar is visible when overlay opens
+        const appContainer = document.querySelector('.app');
+        if (appContainer) appContainer.classList.remove('nav-hidden');
+
         srsLoadWords(); 
         attachSrsScrollListener();
     });
