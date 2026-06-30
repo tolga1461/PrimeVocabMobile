@@ -425,7 +425,7 @@ function srsRenderWeeklyChart(savedWords) {
         const barW = (W - barGap * (barCount - 1)) / barCount;
         weeks.forEach((week, i) => {
             const x = i * (barW + barGap);
-            const barHeight = week.count === 0 ? 2 : Math.max(4, (week.count / maxCount) * (chartH - 12));
+            const barHeight = week.count === 0 ? 2 : Math.max(4, (week.count / maxCount) * (chartH - 18));
             const y = chartH - barHeight;
             const isThis = i === barCount - 1;
             ctx.fillStyle = isThis ? '#6366f1' : (week.count > 0 ? '#1e293b' : '#0f172a');
@@ -436,7 +436,7 @@ function srsRenderWeeklyChart(savedWords) {
                 ctx.fillStyle = isThis ? '#c7d2fe' : '#475569';
                 ctx.font = `600 ${Math.max(9, Math.floor(barW * 0.38))}px sans-serif`;
                 ctx.textAlign = 'center';
-                ctx.fillText(week.count, x + barW / 2, Math.max(y - 2, 10));
+                ctx.fillText(week.count, x + barW / 2, Math.max(y - 2, 12));
             }
             const weekLabel = i === barCount - 1 ? getMessage("chart_this_week") : `${barCount - 1 - i}${getMessage("chart_week_abbr")}`;
             ctx.fillStyle = isThis ? '#818cf8' : '#334155';
