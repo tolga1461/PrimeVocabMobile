@@ -662,19 +662,19 @@ function srsLoadWords() {
             words.forEach((item) => {
                 const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[item.word.toLowerCase()];
                 let badgeHtml = isPhrasal
-                    ? `<span class="cefr-badge phrasal-badge" style="font-size:10px;padding:1px 4px;border-radius:4px;font-weight:600;">Phrasal</span>`
-                    : (() => { const c = cefrColors[item.cefrLevel] || '#64748b'; return `<span class="cefr-badge" style="color:${c};background:${c}22;border:1px solid ${c}44;font-size:10px;padding:1px 4px;border-radius:4px;font-weight:600;">${item.cefrLevel}</span>`; })();
+                    ? `<span class="cefr-badge phrasal-badge" style="font-size:11px;padding:2px 5px;border-radius:4px;font-weight:600;">Phrasal</span>`
+                    : (() => { const c = cefrColors[item.cefrLevel] || '#64748b'; return `<span class="cefr-badge" style="color:${c};background:${c}22;border:1px solid ${c}44;font-size:11px;padding:2px 5px;border-radius:4px;font-weight:600;">${item.cefrLevel}</span>`; })();
                 let reviewBadgeHtml = '';
                 if (item.learned) {
-                    reviewBadgeHtml = `<span style="font-size:10px;color:#10b981;background:rgba(16,185,129,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(16,185,129,0.2);">${getMessage("srs_status_learned") || '📖 Learned'}</span>`;
+                    reviewBadgeHtml = `<span style="font-size:11px;color:#10b981;background:rgba(16,185,129,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(16,185,129,0.2);">${getMessage("srs_status_learned") || '📖 Learned'}</span>`;
                 }
                 else if (!item.reviewCount || !item.nextReview) {
-                    reviewBadgeHtml = `<span style="font-size:10px;color:#3b82f6;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(59,130,246,0.2);">${getMessage("srs_status_new") || '🆕 New'}</span>`;
+                    reviewBadgeHtml = `<span style="font-size:11px;color:#3b82f6;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(59,130,246,0.2);">${getMessage("srs_status_new") || '🆕 New'}</span>`;
                 }
                 else {
                     const diffMs = item.nextReview - Date.now();
                     if (diffMs <= 0) {
-                        reviewBadgeHtml = `<span style="font-size:10px;color:#f59e0b;background:rgba(245,158,11,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(245,158,11,0.2);">${getMessage("srs_status_due") || '⏳ Due'}</span>`;
+                        reviewBadgeHtml = `<span style="font-size:11px;color:#f59e0b;background:rgba(245,158,11,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(245,158,11,0.2);">${getMessage("srs_status_due") || '⏳ Due'}</span>`;
                     }
                     else {
                         const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
@@ -682,7 +682,7 @@ function srsLoadWords() {
                             : days < 7 ? (getMessage("srs_status_days_later") || '{days}d later').replace('{days}', days)
                                 : days < 30 ? (getMessage("srs_status_weeks_later") || '{weeks}w later').replace('{weeks}', Math.round(days / 7))
                                     : (getMessage("srs_status_months_later") || '{months}m later').replace('{months}', Math.round(days / 30));
-                        reviewBadgeHtml = `<span style="font-size:10px;color:#94a3b8;background:rgba(148,163,184,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(148,163,184,0.2);">📅 ${label}</span>`;
+                        reviewBadgeHtml = `<span style="font-size:11px;color:#94a3b8;background:rgba(148,163,184,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(148,163,184,0.2);">📅 ${label}</span>`;
                     }
                 }
                 const div = document.createElement('div');
@@ -694,9 +694,10 @@ function srsLoadWords() {
             <span style="font-size:17px;font-weight:700;color:#818cf8;">${esc(item.word)}</span>
             ${badgeHtml} ${reviewBadgeHtml}
           </div>
-          <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted);cursor:pointer;user-select:none;">
-            <input type="checkbox" class="srs-learned-chk" data-index="${item.originalIndex}" ${item.learned ? 'checked' : ''} style="cursor:pointer;width:14px;height:14px;">
-            ${getMessage("srs_rate_learned") || 'Öğrendim'}
+          <label class="custom-checkbox-container">
+            <input type="checkbox" class="srs-learned-chk" data-index="${item.originalIndex}" ${item.learned ? 'checked' : ''}>
+            <span class="checkmark"></span>
+            <span>${getMessage("srs_rate_learned") || 'Öğrendim'}</span>
           </label>
         </div>
         <div style="font-size:17px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.translation || '—')}</div>

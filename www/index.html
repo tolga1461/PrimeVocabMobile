@@ -497,6 +497,57 @@
       font-size: 12px !important;
     }
 
+    /* Custom Modern Checkbox */
+    .custom-checkbox-container {
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
+      color: var(--text-muted) !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      position: relative !important;
+    }
+
+    .custom-checkbox-container input {
+      display: none !important;
+    }
+
+    .custom-checkbox-container .checkmark {
+      width: 18px !important;
+      height: 18px !important;
+      border: 2px solid var(--border2) !important;
+      border-radius: 6px !important;
+      display: inline-block !important;
+      position: relative !important;
+      box-sizing: border-box !important;
+      transition: all 0.2s ease !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+    }
+
+    .custom-checkbox-container input:checked + .checkmark {
+      background: #10b981 !important;
+      border-color: #10b981 !important;
+    }
+
+    .custom-checkbox-container .checkmark::after {
+      content: "" !important;
+      position: absolute !important;
+      display: none !important;
+      left: 4.5px !important;
+      top: 1px !important;
+      width: 4px !important;
+      height: 9px !important;
+      border: solid white !important;
+      border-width: 0 2px 2px 0 !important;
+      transform: rotate(45deg) !important;
+    }
+
+    .custom-checkbox-container input:checked + .checkmark::after {
+      display: block !important;
+    }
+
     /* Modern Segmented Tab Controllers */
     .review-subtabs,
     #settings-subtabs {
