@@ -1,12 +1,47 @@
 // ── Yardımcı: TTS (Sesli Okuma) ───────────────────────────────────────────────
-function speakWord(word, lang) {
+async function speakWord(word, lang) {
     if (!word) return;
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(word);
-    utter.lang = lang || 'en';
-    utter.rate = 0.9;
-    window.speechSynthesis.speak(utter);
+    const voiceLang = lang || 'en';
+
+    // 1. Yol: Capacitor Native TTS Eklentisi (Mobil APK için en sağlam yol)
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.TextToSpeech) {
+        try {
+            await window.Capacitor.Plugins.TextToSpeech.speak({
+                text: word,
+                lang: voiceLang === 'en' ? 'en-US' : voiceLang,
+                rate: 0.9,
+                pitch: 1.0,
+                volume: 1.0,
+                category: 'ambient'
+            });
+            return;
+        } catch (e) {
+            console.warn("Capacitor Native TTS failed, trying fallback...", e);
+        }
+    }
+
+    // 2. Yol: Web SpeechSynthesis API (Tarayıcılar için)
+    if (window.speechSynthesis) {
+        try {
+            window.speechSynthesis.cancel();
+            const utter = new SpeechSynthesisUtterance(word);
+            utter.lang = voiceLang;
+            utter.rate = 0.9;
+            window.speechSynthesis.speak(utter);
+            return;
+        } catch (e) {
+            console.warn("Web SpeechSynthesis failed, trying online fallback...", e);
+        }
+    }
+
+    // 3. Yol: Google TTS API (Her şey başarısız olursa internet üzerinden)
+    try {
+        const audioUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${voiceLang}&client=tw-ob&q=${encodeURIComponent(word)}`;
+        const audio = new Audio(audioUrl);
+        await audio.play();
+    } catch (e) {
+        console.error("All TTS options failed:", e);
+    }
 }
 
 // ── Yardımcı: Kaynak Popup (ⓘ butonu) ────────────────────────────────────────
