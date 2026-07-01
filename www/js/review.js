@@ -97,38 +97,41 @@ document.getElementById('fc-restart-btn').addEventListener('click', () => {
     }
     fcShowCard();
 });
-document.getElementById('flashcard-btn').addEventListener('click', () => {
-    chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
-        if (savedWords.length === 0) {
-            alert(getMessage("alert_no_words_dictionary"));
-            return;
-        }
-        const uniqueWords = [...new Set(savedWords.map(w => w.word.toLowerCase()))];
-        chrome.runtime.sendMessage({ action: "batch_lookup_cefr", words: uniqueWords }, (res) => {
-            const cefrMap = res?.cefrMap || {};
-            let deck = savedWords.map(item => ({
-                ...item,
-                cefrLevel: cefrMap[item.word.toLowerCase()] || '??'
-            }));
-            if (archiveFilter !== 'all')
-                deck = deck.filter(item => item.cefrLevel === archiveFilter);
-            if (deck.length === 0) {
-                alert(getMessage("alert_no_words_filter"));
+const flashcardBtn = document.getElementById('flashcard-btn');
+if (flashcardBtn) {
+    flashcardBtn.addEventListener('click', () => {
+        chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
+            if (savedWords.length === 0) {
+                alert(getMessage("alert_no_words_dictionary"));
                 return;
             }
-            for (let i = deck.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [deck[i], deck[j]] = [deck[j], deck[i]];
-            }
-            fcDeck = deck;
-            fcIndex = 0;
-            fcScore = 0;
-            fcAgainQueue = [];
-            fcOverlay.style.display = 'flex';
-            fcShowCard();
+            const uniqueWords = [...new Set(savedWords.map(w => w.word.toLowerCase()))];
+            chrome.runtime.sendMessage({ action: "batch_lookup_cefr", words: uniqueWords }, (res) => {
+                const cefrMap = res?.cefrMap || {};
+                let deck = savedWords.map(item => ({
+                    ...item,
+                    cefrLevel: cefrMap[item.word.toLowerCase()] || '??'
+                }));
+                if (archiveFilter !== 'all')
+                    deck = deck.filter(item => item.cefrLevel === archiveFilter);
+                if (deck.length === 0) {
+                    alert(getMessage("alert_no_words_filter"));
+                    return;
+                }
+                for (let i = deck.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [deck[i], deck[j]] = [deck[j], deck[i]];
+                }
+                fcDeck = deck;
+                fcIndex = 0;
+                fcScore = 0;
+                fcAgainQueue = [];
+                fcOverlay.style.display = 'flex';
+                fcShowCard();
+            });
         });
     });
-});
+}
 // ── SRS Algoritması ───────────────────────────────────────────────────────────
 function srsInitItem(item) {
     return {

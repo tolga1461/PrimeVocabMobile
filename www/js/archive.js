@@ -601,6 +601,8 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                 return;
             }
             
+            const isNearBottom = (currentScrollTop + wordList.clientHeight >= wordList.scrollHeight - 50);
+            
             // Auto-hiding header (Twitter style) toggling on .scrolled class
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
@@ -609,7 +611,7 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                         archivePanel.classList.remove('scrolled');
                         headerCollapsed = false;
                     }
-                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
+                } else if (!isNearBottom && Math.abs(currentScrollTop - lastScrollTop) > 8) {
                     if (currentScrollTop > lastScrollTop && currentScrollTop > 40) {
                         if (!headerCollapsed) {
                             archivePanel.classList.add('scrolled');
@@ -629,7 +631,7 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             if (appContainer) {
                 if (currentScrollTop <= 10) {
                     appContainer.classList.remove('nav-hidden');
-                } else if (Math.abs(currentScrollTop - lastScrollTop) > 8) {
+                } else if (!isNearBottom && Math.abs(currentScrollTop - lastScrollTop) > 8) {
                     if (currentScrollTop > lastScrollTop && currentScrollTop > 60) {
                         appContainer.classList.add('nav-hidden');
                     } else {

@@ -87,6 +87,9 @@ function updateProfileUI() {
         const usernameEl = document.getElementById('profile-username');
         const avatarContainer = document.getElementById('profile-avatar-container');
 
+        const loggedOutView = document.getElementById('profile-logged-out-view');
+        const loggedInView = document.getElementById('profile-logged-in-view');
+
         // Settings View specific elements
         const settingsLoginBtn = document.getElementById('settings-login-btn');
         const settingsSyncContainer = document.getElementById('settings-sync-status-container');
@@ -122,6 +125,9 @@ function updateProfileUI() {
         if (data.googleSyncEmail) {
             const displayUsername = data.googleSyncEmail.split('@')[0];
             
+            if (loggedOutView) loggedOutView.style.display = 'none';
+            if (loggedInView) loggedInView.style.display = 'flex';
+
             // Header profile modal updates
             if (loginBtn) loginBtn.style.display = 'none';
             if (emailEl) emailEl.textContent = data.googleSyncEmail;
@@ -137,7 +143,7 @@ function updateProfileUI() {
             // Sync user avatar
             if (avatarContainer) {
                 if (data.googleSyncPicture) {
-                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" style="width:48px; height:48px; border-radius:50%; object-fit:cover;">`;
+                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" style="width:100%; height:100%; object-fit:cover;">`;
                 } else {
                     avatarContainer.innerHTML = '👤';
                 }
@@ -158,6 +164,9 @@ function updateProfileUI() {
             }
         } else {
             // Logged out / local user updates
+            if (loggedOutView) loggedOutView.style.display = 'flex';
+            if (loggedInView) loggedInView.style.display = 'none';
+
             if (loginBtn) loginBtn.style.display = 'block';
             if (emailEl) emailEl.textContent = getMessage('profile_local_user') || 'Yerel Kullanıcı';
             if (usernameEl) usernameEl.textContent = getMessage('profile_user_title') || 'Kullanıcı';
@@ -651,9 +660,8 @@ function initBottomSheetController() {
 
             // Mirror display visibility (only for source & tag filters)
             if (item.id === 'archive-source-select' || item.id === 'archive-tag-select') {
-                const style = window.getComputedStyle(selectEl);
-                const isSelectVisible = selectEl.style.display !== 'none' && style.display !== 'none';
-                btnEl.style.display = isSelectVisible ? 'flex' : 'none';
+                const hasOptions = selectEl.options.length > 1;
+                btnEl.style.display = hasOptions ? 'flex' : 'none';
             }
 
             // Mirror label text
