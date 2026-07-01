@@ -38,6 +38,18 @@
   "confirm_clear_all": {
     "message": "Tüm kayıtlı kelimeleri silmek istediğinize emin misiniz?"
   },
+  "settings_delete_confirm_label": {
+    "message": "Kelime Silme Uyarısı"
+  },
+  "settings_delete_confirm_sublabel": {
+    "message": "Kelimeleri silmek istediğinizde onay uyarısı göster"
+  },
+  "archive_delete_word_confirm": {
+    "message": "Bu kelimeyi silmek istediğinize emin misiniz?"
+  },
+  "btn_delete_confirm_ok": {
+    "message": "Sil"
+  },
   "alert_no_words": {
     "message": "Dışa aktarılacak kelime bulunamadı."
   },

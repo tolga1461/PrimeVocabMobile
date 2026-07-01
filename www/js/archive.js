@@ -675,6 +675,9 @@ function updateVirtualScroll() {
         }
 
         div.innerHTML = `
+      <div class="swipe-delete-bg">
+        <span class="swipe-delete-text">🗑️ Sil</span>
+      </div>
       <div class="word-item-header">
         <span class="expand-toggle-icon">${isExpanded ? '▼' : '▸'}</span>
         <span class="word-item-word">${esc(item.word)}</span>
@@ -703,6 +706,84 @@ function updateVirtualScroll() {
 }
 
 function bindVirtualItemEvents(div, item, virtualIndex) {
+    // Touch swipe-to-delete implementation
+    let startX = 0;
+    let currentX = 0;
+    let isSwiping = false;
+    const swipeThreshold = -80; // pixels to reveal delete fully
+    const swipeTriggerThreshold = -130; // pixels to trigger delete on release
+
+    div.addEventListener('touchstart', (e) => {
+        // Skip touch handling if inside form input or buttons
+        if (e.target.closest('button') || e.target.closest('input')) return;
+        startX = e.touches[0].clientX;
+        isSwiping = true;
+        div.style.transition = 'none';
+    }, { passive: true });
+
+    div.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+        const diffX = e.touches[0].clientX - startX;
+        // Only allow left swiping
+        if (diffX < 0) {
+            currentX = diffX;
+            // Dampen swipe past threshold
+            if (currentX < swipeTriggerThreshold) {
+                currentX = swipeTriggerThreshold + (currentX - swipeTriggerThreshold) * 0.3;
+            }
+            // Move item header & content wrapper to reveal delete button
+            const header = div.querySelector('.word-item-header');
+            const collapse = div.querySelector('.word-item-collapse-content');
+            const tags = div.querySelector('.word-item-tags');
+            
+            if (header) header.style.transform = `translateX(${currentX}px)`;
+            if (collapse) collapse.style.transform = `translateX(${currentX}px)`;
+            if (tags) tags.style.transform = `translateX(${currentX}px)`;
+            
+            // Show red background wrapper
+            const swipeBg = div.querySelector('.swipe-delete-bg');
+            if (swipeBg) {
+                swipeBg.style.opacity = Math.min(1, Math.abs(currentX) / 50);
+            }
+        }
+    }, { passive: true });
+
+    div.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        
+        const header = div.querySelector('.word-item-header');
+        const collapse = div.querySelector('.word-item-collapse-content');
+        const tags = div.querySelector('.word-item-tags');
+        const swipeBg = div.querySelector('.swipe-delete-bg');
+
+        // Apply smooth transition back or to delete action
+        if (header) header.style.transition = 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        if (collapse) collapse.style.transition = 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        if (tags) tags.style.transition = 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+        if (currentX <= swipeThreshold) {
+            // Crossed the swipe threshold -> Trigger deletion
+            if (header) header.style.transform = `translateX(-100%)`;
+            if (collapse) collapse.style.transform = `translateX(-100%)`;
+            if (tags) tags.style.transform = `translateX(-100%)`;
+            
+            setTimeout(() => {
+                deleteWord(item.originalIndex);
+            }, 200);
+        } else {
+            // Cancel swipe -> Snap back
+            if (header) header.style.transform = '';
+            if (collapse) collapse.style.transform = '';
+            if (tags) tags.style.transform = '';
+            if (swipeBg) {
+                swipeBg.style.transition = 'opacity 0.2s';
+                swipeBg.style.opacity = '0';
+            }
+        }
+        currentX = 0;
+    });
+
     const header = div.querySelector('.word-item-header');
     const collapseContent = div.querySelector('.word-item-collapse-content');
     const toggleIcon = div.querySelector('.expand-toggle-icon');
@@ -891,24 +972,41 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
 
 }
 function deleteWord(index) {
-    chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
-        const deletedItem = savedWords[index];
-        if (deletedItem && deletedItem.word) {
-            trackDeletedWord(deletedItem.word);
-        }
-        savedWords.splice(index, 1);
-        chrome.storage.local.set({ savedWords }, () => {
-            loadArchive();
-            updateArchiveBadge();
-            if (deletedItem) {
-                const cleanDeletedWord = deletedItem.word.toLowerCase();
-                document.querySelectorAll('.word-chip').forEach(c => {
-                    const cleanChipWord = c.textContent.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, '');
-                    if (cleanChipWord === cleanDeletedWord)
-                        c.classList.remove('word-saved');
+    chrome.storage.sync.get({ settings: { deleteConfirm: true } }, ({ settings }) => {
+        const needsConfirm = settings ? settings.deleteConfirm !== false : true;
+        const proceedWithDelete = () => {
+            chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
+                const deletedItem = savedWords[index];
+                if (deletedItem && deletedItem.word) {
+                    trackDeletedWord(deletedItem.word);
+                }
+                savedWords.splice(index, 1);
+                chrome.storage.local.set({ savedWords }, () => {
+                    loadArchive();
+                    updateArchiveBadge();
+                    if (deletedItem) {
+                        const cleanDeletedWord = deletedItem.word.toLowerCase();
+                        document.querySelectorAll('.word-chip').forEach(c => {
+                            const cleanChipWord = c.textContent.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, '');
+                            if (cleanChipWord === cleanDeletedWord)
+                                c.classList.remove('word-saved');
+                        });
+                    }
                 });
+            });
+        };
+
+        if (needsConfirm) {
+            if (typeof showCustomConfirm === 'function') {
+                showCustomConfirm("archive_delete_word_confirm", proceedWithDelete, "btn_delete_confirm_ok", "game_btn_cancel");
+            } else {
+                if (confirm(getMessage("archive_delete_word_confirm") || "Bu kelimeyi silmek istediğinize emin misiniz?")) {
+                    proceedWithDelete();
+                }
             }
-        });
+        } else {
+            proceedWithDelete();
+        }
     });
 }
 function toggleLearnWord(index) {

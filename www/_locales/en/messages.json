@@ -38,6 +38,18 @@
   "confirm_clear_all": {
     "message": "Are you sure you want to delete all saved words?"
   },
+  "settings_delete_confirm_label": {
+    "message": "Delete Confirmation"
+  },
+  "settings_delete_confirm_sublabel": {
+    "message": "Show confirmation warning when deleting words"
+  },
+  "archive_delete_word_confirm": {
+    "message": "Are you sure you want to delete this word?"
+  },
+  "btn_delete_confirm_ok": {
+    "message": "Delete"
+  },
   "alert_no_words": {
     "message": "No words found to export."
   },

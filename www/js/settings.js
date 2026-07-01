@@ -296,7 +296,7 @@ function loadSettings() {
             }
         });
 
-        chrome.storage.sync.get({ settings: { appLanguage: 'auto', gamesSound: true, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
+        chrome.storage.sync.get({ settings: { appLanguage: 'auto', gamesSound: true, deleteConfirm: true, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
         if (!settings)
             settings = {};
         const ensureInit = (key) => {
@@ -316,6 +316,9 @@ function loadSettings() {
         const gamesSoundToggle = document.getElementById('games-sound-toggle');
         if (gamesSoundToggle)
             gamesSoundToggle.checked = settings.gamesSound !== false;
+        const deleteConfirmToggle = document.getElementById('delete-confirm-toggle');
+        if (deleteConfirmToggle)
+            deleteConfirmToggle.checked = settings.deleteConfirm !== false;
         const enabledPlats = settings.enabledPlatforms || { youtube: true, netflix: true, prime: true };
         const ytToggle = document.getElementById('platform-toggle-youtube');
         if (ytToggle)
@@ -451,7 +454,7 @@ function saveSetting(key, value) {
         ensureInit('youtube');
         ensureInit('prime');
         ensureInit('netflix');
-        if (key === 'appLanguage' || key === 'gamesSound') {
+        if (key === 'appLanguage' || key === 'gamesSound' || key === 'deleteConfirm') {
             settings[key] = value;
         }
         else {
@@ -643,6 +646,9 @@ if (ytAllowAsrToggleEl) {
 const gamesSoundToggleEl = document.getElementById('games-sound-toggle');
 if (gamesSoundToggleEl)
     gamesSoundToggleEl.addEventListener('change', (e) => saveSetting('gamesSound', e.target.checked));
+const deleteConfirmToggleEl = document.getElementById('delete-confirm-toggle');
+if (deleteConfirmToggleEl)
+    deleteConfirmToggleEl.addEventListener('change', (e) => saveSetting('deleteConfirm', e.target.checked));
 ['youtube', 'netflix', 'prime'].forEach(plat => {
     const el = document.getElementById(`platform-toggle-${plat}`);
     if (el) {
