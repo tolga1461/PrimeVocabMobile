@@ -741,6 +741,8 @@ body {
   position: relative;
   transition: all 0.18s ease;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 .word-item:hover:not(:has(.speak-btn:hover)):not(:has(.source-btn:hover)) {
