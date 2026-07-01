@@ -731,17 +731,30 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
     }
     const speakBtn = div.querySelector('.speak-btn');
     if (speakBtn) {
-        speakBtn.addEventListener('click', (e) => {
+        // Dokunma ve tıklama olaylarının yukarı yayılmasını engelliyoruz
+        const handleSpeak = (e) => {
             e.stopPropagation();
-            speakWord(item.word, item.lang || 'en');
-        });
+            if (e.type === 'click') {
+                speakWord(item.word, item.lang || 'en');
+            }
+        };
+        speakBtn.addEventListener('click', handleSpeak);
+        speakBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+        speakBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+        speakBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
     }
     const sourceBtn = div.querySelector('.source-btn');
     if (sourceBtn && item.source) {
-        sourceBtn.addEventListener('click', (e) => {
+        const handleSource = (e) => {
             e.stopPropagation();
-            showSourcePopup(sourceBtn, item);
-        });
+            if (e.type === 'click') {
+                showSourcePopup(sourceBtn, item);
+            }
+        };
+        sourceBtn.addEventListener('click', handleSource);
+        sourceBtn.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
+        sourceBtn.addEventListener('mousedown', (e) => e.stopPropagation());
+        sourceBtn.addEventListener('pointerdown', (e) => e.stopPropagation());
     }
     div.querySelectorAll('.family-word').forEach(fw => {
         fw.addEventListener('click', (e) => {
