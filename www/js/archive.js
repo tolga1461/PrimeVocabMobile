@@ -107,6 +107,74 @@ function showSourcePopup(anchorEl, item) {
     setTimeout(close, 4000);
 }
 
+// ── Yardımcı: Kelime Ailesi Çeviri Popup (Masaüstündeki showRowTranslation'ın Mobil Karşılığı) ──
+function showRowTranslation(anchorEl, word) {
+    // Varsa eski popup'ı kaldır
+    const existing = document.getElementById('translation-popup-bubble');
+    if (existing) {
+        existing.remove();
+        return;
+    }
+
+    if (!word) return;
+
+    // Geçici yükleniyor balonu oluştur
+    const popup = document.createElement('div');
+    popup.id = 'translation-popup-bubble';
+    popup.innerHTML = `<span style="opacity: 0.6;">⏳ Çevriliyor...</span>`;
+    popup.style.cssText = `
+        position: fixed;
+        background: var(--card-bg, #1e293b);
+        color: var(--text-primary, #f1f5f9);
+        border: 1px solid var(--border-color, #334155);
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 500;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+        z-index: 9999;
+        pointer-events: none;
+        transition: opacity 0.15s ease;
+    `;
+    document.body.appendChild(popup);
+
+    // Konumlandır
+    const positionPopup = () => {
+        const rect = anchorEl.getBoundingClientRect();
+        const pw = popup.offsetWidth || 100;
+        let left = rect.left + (rect.width / 2) - (pw / 2);
+        let top = rect.bottom + 6;
+        if (left < 8) left = 8;
+        if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+        if (top + 40 > window.innerHeight) top = rect.top - 40;
+        popup.style.left = `${left}px`;
+        popup.style.top = `${top}px`;
+    };
+    positionPopup();
+
+    // Dışarı tıklayınca kapatma
+    const close = () => { popup.remove(); document.removeEventListener('click', close, true); };
+    setTimeout(() => document.addEventListener('click', close, true), 10);
+
+    // Google Translate API ile kelimeyi çevir
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=tr&dt=t&q=${encodeURIComponent(word)}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            if (data && data[0] && data[0][0] && data[0][0][0]) {
+                const trans = data[0][0][0].trim();
+                popup.innerHTML = `<strong>${esc(word)}</strong>: ${esc(trans)}`;
+                positionPopup();
+            } else {
+                popup.innerHTML = `<span style="color: #ef4444;">⚠️ Çevrilemedi</span>`;
+            }
+        })
+        .catch(err => {
+            console.error("Translation error:", err);
+            popup.innerHTML = `<span style="color: #ef4444;">⚠️ Bağlantı hatası</span>`;
+        });
+}
+
 // ── Arşiv state ───────────────────────────────────────────────────────────────
 let archiveFilter = 'all';
 let archiveSort = 'newest';
@@ -129,6 +197,7 @@ let scrollListenerAttached = false;
 let lastScrollTop = 0;
 let headerCollapsed = false;
 let isResettingScroll = false;
+let isTogglingDetails = false;
 
 function throttle(fn, ms) {
     let last = 0;
@@ -142,26 +211,26 @@ function throttle(fn, ms) {
 }
 
 function estimateItemHeight(item, showFamily, showTags, isExpanded) {
-    let height = 56; // Header base height on mobile
+    let height = 58; // Header base height on mobile (increased slightly matching header height adjustments)
     if (isExpanded) {
         if (item.context) {
             const charCount = item.context.length;
-            const lines = Math.max(1, Math.ceil(charCount / 40));
-            height += 12 + (lines * 16.5);
+            const lines = Math.max(1, Math.ceil(charCount / 38)); // Slightly lower denominator for safer wrap estimation
+            height += 14 + (lines * 17.5);
         }
         if (showFamily && Array.isArray(item.wordFamily) && item.wordFamily.length) {
             const totalChars = 14 + item.wordFamily.reduce((sum, w) => sum + w.length + 2, 0);
-            const lines = Math.max(1, Math.ceil(totalChars / 40));
-            height += 11 + (lines * 15);
+            const lines = Math.max(1, Math.ceil(totalChars / 36)); // Lower denominator since flex-wrapped chips take more line height space
+            height += 15 + (lines * 19.5); // Allocate more height per wrapped chip line
         }
     }
     if (showTags) {
         const tags = item.tags || [];
         const totalChars = tags.reduce((sum, t) => sum + t.length + 4, 0) + 5;
-        const lines = Math.max(1, Math.ceil(totalChars / 35));
-        height += 8 + (lines * 22);
+        const lines = Math.max(1, Math.ceil(totalChars / 32));
+        height += 12 + (lines * 24); // Allocate more height per wrapped tag line
     }
-    height += 6; // gap/margin
+    height += 8; // gap/margin
     return Math.ceil(height);
 }
 
@@ -370,6 +439,10 @@ function updateSourceDropdown(savedWords) {
     }
 }
 function renderArchive(savedWords, showFamily = true, showTags = true, expandAll = false, cefrMap = {}, licenseType = 'FREE') {
+    isTogglingDetails = true;
+    setTimeout(() => {
+        isTogglingDetails = false;
+    }, 150);
     const wordList = document.getElementById('word-list');
     const emptyState = document.getElementById('empty-archive');
     const countEl = document.getElementById('archive-count');
@@ -523,6 +596,11 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             updateVirtualScroll();
             const currentScrollTop = wordList.scrollTop;
             
+            if (isTogglingDetails) {
+                lastScrollTop = currentScrollTop;
+                return;
+            }
+            
             // Auto-hiding header (Twitter style) toggling on .scrolled class
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
@@ -671,7 +749,7 @@ function updateVirtualScroll() {
 
         let activeStatusHtml = '';
         if (!item.isActive) {
-            activeStatusHtml = `<span class="inactive-sub-badge" title="${getMessage("archive_inactive_badge_title") || 'Ücretsiz sürüm limiti (Son 20 kelime) dışında kaldığı için altyazılarda taranmaz.'}">${getMessage("archive_inactive_badge_label") || '⚠️ Altyazıda Pasif'}</span>`;
+            activeStatusHtml = `<span class="inactive-sub-badge" title="${getMessage("archive_inactive_badge_title") || 'Ücretsiz sürüm limiti (Son 20 kelime) dışında kaldığı için altyazılarda taranmaz.'}">⚠️</span>`;
         }
 
         div.innerHTML = `
@@ -806,8 +884,12 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
                     expandedIndices.add(item.originalIndex);
                 }
             }
+            isTogglingDetails = true;
             recalculateOffsets();
             updateVirtualScroll();
+            setTimeout(() => {
+                isTogglingDetails = false;
+            }, 150);
         });
     }
     const speakBtn = div.querySelector('.speak-btn');

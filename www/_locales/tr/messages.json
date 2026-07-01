@@ -1386,7 +1386,7 @@
     "message": "Ücretsiz sürüm limiti (Son 20 kelime) dışında kaldığı için altyazılarda taranmaz."
   },
   "archive_inactive_badge_label": {
-    "message": "⚠️ Altyazıda Pasif"
+    "message": "⚠️"
   },
   "premium_smart_locked_desc": {
     "message": "Akıllı Özellikleri (Shadowing, Otomatik Geri Sarma, Yavaşlatma vb.) kullanabilmek için Premium üyeliğe yükseltmeniz gerekmektedir."

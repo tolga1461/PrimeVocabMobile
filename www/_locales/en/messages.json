@@ -1386,7 +1386,7 @@
     "message": "Not scanned in subtitles because it is outside the free version limit (Last 20 words)."
   },
   "archive_inactive_badge_label": {
-    "message": "⚠️ Inactive in Subtitles"
+    "message": "⚠️"
   },
   "premium_smart_locked_desc": {
     "message": "You need to upgrade to Premium to use Smart Features (Shadowing, Auto Rewind, Slow Motion, etc.)."
