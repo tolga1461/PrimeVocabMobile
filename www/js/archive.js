@@ -594,14 +594,21 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     if (!scrollListenerAttached) {
         wordList.addEventListener('scroll', throttle(() => {
             updateVirtualScroll();
-            const currentScrollTop = wordList.scrollTop;
+
+            // Clamp scrollTop against overscroll (rubber-band): some browsers
+            // let scrollTop go negative or beyond maxScroll during momentum/pull,
+            // which causes lastScrollTop comparisons to flip direction repeatedly.
+            const maxScroll = Math.max(0, wordList.scrollHeight - wordList.clientHeight);
+            const currentScrollTop = Math.min(Math.max(0, wordList.scrollTop), maxScroll);
             
             if (isTogglingDetails) {
                 lastScrollTop = currentScrollTop;
                 return;
             }
             
-            const isNearBottom = (currentScrollTop + wordList.clientHeight >= wordList.scrollHeight - 50);
+            // Larger threshold (120px) keeps bar state stable before the very end,
+            // preventing isNearBottom from toggling rapidly as layout shifts.
+            const isNearBottom = (currentScrollTop + wordList.clientHeight >= wordList.scrollHeight - 120);
             
             // Auto-hiding header (Twitter style) toggling on .scrolled class
             const archivePanel = document.getElementById('panel-archive');
@@ -627,6 +634,8 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             }
             
             // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
+            // NOTE: !isNearBottom guard is applied to the "remove" branch too so that
+            // header and nav bar remain in sync and neither can toggle near the bottom.
             const appContainer = document.querySelector('.app');
             if (appContainer) {
                 if (currentScrollTop <= 10) {

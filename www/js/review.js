@@ -531,11 +531,13 @@ function attachSrsScrollListener() {
     if (!srsWordsList || !srsWordsOverlay || srsScrollListenerAttached) return;
 
     srsWordsList.addEventListener('scroll', srsThrottle(() => {
-        const currentScrollTop = srsWordsList.scrollTop;
+        // Clamp scrollTop against overscroll (rubber-band)
+        const maxSrsScroll = Math.max(0, srsWordsList.scrollHeight - srsWordsList.clientHeight);
+        const currentScrollTop = Math.min(Math.max(0, srsWordsList.scrollTop), maxSrsScroll);
         const appContainer = document.querySelector('.app');
         
         // Prevent scroll bounce / feedback loops on short pages
-        const scrollableHeight = srsWordsList.scrollHeight - srsWordsList.clientHeight;
+        const scrollableHeight = maxSrsScroll;
         if (scrollableHeight <= 100) {
             if (appContainer && appContainer.classList.contains('nav-hidden')) {
                 appContainer.classList.remove('nav-hidden');
@@ -547,13 +549,15 @@ function attachSrsScrollListener() {
             return;
         }
 
+        const isNearBottom = (currentScrollTop + srsWordsList.clientHeight >= srsWordsList.scrollHeight - 120);
+
         // Auto-hiding header (Twitter style) toggling on .scrolled class
         if (currentScrollTop <= 10) {
             if (srsHeaderCollapsed) {
                 srsWordsOverlay.classList.remove('scrolled');
                 srsHeaderCollapsed = false;
             }
-        } else if (Math.abs(currentScrollTop - srsLastScrollTop) > 8) {
+        } else if (!isNearBottom && Math.abs(currentScrollTop - srsLastScrollTop) > 8) {
             if (currentScrollTop > srsLastScrollTop && currentScrollTop > 40) {
                 if (!srsHeaderCollapsed) {
                     srsWordsOverlay.classList.add('scrolled');
@@ -568,14 +572,13 @@ function attachSrsScrollListener() {
         }
         
         // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
-        const isNearBottom = (currentScrollTop + srsWordsList.clientHeight >= srsWordsList.scrollHeight - 30);
         if (appContainer) {
             if (currentScrollTop <= 10) {
                 appContainer.classList.remove('nav-hidden');
-            } else if (Math.abs(currentScrollTop - srsLastScrollTop) > 8) {
+            } else if (!isNearBottom && Math.abs(currentScrollTop - srsLastScrollTop) > 8) {
                 if (currentScrollTop > srsLastScrollTop && currentScrollTop > 60) {
                     appContainer.classList.add('nav-hidden');
-                } else if (!isNearBottom) {
+                } else {
                     appContainer.classList.remove('nav-hidden');
                 }
             }
@@ -973,11 +976,13 @@ function attachReviewScrollListener() {
     if (!panelReview || reviewScrollListenerAttached) return;
 
     panelReview.addEventListener('scroll', srsThrottle(() => {
-        const currentScrollTop = panelReview.scrollTop;
+        // Clamp scrollTop against overscroll (rubber-band)
+        const maxReviewScroll = Math.max(0, panelReview.scrollHeight - panelReview.clientHeight);
+        const currentScrollTop = Math.min(Math.max(0, panelReview.scrollTop), maxReviewScroll);
         const appContainer = document.querySelector('.app');
         
         // Prevent scroll bounce / feedback loops on short pages
-        const scrollableHeight = panelReview.scrollHeight - panelReview.clientHeight;
+        const scrollableHeight = maxReviewScroll;
         if (scrollableHeight <= 100) {
             if (appContainer && appContainer.classList.contains('nav-hidden')) {
                 appContainer.classList.remove('nav-hidden');
@@ -985,15 +990,15 @@ function attachReviewScrollListener() {
             return;
         }
 
-        const isNearBottom = (currentScrollTop + panelReview.clientHeight >= panelReview.scrollHeight - 30);
+        const isNearBottom = (currentScrollTop + panelReview.clientHeight >= panelReview.scrollHeight - 120);
 
         if (appContainer) {
             if (currentScrollTop <= 10) {
                 appContainer.classList.remove('nav-hidden');
-            } else if (Math.abs(currentScrollTop - reviewLastScrollTop) > 8) {
+            } else if (!isNearBottom && Math.abs(currentScrollTop - reviewLastScrollTop) > 8) {
                 if (currentScrollTop > reviewLastScrollTop && currentScrollTop > 60) {
                     appContainer.classList.add('nav-hidden');
-                } else if (!isNearBottom) {
+                } else {
                     appContainer.classList.remove('nav-hidden');
                 }
             }
