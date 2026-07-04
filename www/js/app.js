@@ -145,10 +145,10 @@ function updateProfileUI() {
                 if (!tabAvatarRing) {
                     tabAvatarRing = document.createElement('div');
                     tabAvatarRing.className = 'tab-profile-avatar-ring';
-                    tabAvatarRing.style.cssText = 'width: 22px; height: 22px; border-radius: 50%; padding: 1.5px; margin-bottom: 2px; display: flex; align-items: center; justify-content: center;';
+                    tabAvatarRing.style.cssText = 'width: 26px; height: 26px; border-radius: 50%; padding: 1.5px; margin-bottom: 2px; display: flex; align-items: center; justify-content: center;';
                     tabAvatarInner = document.createElement('div');
                     tabAvatarInner.className = 'tab-profile-avatar-inner';
-                    tabAvatarInner.style.cssText = 'width: 100%; height: 100%; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg);';
+                    tabAvatarInner.style.cssText = 'width: 100%; height: 100%; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg); font-size: 14px;';
                     tabAvatarRing.appendChild(tabAvatarInner);
                     tabProfileBtn.insertBefore(tabAvatarRing, tabProfileBtn.firstChild);
                 }
