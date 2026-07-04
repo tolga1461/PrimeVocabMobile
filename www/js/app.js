@@ -122,6 +122,18 @@ function updateProfileUI() {
             }
         }
 
+        // Dynamically style the avatar ring for Premium/Free users
+        const avatarRing = document.querySelector('.profile-avatar-ring');
+        if (avatarRing) {
+            if (isPremium) {
+                avatarRing.style.background = 'linear-gradient(135deg, #f59e0b, #fbbf24)';
+                avatarRing.style.boxShadow = '0 0 20px rgba(251, 191, 36, 0.4)';
+            } else {
+                avatarRing.style.background = 'linear-gradient(135deg, #6366f1, #a855f7)';
+                avatarRing.style.boxShadow = '0 0 20px rgba(99, 102, 241, 0.3)';
+            }
+        }
+
         if (data.googleSyncEmail) {
             const displayUsername = data.googleSyncEmail.split('@')[0];
             
