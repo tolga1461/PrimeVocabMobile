@@ -132,24 +132,8 @@
       content: "👤";
     }
 
-    .tab-profile-avatar {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      margin: 0 auto 2px auto;
-    }
-    .tab-profile-avatar.premium {
-      border: 1.5px solid #fbbf24;
-      box-shadow: 0 0 5px rgba(251, 191, 36, 0.6);
-    }
-    .tab-profile-avatar.free {
-      border: 1.5px solid #6366f1;
-      box-shadow: 0 0 5px rgba(99, 102, 241, 0.6);
-    }
-    .tab-has-avatar::before {
-      display: none !important;
+    #tab-profile.has-avatar::before {
+      content: none !important;
     }
 
     .tab.active {
@@ -1218,10 +1202,10 @@
       align-items: center;
       text-align: center;
       position: sticky;
-      top: -16px;
-      z-index: 100;
+      top: 0;
+      z-index: 10;
       overflow: hidden;
-      margin-top: 0;
+      margin-top: 10px;
     }
 
     .profile-card::before {

@@ -134,16 +134,36 @@ function updateProfileUI() {
             }
         }
 
-        // Update Bottom Tab Bar Profile Icon dynamically
-        const tabProfile = document.getElementById('tab-profile');
-        if (tabProfile) {
+        // Tab-bar Profile Avatar Updates
+        const tabProfileBtn = document.getElementById('tab-profile');
+        if (tabProfileBtn) {
+            let tabAvatarRing = tabProfileBtn.querySelector('.tab-profile-avatar-ring');
+            let tabAvatarInner = tabProfileBtn.querySelector('.tab-profile-avatar-inner');
+            
             if (data.googleSyncEmail && data.googleSyncPicture) {
-                tabProfile.classList.add('tab-has-avatar');
-                const borderClass = isPremium ? 'premium' : 'free';
-                tabProfile.innerHTML = `<img src="${data.googleSyncPicture}" onerror="this.onerror=null; this.parentElement.classList.remove('tab-has-avatar'); this.outerHTML=''; " class="tab-profile-avatar ${borderClass}">${getMessage('tab_profile') || 'Profil'}`;
+                tabProfileBtn.classList.add('has-avatar');
+                if (!tabAvatarRing) {
+                    tabAvatarRing = document.createElement('div');
+                    tabAvatarRing.className = 'tab-profile-avatar-ring';
+                    tabAvatarRing.style.cssText = 'width: 22px; height: 22px; border-radius: 50%; padding: 1.5px; margin-bottom: 2px; display: flex; align-items: center; justify-content: center;';
+                    tabAvatarInner = document.createElement('div');
+                    tabAvatarInner.className = 'tab-profile-avatar-inner';
+                    tabAvatarInner.style.cssText = 'width: 100%; height: 100%; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg);';
+                    tabAvatarRing.appendChild(tabAvatarInner);
+                    tabProfileBtn.insertBefore(tabAvatarRing, tabProfileBtn.firstChild);
+                }
+                tabAvatarRing.style.display = 'flex';
+                if (isPremium) {
+                    tabAvatarRing.style.background = 'linear-gradient(135deg, #f59e0b, #fbbf24)';
+                } else {
+                    tabAvatarRing.style.background = 'linear-gradient(135deg, #6366f1, #a855f7)';
+                }
+                tabAvatarInner.innerHTML = `<img src="${data.googleSyncPicture}" onerror="this.onerror=null; this.outerHTML='👤';" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
-                tabProfile.classList.remove('tab-has-avatar');
-                tabProfile.innerHTML = getMessage('tab_profile') || 'Profil';
+                tabProfileBtn.classList.remove('has-avatar');
+                if (tabAvatarRing) {
+                    tabAvatarRing.style.display = 'none';
+                }
             }
         }
 
