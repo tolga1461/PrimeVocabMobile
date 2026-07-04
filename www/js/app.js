@@ -355,10 +355,10 @@ function loadProfileData() {
                         const desc = getMessage(ach.descKey) || '';
                         const badgeSpan = document.createElement('span');
                         badgeSpan.className = 'profile-achievement-badge';
-                        // Clean, modern CSS styling for achievement badges
-                        badgeSpan.style.cssText = 'font-size: 12px; font-weight:600; padding: 6px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: inline-flex; align-items:center; gap:6px; color:var(--text);';
+                        // Clean, modern CSS styling for square emoji achievement badges
+                        badgeSpan.style.cssText = 'font-size: 18px; width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: transform 0.2s ease;';
                         
-                        // Click handler to show description
+                        // Scale effect on active click
                         badgeSpan.addEventListener('click', () => {
                             if (typeof showToast === 'function') {
                                 showToast(`${title}: ${desc}`);
@@ -367,7 +367,7 @@ function loadProfileData() {
                             }
                         });
 
-                        badgeSpan.textContent = title; // Translation already contains the emoji
+                        badgeSpan.textContent = ach.emoji; // Render ONLY the emoji icon
                         badgesContainer.appendChild(badgeSpan);
                     }
                 });
