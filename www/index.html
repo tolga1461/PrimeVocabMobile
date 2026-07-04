@@ -1893,7 +1893,10 @@
     <!-- ── SÖZLÜK PANELİ ── -->
     <div class="panel active" id="panel-archive">
       <div id="archive-pull-to-refresh" class="pull-to-refresh">
-        <span class="ptr-icon">🔄</span>
+        <svg class="ptr-spinner" viewBox="0 0 24 24">
+          <circle class="ptr-spinner-bg" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.15"/>
+          <circle class="ptr-spinner-path" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5" fill="none"/>
+        </svg>
       </div>
 
       <!-- Sticky Search Header (Always visible at top of panel) -->

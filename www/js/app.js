@@ -865,23 +865,27 @@ initBottomSheetController();
 function initPullToRefresh() {
     const wordList = document.getElementById('word-list');
     const ptr = document.getElementById('archive-pull-to-refresh');
+    const panel = document.getElementById('panel-archive');
     if (!wordList || !ptr) return;
+
+    const spinnerPath = ptr.querySelector('.ptr-spinner-path');
+    const circumference = 62.8; // 2 * pi * r (r=10)
 
     let startY = 0;
     let isPulling = false;
     const triggerThreshold = 65; // Pull distance in px to trigger sync
-    const maxPullDistance = 90;
+    const maxPullDistance = 95;
 
     wordList.addEventListener('touchstart', (e) => {
         // Only trigger pull-to-refresh if scrolled to top
-        if (wordList.scrollTop <= 0) {
+        if (wordList.scrollTop <= 0 && !ptr.classList.contains('loading')) {
             startY = e.touches[0].screenY;
             isPulling = false;
         }
     }, { passive: true });
 
     wordList.addEventListener('touchmove', (e) => {
-        if (wordList.scrollTop > 0) return;
+        if (wordList.scrollTop > 0 || ptr.classList.contains('loading')) return;
 
         // Skip if search or filters are active
         const searchInput = document.getElementById('archive-search');
@@ -891,8 +895,8 @@ function initPullToRefresh() {
         const deltaY = currentY - startY;
 
         if (deltaY > 0) {
-            const pullDistance = Math.min(deltaY * 0.4, maxPullDistance); // Apply resistance
-            if (pullDistance > 10) {
+            const pullDistance = Math.min(deltaY * 0.45, maxPullDistance); // Apply resistance
+            if (pullDistance > 6) {
                 isPulling = true;
                 
                 // Prevent elastic scroll bounce on iOS/Android PWA
@@ -900,20 +904,30 @@ function initPullToRefresh() {
                     e.preventDefault();
                 }
 
+                if (panel) panel.classList.add('word-list-pulling');
                 ptr.classList.remove('loading');
                 ptr.classList.add('pulling');
-                ptr.style.setProperty('--ptr-translate', `${pullDistance}px`);
                 
-                // Rotate icon as user pulls
-                const rotation = pullDistance * 5;
-                ptr.style.setProperty('--ptr-rotation', `${rotation}deg`);
+                // Translate the spinner slightly slower than the list (parallax reveal)
+                const ptrTranslate = pullDistance * 0.75;
+                ptr.style.setProperty('--ptr-translate', `${ptrTranslate}px`);
+                
+                // Shift the word list down (accordion pull effect)
+                wordList.style.transform = `translateY(${pullDistance}px)`;
+
+                // Fill the SVG circle dynamically
+                if (spinnerPath) {
+                    const progress = Math.min(pullDistance / triggerThreshold, 1);
+                    const offset = circumference - (circumference * progress * 0.85);
+                    spinnerPath.style.strokeDashoffset = offset;
+                }
 
                 // Add visual indicator if reached threshold
                 if (pullDistance >= triggerThreshold) {
-                    ptr.style.transform = `translate(-50%, ${pullDistance}px) scale(1.15)`;
+                    ptr.style.transform = `translate(-50%, ${ptrTranslate}px) scale(1.15)`;
                     ptr.style.borderColor = 'var(--accent)';
                 } else {
-                    ptr.style.transform = `translate(-50%, ${pullDistance}px) scale(1)`;
+                    ptr.style.transform = `translate(-50%, ${ptrTranslate}px) scale(1)`;
                     ptr.style.borderColor = 'var(--border2)';
                 }
             }
@@ -924,18 +938,39 @@ function initPullToRefresh() {
         if (!isPulling) return;
         isPulling = false;
 
-        const currentTranslate = parseFloat(ptr.style.getPropertyValue('--ptr-translate') || '0');
+        if (panel) panel.classList.remove('word-list-pulling');
+
+        const ptrStyle = window.getComputedStyle(ptr);
+        const transformMatrix = ptrStyle.transform || ptrStyle.webkitTransform;
+        let currentTranslate = 0;
         
-        // Reset properties
+        // Parse translateY from transform matrix
+        if (transformMatrix && transformMatrix !== 'none') {
+            const values = transformMatrix.split('(')[1].split(')')[0].split(',');
+            if (values.length >= 6) {
+                // matrix(a, b, c, d, tx, ty) -> ty is index 5
+                currentTranslate = parseFloat(values[5]);
+            }
+        }
+
+        // Reset custom properties
         ptr.style.removeProperty('--ptr-translate');
-        ptr.style.removeProperty('--ptr-rotation');
         ptr.style.transform = '';
         ptr.style.borderColor = '';
 
-        if (currentTranslate >= triggerThreshold) {
-            // Trigger synchronization
+        // If pulled far enough, trigger loading state
+        // 48.75px is the mapped triggerThreshold (65px * 0.75 parallax factor)
+        if (currentTranslate >= 45) {
             ptr.classList.remove('pulling');
             ptr.classList.add('loading');
+            
+            // Keep word-list shifted down during loading
+            wordList.style.transform = 'translateY(55px)';
+            
+            // Keep the spinner path partially filled during loading rotation
+            if (spinnerPath) {
+                spinnerPath.style.strokeDashoffset = circumference * 0.3;
+            }
             
             try {
                 console.log("[PV-core] Pull-to-refresh triggered sync...");
@@ -956,9 +991,17 @@ function initPullToRefresh() {
                 }
             } finally {
                 ptr.classList.remove('loading');
+                wordList.style.transform = 'translateY(0)';
+                if (spinnerPath) {
+                    spinnerPath.style.strokeDashoffset = circumference;
+                }
             }
         } else {
             ptr.classList.remove('pulling');
+            wordList.style.transform = 'translateY(0)';
+            if (spinnerPath) {
+                spinnerPath.style.strokeDashoffset = circumference;
+            }
         }
     });
 }
