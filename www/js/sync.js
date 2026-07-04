@@ -121,13 +121,28 @@ function getGoogleAuthToken(interactive = false) {
     });
 }
 
-/**
- * Google hesabını bağlar (Hafif OAuth Akışı).
- * @returns {Promise<{email: string, picture: string}>}
- */
 async function connectGoogleAccount() {
     const token = await getGoogleAuthToken(true);
     const userInfo = await getGoogleUserInfo(token);
+
+    // Account Switch Detection: Clear local data silently if switching users
+    const lastEmail = localStorage.getItem('last_logged_sync_email') || '';
+    if (lastEmail && lastEmail.toLowerCase() !== userInfo.email.toLowerCase()) {
+        console.log(`[PV-Sync] Account switch detected: ${lastEmail} -> ${userInfo.email}. Clearing previous user local data.`);
+        await new Promise(resolve => {
+            chrome.storage.local.remove([
+                'savedWords',
+                'deletedWords',
+                'gameStats',
+                'achievements',
+                'srsStreakStats',
+                'lastGoogleSyncTime'
+            ], resolve);
+        });
+    }
+    
+    // Save current email as the last logged sync email
+    localStorage.setItem('last_logged_sync_email', userInfo.email);
 
     await new Promise(resolve =>
         chrome.storage.local.set({
