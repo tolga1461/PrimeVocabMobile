@@ -861,6 +861,110 @@ function initBottomSheetController() {
 // Initialize bottom sheet controller
 initBottomSheetController();
 
+// ── Pull-to-Refresh Controller for Dictionary (Archive) ──
+function initPullToRefresh() {
+    const wordList = document.getElementById('word-list');
+    const ptr = document.getElementById('archive-pull-to-refresh');
+    if (!wordList || !ptr) return;
+
+    let startY = 0;
+    let isPulling = false;
+    const triggerThreshold = 65; // Pull distance in px to trigger sync
+    const maxPullDistance = 90;
+
+    wordList.addEventListener('touchstart', (e) => {
+        // Only trigger pull-to-refresh if scrolled to top
+        if (wordList.scrollTop <= 0) {
+            startY = e.touches[0].screenY;
+            isPulling = false;
+        }
+    }, { passive: true });
+
+    wordList.addEventListener('touchmove', (e) => {
+        if (wordList.scrollTop > 0) return;
+
+        // Skip if search or filters are active
+        const searchInput = document.getElementById('archive-search');
+        if (searchInput && searchInput.value.trim().length > 0) return;
+
+        const currentY = e.touches[0].screenY;
+        const deltaY = currentY - startY;
+
+        if (deltaY > 0) {
+            const pullDistance = Math.min(deltaY * 0.4, maxPullDistance); // Apply resistance
+            if (pullDistance > 10) {
+                isPulling = true;
+                
+                // Prevent elastic scroll bounce on iOS/Android PWA
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+
+                ptr.classList.remove('loading');
+                ptr.classList.add('pulling');
+                ptr.style.setProperty('--ptr-translate', `${pullDistance}px`);
+                
+                // Rotate icon as user pulls
+                const rotation = pullDistance * 5;
+                ptr.style.setProperty('--ptr-rotation', `${rotation}deg`);
+
+                // Add visual indicator if reached threshold
+                if (pullDistance >= triggerThreshold) {
+                    ptr.style.transform = `translate(-50%, ${pullDistance}px) scale(1.15)`;
+                    ptr.style.borderColor = 'var(--accent)';
+                } else {
+                    ptr.style.transform = `translate(-50%, ${pullDistance}px) scale(1)`;
+                    ptr.style.borderColor = 'var(--border2)';
+                }
+            }
+        }
+    }, { passive: false });
+
+    wordList.addEventListener('touchend', async () => {
+        if (!isPulling) return;
+        isPulling = false;
+
+        const currentTranslate = parseFloat(ptr.style.getPropertyValue('--ptr-translate') || '0');
+        
+        // Reset properties
+        ptr.style.removeProperty('--ptr-translate');
+        ptr.style.removeProperty('--ptr-rotation');
+        ptr.style.transform = '';
+        ptr.style.borderColor = '';
+
+        if (currentTranslate >= triggerThreshold) {
+            // Trigger synchronization
+            ptr.classList.remove('pulling');
+            ptr.classList.add('loading');
+            
+            try {
+                console.log("[PV-core] Pull-to-refresh triggered sync...");
+                await performGoogleDriveSync(false);
+                console.log("[PV-core] Pull-to-refresh sync completed.");
+                showToast("Eşitleme tamamlandı!");
+                
+                // Reload list
+                if (typeof loadArchive === 'function') {
+                    loadArchive();
+                }
+            } catch (err) {
+                console.warn("[PV-core] Pull-to-refresh sync failed:", err);
+                if (err.message === "PREMIUM_REQUIRED") {
+                    showToast("Senkronizasyon için Premium lisansına sahip olmalısınız.");
+                } else {
+                    showToast("Eşitleme başarısız: " + err.message);
+                }
+            } finally {
+                ptr.classList.remove('loading');
+            }
+        } else {
+            ptr.classList.remove('pulling');
+        }
+    });
+}
+
+initPullToRefresh();
+
 // ── Automated Silent Synchronization Scheduler ──
 let silentSyncTimeout = null;
 function triggerSilentSync(immediate = false) {

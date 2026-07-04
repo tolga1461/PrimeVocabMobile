@@ -4375,3 +4375,48 @@ input:checked+.slider:before {
   border-radius: 4px;
   pointer-events: none;
 }
+
+#panel-archive {
+  position: relative;
+}
+
+/* ── Pull to Refresh ── */
+.pull-to-refresh {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translate(-50%, -60px) scale(0);
+  width: 38px;
+  height: 38px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  z-index: 1002;
+  transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.15s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+.pull-to-refresh.pulling {
+  opacity: 1;
+  transform: translate(-50%, var(--ptr-translate, 0px)) scale(1);
+  transition: none;
+}
+.pull-to-refresh.loading {
+  opacity: 1;
+  transform: translate(-50%, 65px) scale(1);
+  transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.15s ease;
+}
+.pull-to-refresh .ptr-icon {
+  font-size: 16px;
+  display: inline-block;
+  transform: rotate(var(--ptr-rotation, 0deg));
+  transition: none;
+  color: var(--accent);
+}
+.pull-to-refresh.loading .ptr-icon {
+  animation: spin 0.8s linear infinite;
+}
