@@ -337,6 +337,33 @@ function loadProfileData() {
         if (achievementsRatioEl) {
             achievementsRatioEl.textContent = `${earnedAchievements.length} / ${totalAchievementsCount}`;
         }
+
+        // Render achievement badges
+        const badgesContainer = document.getElementById('profile-achievements-badges');
+        if (badgesContainer) {
+            badgesContainer.innerHTML = '';
+            if (earnedAchievements.length === 0) {
+                badgesContainer.innerHTML = `<span style="font-size: 13px; color: var(--text-muted);" data-i18n="profile_no_achievements">Henüz başarım kazanılmadı.</span>`;
+                localizeHtml(); // Localize fallback text
+            } else {
+                earnedAchievements.forEach(id => {
+                    const ach = (typeof ACHIEVEMENTS !== 'undefined') 
+                        ? ACHIEVEMENTS.find(a => a.id === id) 
+                        : null;
+                    if (ach) {
+                        const title = getMessage(ach.titleKey) || ach.id;
+                        const desc = getMessage(ach.descKey) || '';
+                        const badgeSpan = document.createElement('span');
+                        badgeSpan.className = 'profile-achievement-badge';
+                        // Clean, modern CSS styling for achievement badges
+                        badgeSpan.style.cssText = 'font-size: 12px; font-weight:600; padding: 6px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: help; display: inline-flex; align-items:center; gap:6px; color:var(--text);';
+                        badgeSpan.title = `${title}: ${desc}`;
+                        badgeSpan.textContent = `${ach.emoji} ${title}`;
+                        badgesContainer.appendChild(badgeSpan);
+                    }
+                });
+            }
+        }
     });
 }
 
