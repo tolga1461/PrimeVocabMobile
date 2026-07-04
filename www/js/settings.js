@@ -762,9 +762,13 @@ if (resetSrsBtn) {
                     srsStreakStats.currentStreak = legacyMaxStreak;
                     srsStreakStats.lastStudyDate = new Date().toDateString();
                     srsStreakStats.bestStreak = Math.max(bestStreak || 0, legacyMaxStreak);
+                    srsStreakStats.timestamp = Date.now();
                     updates.srsStreakStats = srsStreakStats;
                 }
-                updates.savedWords = savedWords.map(w => { const { interval, easeFactor, nextReview, reviewCount, streak, firstReviewDate, againCount, hard, learned, ...rest } = w; return { ...rest, againCount: 0, hard: false }; });
+                updates.savedWords = savedWords.map(w => { 
+                    const { interval, easeFactor, nextReview, reviewCount, streak, firstReviewDate, againCount, hard, learned, ...rest } = w; 
+                    return { ...rest, againCount: 0, hard: false, timestamp: Date.now() }; 
+                });
                 chrome.storage.local.set(updates, () => { showToast(getMessage("settings_reset_srs_done")); updateReviewBadge(); });
             });
         }, "btn_confirm_reset", "game_btn_cancel");
@@ -775,11 +779,14 @@ if (resetStreakBtn) {
     resetStreakBtn.addEventListener('click', () => {
         showCustomConfirm("settings_reset_streak_confirm", () => {
             chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
-                const cleanedWords = savedWords.map(w => { if (w.streak !== undefined) {
-                    const { streak, ...rest } = w;
-                    return rest;
-                } return w; });
-                chrome.storage.local.set({ savedWords: cleanedWords, srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 } }, () => {
+                const cleanedWords = savedWords.map(w => { 
+                    if (w.streak !== undefined) {
+                        const { streak, ...rest } = w;
+                        return { ...rest, timestamp: Date.now() };
+                    } 
+                    return w; 
+                });
+                chrome.storage.local.set({ savedWords: cleanedWords, srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0, timestamp: Date.now() } }, () => {
                     showToast(getMessage("settings_reset_streak_done"));
                     const streakEl = document.getElementById('srs-streak-count');
                     if (streakEl)
@@ -798,7 +805,7 @@ const resetGamesBtn = document.getElementById('reset-games-btn');
 if (resetGamesBtn) {
     resetGamesBtn.addEventListener('click', () => {
         showCustomConfirm("settings_reset_games_confirm", () => {
-            chrome.storage.local.set({ gameStats: {}, achievements: {} }, () => {
+            chrome.storage.local.set({ gameStats: { timestamp: Date.now() }, achievements: { timestamp: Date.now() } }, () => {
                 showToast(getMessage("settings_reset_games_done"));
                 const expDisplay = document.getElementById('user-exp-display');
                 if (expDisplay)

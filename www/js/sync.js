@@ -338,76 +338,92 @@ function mergeSyncData(local, cloud, localSettings = {}) {
     // 2. Oyun İstatistiklerini Birleştir (Merge gameStats)
     const cStats = cloud.gameStats || {};
     const lStats = local.gameStats || {};
-    const statsKeys = new Set([...Object.keys(lStats), ...Object.keys(cStats)]);
-    statsKeys.forEach(k => {
-        if (typeof lStats[k] === 'number' && typeof cStats[k] === 'number') {
-            if (k === 'totalExp' || k === 'bestScore' || k.includes('highScore')) {
+    if (lStats.timestamp && (!cStats.timestamp || lStats.timestamp > cStats.timestamp)) {
+        merged.gameStats = { ...lStats };
+    } else if (cStats.timestamp && (!lStats.timestamp || cStats.timestamp > lStats.timestamp)) {
+        merged.gameStats = { ...cStats };
+    } else {
+        const statsKeys = new Set([...Object.keys(lStats), ...Object.keys(cStats)]);
+        statsKeys.forEach(k => {
+            if (k === 'timestamp') return;
+            if (typeof lStats[k] === 'number' && typeof cStats[k] === 'number') {
                 merged.gameStats[k] = Math.max(lStats[k], cStats[k]);
             } else {
-                merged.gameStats[k] = Math.max(lStats[k], cStats[k]);
+                merged.gameStats[k] = lStats[k] !== undefined ? lStats[k] : cStats[k];
             }
-        } else {
-            merged.gameStats[k] = lStats[k] !== undefined ? lStats[k] : cStats[k];
-        }
-    });
+        });
+    }
 
     // 3. Başarımları Birleştir (Merge achievements)
     const cAch = cloud.achievements || {};
     const lAch = local.achievements || {};
-    const achKeys = new Set([...Object.keys(lAch), ...Object.keys(cAch)]);
-    achKeys.forEach(k => {
-        merged.achievements[k] = lAch[k] || cAch[k];
-    });
+    if (lAch.timestamp && (!cAch.timestamp || lAch.timestamp > cAch.timestamp)) {
+        merged.achievements = { ...lAch };
+    } else if (cAch.timestamp && (!lAch.timestamp || cAch.timestamp > lAch.timestamp)) {
+        merged.achievements = { ...cAch };
+    } else {
+        const achKeys = new Set([...Object.keys(lAch), ...Object.keys(cAch)]);
+        achKeys.forEach(k => {
+            if (k === 'timestamp') return;
+            merged.achievements[k] = lAch[k] || cAch[k];
+        });
+    }
 
     // 4. Gün Serisini Birleştir (Merge Streaks)
     const cStreak = cloud.srsStreakStats || {};
     const lStreak = local.srsStreakStats || {};
 
-    const todayStr = new Date().toDateString();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toDateString();
+    if (lStreak.timestamp && (!cStreak.timestamp || lStreak.timestamp > cStreak.timestamp)) {
+        merged.srsStreakStats = { ...lStreak };
+    } else if (cStreak.timestamp && (!lStreak.timestamp || cStreak.timestamp > lStreak.timestamp)) {
+        merged.srsStreakStats = { ...cStreak };
+    } else {
+        const todayStr = new Date().toDateString();
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toDateString();
 
-    const isLActive = lStreak.lastStudyDate === todayStr || lStreak.lastStudyDate === yesterdayStr;
-    const isCActive = cStreak.lastStudyDate === todayStr || cStreak.lastStudyDate === yesterdayStr;
+        const isLActive = lStreak.lastStudyDate === todayStr || lStreak.lastStudyDate === yesterdayStr;
+        const isCActive = cStreak.lastStudyDate === todayStr || cStreak.lastStudyDate === yesterdayStr;
 
-    const activeLStreak = isLActive ? (lStreak.currentStreak || 0) : 0;
-    const activeCStreak = isCActive ? (cStreak.currentStreak || 0) : 0;
+        const activeLStreak = isLActive ? (lStreak.currentStreak || 0) : 0;
+        const activeCStreak = isCActive ? (cStreak.currentStreak || 0) : 0;
 
-    let mergedCurrentStreak = 0;
-    let mergedLastStudyDate = '';
+        let mergedCurrentStreak = 0;
+        let mergedLastStudyDate = '';
 
-    if (isLActive && isCActive) {
-        const lDate = new Date(lStreak.lastStudyDate);
-        const cDate = new Date(cStreak.lastStudyDate);
-        if (lDate > cDate) {
+        if (isLActive && isCActive) {
+            const lDate = new Date(lStreak.lastStudyDate);
+            const cDate = new Date(cStreak.lastStudyDate);
+            if (lDate > cDate) {
+                mergedCurrentStreak = activeLStreak;
+                mergedLastStudyDate = lStreak.lastStudyDate;
+            } else if (cDate > lDate) {
+                mergedCurrentStreak = activeCStreak;
+                mergedLastStudyDate = cStreak.lastStudyDate;
+            } else {
+                mergedCurrentStreak = Math.max(activeLStreak, activeCStreak);
+                mergedLastStudyDate = lStreak.lastStudyDate;
+            }
+        } else if (isLActive) {
             mergedCurrentStreak = activeLStreak;
             mergedLastStudyDate = lStreak.lastStudyDate;
-        } else if (cDate > lDate) {
+        } else if (isCActive) {
             mergedCurrentStreak = activeCStreak;
             mergedLastStudyDate = cStreak.lastStudyDate;
         } else {
-            mergedCurrentStreak = Math.max(activeLStreak, activeCStreak);
-            mergedLastStudyDate = lStreak.lastStudyDate;
+            mergedCurrentStreak = 0;
+            const lDate = lStreak.lastStudyDate ? new Date(lStreak.lastStudyDate) : new Date(0);
+            const cDate = cStreak.lastStudyDate ? new Date(cStreak.lastStudyDate) : new Date(0);
+            mergedLastStudyDate = lDate > cDate ? (lStreak.lastStudyDate || '') : (cStreak.lastStudyDate || lStreak.lastStudyDate || '');
         }
-    } else if (isLActive) {
-        mergedCurrentStreak = activeLStreak;
-        mergedLastStudyDate = lStreak.lastStudyDate;
-    } else if (isCActive) {
-        mergedCurrentStreak = activeCStreak;
-        mergedLastStudyDate = cStreak.lastStudyDate;
-    } else {
-        mergedCurrentStreak = 0;
-        const lDate = lStreak.lastStudyDate ? new Date(lStreak.lastStudyDate) : new Date(0);
-        const cDate = cStreak.lastStudyDate ? new Date(cStreak.lastStudyDate) : new Date(0);
-        mergedLastStudyDate = lDate > cDate ? (lStreak.lastStudyDate || '') : (cStreak.lastStudyDate || lStreak.lastStudyDate || '');
-    }
 
-    merged.srsStreakStats = {
-        currentStreak: mergedCurrentStreak,
-        bestStreak: Math.max(lStreak.bestStreak || 0, cStreak.bestStreak || 0),
-        lastStudyDate: mergedLastStudyDate
-    };
+        merged.srsStreakStats = {
+            currentStreak: mergedCurrentStreak,
+            bestStreak: Math.max(lStreak.bestStreak || 0, cStreak.bestStreak || 0),
+            lastStudyDate: mergedLastStudyDate
+        };
+    }
 
     // 5. SRS Ayarlarını Birleştir (Merge SRS settings)
     const cSrsSet = cloud.srsSettings || {};
