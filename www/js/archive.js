@@ -797,8 +797,11 @@ function updateVirtualScroll() {
 function bindVirtualItemEvents(div, item, virtualIndex) {
     // Touch swipe-to-delete implementation
     let startX = 0;
+    let startY = 0;
     let currentX = 0;
     let isSwiping = false;
+    let isScrolling = false;
+    let hasCheckedGesture = false;
     const swipeThreshold = -80; // pixels to reveal delete fully
     const swipeTriggerThreshold = -130; // pixels to trigger delete on release
 
@@ -806,13 +809,44 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
         // Skip touch handling if inside form input or buttons
         if (e.target.closest('button') || e.target.closest('input')) return;
         startX = e.touches[0].clientX;
-        isSwiping = true;
+        startY = e.touches[0].clientY;
+        isSwiping = false;
+        isScrolling = false;
+        hasCheckedGesture = false;
         div.style.transition = 'none';
     }, { passive: true });
 
     div.addEventListener('touchmove', (e) => {
+        if (isScrolling) return;
+
+        const touch = e.touches[0];
+        const diffX = touch.clientX - startX;
+        const diffY = touch.clientY - startY;
+
+        if (!hasCheckedGesture) {
+            const absX = Math.abs(diffX);
+            const absY = Math.abs(diffY);
+            // Must move at least 8 pixels to decide direction
+            if (absX > 8 || absY > 8) {
+                hasCheckedGesture = true;
+                if (absY > absX) {
+                    isScrolling = true;
+                    return;
+                } else {
+                    isSwiping = true;
+                }
+            } else {
+                return;
+            }
+        }
+
         if (!isSwiping) return;
-        const diffX = e.touches[0].clientX - startX;
+
+        // Prevent vertical scroll when swiping horizontally
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+
         // Only allow left swiping
         if (diffX < 0) {
             currentX = diffX;
@@ -834,8 +868,17 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
             if (swipeBg) {
                 swipeBg.style.opacity = Math.min(1, Math.abs(currentX) / 50);
             }
+        } else {
+            // Reset transforms if swiped right
+            currentX = 0;
+            const header = div.querySelector('.word-item-header');
+            const collapse = div.querySelector('.word-item-collapse-content');
+            const tags = div.querySelector('.word-item-tags');
+            if (header) header.style.transform = '';
+            if (collapse) collapse.style.transform = '';
+            if (tags) tags.style.transform = '';
         }
-    }, { passive: true });
+    }, { passive: false });
 
     div.addEventListener('touchend', (e) => {
         if (!isSwiping) return;
