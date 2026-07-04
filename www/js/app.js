@@ -877,6 +877,24 @@ function initPullToRefresh() {
     const triggerThreshold = 65; // Pull distance in px to trigger sync
     const maxPullDistance = 95;
 
+    function getGapBaseTop() {
+        const headerWrap = document.getElementById('archive-header-wrap');
+        if (panel && headerWrap) {
+            const panelRect = panel.getBoundingClientRect();
+            if (panel.classList.contains('scrolled')) {
+                const searchWrap = document.querySelector('.archive-sticky-search-wrap');
+                if (searchWrap) {
+                    const searchRect = searchWrap.getBoundingClientRect();
+                    return Math.round(searchRect.bottom - panelRect.top + 4);
+                }
+            } else {
+                const headerRect = headerWrap.getBoundingClientRect();
+                return Math.round(headerRect.bottom - panelRect.top + 4);
+            }
+        }
+        return panel && panel.classList.contains('scrolled') ? 95 : 270; // safe dynamic fallback
+    }
+
     wordList.addEventListener('touchstart', (e) => {
         // Only trigger pull-to-refresh if scrolled to top
         if (wordList.scrollTop <= 0 && !ptr.classList.contains('loading')) {
@@ -885,8 +903,7 @@ function initPullToRefresh() {
             lastPullDistance = 0;
 
             // Set initial top position
-            const baseTop = panel && panel.classList.contains('scrolled') ? 95 : 205;
-            ptr.style.top = `${baseTop}px`;
+            ptr.style.top = `${getGapBaseTop()}px`;
         }
     }, { passive: true });
 
@@ -913,8 +930,7 @@ function initPullToRefresh() {
 
                 if (panel) {
                     panel.classList.add('word-list-pulling');
-                    const baseTop = panel.classList.contains('scrolled') ? 95 : 205;
-                    ptr.style.top = `${baseTop}px`;
+                    ptr.style.top = `${getGapBaseTop()}px`;
                 }
                 ptr.classList.remove('loading');
                 ptr.classList.add('pulling');
@@ -965,8 +981,7 @@ function initPullToRefresh() {
             wordList.style.transform = 'translateY(65px)';
             
             // Center the loading spinner in the opened gap (14px from top baseTop)
-            const baseTop = panel && panel.classList.contains('scrolled') ? 95 : 205;
-            ptr.style.top = `${baseTop}px`;
+            ptr.style.top = `${getGapBaseTop()}px`;
             ptr.style.transform = 'translate(-50%, 14px) scale(1)';
             
             // Keep the spinner path partially filled during loading rotation
