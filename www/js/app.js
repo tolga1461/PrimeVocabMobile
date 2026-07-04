@@ -481,6 +481,17 @@ async function handleLogout() {
     showCustomConfirm(
         "Çıkış yapmak istediğinize emin misiniz? Yerel verileriniz korunacaktır.",
         async () => {
+            showToast(getMessage('profile_logging_out') || "Çıkış yapılıyor...");
+
+            // Silent sync before logout to secure local progress in cloud
+            try {
+                console.log("[PV-core] Performing silent sync before logout...");
+                await performGoogleDriveSync(false);
+                console.log("[PV-core] Silent sync before logout completed successfully.");
+            } catch (syncErr) {
+                console.warn("[PV-core] Silent sync before logout failed (offline or not premium), proceeding with logout:", syncErr);
+            }
+
             // Save the current logged-in email to last_logged_sync_email before clearing it
             await new Promise(resolve => {
                 chrome.storage.local.get({ googleSyncEmail: "" }, (data) => {
