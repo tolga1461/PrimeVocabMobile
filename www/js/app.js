@@ -397,6 +397,16 @@ async function handleLogin() {
 
 async function handleLogout() {
     if (confirm("Çıkış yapmak istediğinize emin misiniz? Yerel verileriniz korunacaktır.")) {
+        // Save the current logged-in email to last_logged_sync_email before clearing it
+        await new Promise(resolve => {
+            chrome.storage.local.get({ googleSyncEmail: "" }, (data) => {
+                if (data.googleSyncEmail) {
+                    localStorage.setItem('last_logged_sync_email', data.googleSyncEmail);
+                }
+                resolve();
+            });
+        });
+
         await clearGoogleAuthToken();
         await new Promise(resolve => {
             chrome.storage.local.remove([
@@ -486,6 +496,13 @@ function migrateLegacyStreakIfNeeded() {
 async function start() {
     console.log("[PV-core] start() PWA initiated");
     migrateLegacyStreakIfNeeded();
+    
+    // Sync current logged-in email to last_logged_sync_email on startup
+    chrome.storage.local.get({ googleSyncEmail: "" }, (data) => {
+        if (data.googleSyncEmail) {
+            localStorage.setItem('last_logged_sync_email', data.googleSyncEmail);
+        }
+    });
     
     await initI18n();
     localizeHtml();
