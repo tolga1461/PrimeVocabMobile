@@ -96,15 +96,15 @@ function showCustomConfirm(messageKey, onConfirm, okTextKey = "game_btn_quit", c
     const cancelBtn = document.getElementById('custom-confirm-cancel');
     activeConfirmCallback = onConfirm;
     if (!overlay || !msgEl || !okBtn || !cancelBtn) {
-        if (confirm(getMessage(messageKey) || "Emin misiniz?")) {
+        if (confirm(getMessage(messageKey) || messageKey)) {
             if (onConfirm)
                 onConfirm();
         }
         return;
     }
-    msgEl.textContent = getMessage(messageKey) || "Oyundan çıkmak istediğinize emin misiniz?";
-    okBtn.textContent = getMessage(okTextKey) || "Çık";
-    cancelBtn.textContent = getMessage(cancelTextKey) || "Vazgeç";
+    msgEl.textContent = getMessage(messageKey) || messageKey;
+    okBtn.textContent = getMessage(okTextKey) || okTextKey;
+    cancelBtn.textContent = getMessage(cancelTextKey) || cancelTextKey;
     overlay.style.display = 'flex';
 }
 // ── Oyun State & Hub ──────────────────────────────────────────────────────────
