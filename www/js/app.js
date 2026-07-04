@@ -140,7 +140,7 @@ function updateProfileUI() {
             if (data.googleSyncEmail && data.googleSyncPicture) {
                 tabProfile.classList.add('tab-has-avatar');
                 const borderClass = isPremium ? 'premium' : 'free';
-                tabProfile.innerHTML = `<img src="${data.googleSyncPicture}" onerror="this.onerror=null; this.outerHTML='👤';" class="tab-profile-avatar ${borderClass}">${getMessage('tab_profile') || 'Profil'}`;
+                tabProfile.innerHTML = `<img src="${data.googleSyncPicture}" onerror="this.onerror=null; this.parentElement.classList.remove('tab-has-avatar'); this.outerHTML=''; " class="tab-profile-avatar ${borderClass}">${getMessage('tab_profile') || 'Profil'}`;
             } else {
                 tabProfile.classList.remove('tab-has-avatar');
                 tabProfile.innerHTML = getMessage('tab_profile') || 'Profil';
