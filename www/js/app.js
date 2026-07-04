@@ -873,6 +873,7 @@ function initPullToRefresh() {
 
     let startY = 0;
     let isPulling = false;
+    let lastPullDistance = 0;
     const triggerThreshold = 65; // Pull distance in px to trigger sync
     const maxPullDistance = 95;
 
@@ -881,6 +882,7 @@ function initPullToRefresh() {
         if (wordList.scrollTop <= 0 && !ptr.classList.contains('loading')) {
             startY = e.touches[0].screenY;
             isPulling = false;
+            lastPullDistance = 0;
 
             // Set initial top position
             const baseTop = panel && panel.classList.contains('scrolled') ? 95 : 205;
@@ -902,6 +904,7 @@ function initPullToRefresh() {
             const pullDistance = Math.min(deltaY * 0.45, maxPullDistance); // Apply resistance
             if (pullDistance > 6) {
                 isPulling = true;
+                lastPullDistance = pullDistance;
                 
                 // Prevent elastic scroll bounce on iOS/Android PWA
                 if (e.cancelable) {
@@ -917,7 +920,7 @@ function initPullToRefresh() {
                 ptr.classList.add('pulling');
                 
                 // Translate the spinner slightly slower than the list (parallax reveal)
-                const ptrTranslate = pullDistance * 0.75;
+                const ptrTranslate = pullDistance * 0.35;
                 ptr.style.setProperty('--ptr-translate', `${ptrTranslate}px`);
                 
                 // Shift the word list down (accordion pull effect)
@@ -948,37 +951,23 @@ function initPullToRefresh() {
 
         if (panel) panel.classList.remove('word-list-pulling');
 
-        const ptrStyle = window.getComputedStyle(ptr);
-        const transformMatrix = ptrStyle.transform || ptrStyle.webkitTransform;
-        let currentTranslate = 0;
-        
-        // Parse translateY from transform matrix
-        if (transformMatrix && transformMatrix !== 'none') {
-            const values = transformMatrix.split('(')[1].split(')')[0].split(',');
-            if (values.length >= 6) {
-                // matrix(a, b, c, d, tx, ty) -> ty is index 5
-                currentTranslate = parseFloat(values[5]);
-            }
-        }
-
         // Reset custom transform properties
         ptr.style.removeProperty('--ptr-translate');
         ptr.style.transform = '';
         ptr.style.borderColor = '';
 
         // If pulled far enough, trigger loading state
-        // 48.75px is the mapped triggerThreshold (65px * 0.75 parallax factor)
-        if (currentTranslate >= 45) {
+        if (lastPullDistance >= triggerThreshold) {
             ptr.classList.remove('pulling');
             ptr.classList.add('loading');
             
-            // Keep word-list shifted down during loading
-            wordList.style.transform = 'translateY(55px)';
+            // Keep word-list shifted down during loading (65px gap)
+            wordList.style.transform = 'translateY(65px)';
             
-            // Center the loading spinner in the opened gap
+            // Center the loading spinner in the opened gap (14px from top baseTop)
             const baseTop = panel && panel.classList.contains('scrolled') ? 95 : 205;
             ptr.style.top = `${baseTop}px`;
-            ptr.style.transform = 'translate(-50%, 8px) scale(1)';
+            ptr.style.transform = 'translate(-50%, 14px) scale(1)';
             
             // Keep the spinner path partially filled during loading rotation
             if (spinnerPath) {
