@@ -143,7 +143,7 @@ function updateProfileUI() {
             // Sync user avatar
             if (avatarContainer) {
                 if (data.googleSyncPicture) {
-                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" style="width:100%; height:100%; object-fit:cover;">`;
+                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" onerror="this.onerror=null; this.outerHTML='👤';" style="width:100%; height:100%; object-fit:cover;">`;
                 } else {
                     avatarContainer.innerHTML = '👤';
                 }
@@ -157,7 +157,7 @@ function updateProfileUI() {
             if (settingsLogoutBtn) settingsLogoutBtn.style.display = 'block';
             if (settingsUserAvatar) {
                 if (data.googleSyncPicture) {
-                    settingsUserAvatar.innerHTML = `<img src="${data.googleSyncPicture}" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">`;
+                    settingsUserAvatar.innerHTML = `<img src="${data.googleSyncPicture}" onerror="this.onerror=null; this.outerHTML='👤';" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">`;
                 } else {
                     settingsUserAvatar.innerHTML = '👤';
                 }
