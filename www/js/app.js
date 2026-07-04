@@ -881,6 +881,10 @@ function initPullToRefresh() {
         if (wordList.scrollTop <= 0 && !ptr.classList.contains('loading')) {
             startY = e.touches[0].screenY;
             isPulling = false;
+
+            // Set initial top position
+            const baseTop = panel && panel.classList.contains('scrolled') ? 95 : 205;
+            ptr.style.top = `${baseTop}px`;
         }
     }, { passive: true });
 
@@ -904,7 +908,11 @@ function initPullToRefresh() {
                     e.preventDefault();
                 }
 
-                if (panel) panel.classList.add('word-list-pulling');
+                if (panel) {
+                    panel.classList.add('word-list-pulling');
+                    const baseTop = panel.classList.contains('scrolled') ? 95 : 205;
+                    ptr.style.top = `${baseTop}px`;
+                }
                 ptr.classList.remove('loading');
                 ptr.classList.add('pulling');
                 
@@ -953,7 +961,7 @@ function initPullToRefresh() {
             }
         }
 
-        // Reset custom properties
+        // Reset custom transform properties
         ptr.style.removeProperty('--ptr-translate');
         ptr.style.transform = '';
         ptr.style.borderColor = '';
@@ -966,6 +974,11 @@ function initPullToRefresh() {
             
             // Keep word-list shifted down during loading
             wordList.style.transform = 'translateY(55px)';
+            
+            // Center the loading spinner in the opened gap
+            const baseTop = panel && panel.classList.contains('scrolled') ? 95 : 205;
+            ptr.style.top = `${baseTop}px`;
+            ptr.style.transform = 'translate(-50%, 8px) scale(1)';
             
             // Keep the spinner path partially filled during loading rotation
             if (spinnerPath) {
@@ -991,6 +1004,7 @@ function initPullToRefresh() {
                 }
             } finally {
                 ptr.classList.remove('loading');
+                ptr.style.transform = '';
                 wordList.style.transform = 'translateY(0)';
                 if (spinnerPath) {
                     spinnerPath.style.strokeDashoffset = circumference;
