@@ -406,13 +406,13 @@ async function handleSyncNow() {
         
         loadProfileData(); // Reload statistics, word counts, and achievements
         updateProfileUI();
-        alert("Eşitleme tamamlandı!");
+        showToast("Eşitleme tamamlandı!");
     } catch (err) {
         console.error("[PV-core] Sync failed:", err);
         if (err.message === "PREMIUM_REQUIRED") {
-            alert("Senkronizasyonu kullanabilmek için Premium lisansına sahip olmalısınız.");
+            showToast("Senkronizasyonu kullanabilmek için Premium lisansına sahip olmalısınız.");
         } else {
-            alert("Senkronizasyon başarısız: " + err.message);
+            showToast("Senkronizasyon başarısız: " + err.message);
         }
     } finally {
         const syncNowBtn = document.getElementById('profile-sync-now-btn');
@@ -440,7 +440,7 @@ async function handleLogin() {
         });
     } catch (err) {
         console.error("[PV-core] Google login failed:", err);
-        alert("Giriş yapılamadı: " + err.message);
+        showToast("Giriş yapılamadı: " + err.message);
     }
 }
 
@@ -466,7 +466,7 @@ async function handleLogout() {
             ], resolve);
         });
         updateProfileUI();
-        alert("Çıkış yapıldı.");
+        showToast("Çıkış yapıldı.");
     }
 }
 
