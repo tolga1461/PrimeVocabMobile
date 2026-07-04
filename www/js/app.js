@@ -248,6 +248,7 @@ function switchMainTab(tabName) {
         }
     } else if (tabName === 'profile') {
         loadProfileData();
+        updateProfileUI();
     }
 }
 
@@ -378,7 +379,12 @@ async function handleLogin() {
         const userInfo = await connectGoogleAccount();
         console.log("[PV-core] Google user connected:", userInfo);
         
-        // Silent license validation immediately
+        // Update UI immediately after connecting (don't wait for license check)
+        updateProfileUI();
+        // Switch to profile tab so user sees their info
+        switchMainTab('profile');
+        
+        // Silent license validation
         chrome.runtime.sendMessage({ action: "api_check_license", email: userInfo.email }, () => {
             updateProfileUI();
             handleSyncNow(); // Attempt initial sync
@@ -500,6 +506,33 @@ async function start() {
     bindAuthButtons();
     updateProfileUI();
 
+    // ── Auto-complete login if OAuth redirect just happened ──
+    // oauth_callback.html stores the token then redirects back to index.html.
+    // On that reload, googleSyncEmail may not be saved yet. Fix it here.
+    const cachedToken = localStorage.getItem('google_sync_token');
+    const cachedExpires = localStorage.getItem('google_sync_token_expires');
+    const tokenValid = cachedToken && cachedExpires && parseInt(cachedExpires) > Date.now();
+    if (tokenValid) {
+        const savedEmail = localStorage.getItem('local_googleSyncEmail');
+        if (!savedEmail) {
+            // Token exists but email not saved → complete the login silently
+            console.log("[PV-core] Detected pending OAuth token, completing login...");
+            try {
+                const userInfo = await getGoogleUserInfo(cachedToken);
+                await new Promise(resolve =>
+                    chrome.storage.local.set({
+                        googleSyncEmail: userInfo.email,
+                        googleSyncPicture: userInfo.picture || ''
+                    }, resolve)
+                );
+                console.log("[PV-core] Auto-login complete:", userInfo.email);
+                updateProfileUI();
+            } catch (e) {
+                console.warn("[PV-core] Auto-login failed:", e);
+            }
+        }
+    }
+
     // Default load tab states (handles home screen shortcuts using query params)
     const urlParams = new URLSearchParams(window.location.search);
     const urlTab = urlParams.get('tab');
@@ -512,6 +545,7 @@ async function start() {
     }
     switchMainTab(initialTab);
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     start();
