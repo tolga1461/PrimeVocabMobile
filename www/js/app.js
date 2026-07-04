@@ -430,8 +430,14 @@ async function handleSyncNow() {
     try {
         const syncNowBtn = document.getElementById('profile-sync-now-btn');
         const settingsSyncNowBtn = document.getElementById('settings-sync-now-btn');
-        if (syncNowBtn) syncNowBtn.disabled = true;
-        if (settingsSyncNowBtn) settingsSyncNowBtn.disabled = true;
+        if (syncNowBtn) {
+            syncNowBtn.disabled = true;
+            syncNowBtn.classList.add('spinning');
+        }
+        if (settingsSyncNowBtn) {
+            settingsSyncNowBtn.disabled = true;
+            settingsSyncNowBtn.classList.add('spinning');
+        }
 
         console.log("[PV-core] Triggering Google Drive synchronization...");
         const result = await performGoogleDriveSync(true);
@@ -450,8 +456,14 @@ async function handleSyncNow() {
     } finally {
         const syncNowBtn = document.getElementById('profile-sync-now-btn');
         const settingsSyncNowBtn = document.getElementById('settings-sync-now-btn');
-        if (syncNowBtn) syncNowBtn.disabled = false;
-        if (settingsSyncNowBtn) settingsSyncNowBtn.disabled = false;
+        if (syncNowBtn) {
+            syncNowBtn.disabled = false;
+            syncNowBtn.classList.remove('spinning');
+        }
+        if (settingsSyncNowBtn) {
+            settingsSyncNowBtn.disabled = false;
+            settingsSyncNowBtn.classList.remove('spinning');
+        }
     }
 }
 
@@ -659,6 +671,9 @@ async function start() {
         initialTab = sessionStorage.getItem('activeMainTab') || 'archive';
     }
     switchMainTab(initialTab);
+    
+    // Auto-sync immediately on startup if logged in
+    triggerSilentSync(true);
 }
 
 
@@ -848,12 +863,13 @@ initBottomSheetController();
 
 // ── Automated Silent Synchronization Scheduler ──
 let silentSyncTimeout = null;
-function triggerSilentSync() {
+function triggerSilentSync(immediate = false) {
     chrome.storage.local.get({ googleSyncEmail: "", googleSyncEnabled: false }, (data) => {
         if (!data.googleSyncEmail) return; // Skip if not logged in
 
         if (silentSyncTimeout) clearTimeout(silentSyncTimeout);
-        silentSyncTimeout = setTimeout(async () => {
+
+        const performSync = async () => {
             try {
                 console.log("[PV-core] Triggering automated silent sync...");
                 await performGoogleDriveSync(false);
@@ -861,7 +877,13 @@ function triggerSilentSync() {
             } catch (err) {
                 console.warn("[PV-core] Automated silent sync failed:", err);
             }
-        }, 5000); // 5 seconds debounce
+        };
+
+        if (immediate) {
+            performSync();
+        } else {
+            silentSyncTimeout = setTimeout(performSync, 5000); // 5 seconds debounce
+        }
     });
 }
 
@@ -870,7 +892,7 @@ if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App
     window.Capacitor.Plugins.App.addListener('appStateChange', (state) => {
         if (state.isActive) {
             console.log("[PV-core] App state active, triggering sync...");
-            triggerSilentSync();
+            triggerSilentSync(true);
         }
     });
 }
@@ -878,6 +900,14 @@ if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App
 // Auto-sync when web/PWA window gains focus (Web resume)
 window.addEventListener('focus', () => {
     console.log("[PV-core] Window focused, triggering sync...");
-    triggerSilentSync();
+    triggerSilentSync(true);
+});
+
+// Auto-sync when web/PWA visibility changes to visible
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        console.log("[PV-core] Visibility state visible, triggering sync...");
+        triggerSilentSync(true);
+    }
 });
 
