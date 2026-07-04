@@ -356,9 +356,18 @@ function loadProfileData() {
                         const badgeSpan = document.createElement('span');
                         badgeSpan.className = 'profile-achievement-badge';
                         // Clean, modern CSS styling for achievement badges
-                        badgeSpan.style.cssText = 'font-size: 12px; font-weight:600; padding: 6px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: help; display: inline-flex; align-items:center; gap:6px; color:var(--text);';
-                        badgeSpan.title = `${title}: ${desc}`;
-                        badgeSpan.textContent = `${ach.emoji} ${title}`;
+                        badgeSpan.style.cssText = 'font-size: 12px; font-weight:600; padding: 6px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; display: inline-flex; align-items:center; gap:6px; color:var(--text);';
+                        
+                        // Click handler to show description
+                        badgeSpan.addEventListener('click', () => {
+                            if (typeof showToast === 'function') {
+                                showToast(`${title}: ${desc}`);
+                            } else {
+                                alert(`${title}: ${desc}`);
+                            }
+                        });
+
+                        badgeSpan.textContent = title; // Translation already contains the emoji
                         badgesContainer.appendChild(badgeSpan);
                     }
                 });
