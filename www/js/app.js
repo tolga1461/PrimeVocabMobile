@@ -404,6 +404,7 @@ async function handleSyncNow() {
         const result = await performGoogleDriveSync(true);
         console.log("[PV-core] Synchronization successful!", result);
         
+        loadProfileData(); // Reload statistics, word counts, and achievements
         updateProfileUI();
         alert("Eşitleme tamamlandı!");
     } catch (err) {
@@ -620,7 +621,16 @@ document.addEventListener('DOMContentLoaded', () => {
 chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local') {
         if (changes.licenseType || changes.googleSyncEmail || changes.googleSyncPicture || changes.isPremium) {
+            loadProfileData(); // Ensure stats and badges reload
             updateProfileUI();
+        }
+
+        // Reload profile data dynamically if achievements/stats change while on profile tab
+        if (changes.achievements || changes.gameStats || changes.srsStreakStats || changes.savedWords) {
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab && activeTab.dataset.tab === 'profile') {
+                loadProfileData();
+            }
         }
 
         if (changes.savedWords || changes.isPremium) {
