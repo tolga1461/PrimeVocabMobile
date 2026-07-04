@@ -675,10 +675,16 @@ chrome.storage.onChanged.addListener((changes, area) => {
         }
 
         // Reload profile data dynamically if achievements/stats change while on profile tab
-        if (changes.achievements || changes.gameStats || changes.srsStreakStats || changes.savedWords) {
+        if (changes.achievements || changes.gameStats || changes.srsStreakStats || changes.savedWords || changes.deletedWords) {
             const activeTab = document.querySelector('.tab.active');
             if (activeTab && activeTab.dataset.tab === 'profile') {
                 loadProfileData();
+            }
+
+            // Centralized silent sync trigger on local user modifications (ignoring background sync changes)
+            if (!window.isSyncInProgress) {
+                console.log("[PV-core] Local database change detected (user action). Scheduling silent sync...");
+                triggerSilentSync();
             }
         }
 
@@ -839,4 +845,39 @@ function initBottomSheetController() {
 
 // Initialize bottom sheet controller
 initBottomSheetController();
+
+// ── Automated Silent Synchronization Scheduler ──
+let silentSyncTimeout = null;
+function triggerSilentSync() {
+    chrome.storage.local.get({ googleSyncEmail: "", googleSyncEnabled: false }, (data) => {
+        if (!data.googleSyncEmail) return; // Skip if not logged in
+
+        if (silentSyncTimeout) clearTimeout(silentSyncTimeout);
+        silentSyncTimeout = setTimeout(async () => {
+            try {
+                console.log("[PV-core] Triggering automated silent sync...");
+                await performGoogleDriveSync(false);
+                console.log("[PV-core] Automated silent sync completed successfully.");
+            } catch (err) {
+                console.warn("[PV-core] Automated silent sync failed:", err);
+            }
+        }, 5000); // 5 seconds debounce
+    });
+}
+
+// Auto-sync when app comes from background to foreground (Mobile app resume)
+if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+    window.Capacitor.Plugins.App.addListener('appStateChange', (state) => {
+        if (state.isActive) {
+            console.log("[PV-core] App state active, triggering sync...");
+            triggerSilentSync();
+        }
+    });
+}
+
+// Auto-sync when web/PWA window gains focus (Web resume)
+window.addEventListener('focus', () => {
+    console.log("[PV-core] Window focused, triggering sync...");
+    triggerSilentSync();
+});
 

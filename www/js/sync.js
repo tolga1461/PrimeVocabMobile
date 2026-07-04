@@ -502,117 +502,122 @@ function mergeSyncData(local, cloud, localSettings = {}) {
  * @returns {Promise<object>} Eşitlenmiş veritabanı paketi (Synchronized data package)
  */
 async function performGoogleDriveSync(interactive = false) {
-    const token = await getGoogleAuthToken(interactive);
-    const userInfo = await getGoogleUserInfo(token);
-    const email = userInfo.email;
-    const picture = userInfo.picture;
+    window.isSyncInProgress = true;
+    try {
+        const token = await getGoogleAuthToken(interactive);
+        const userInfo = await getGoogleUserInfo(token);
+        const email = userInfo.email;
+        const picture = userInfo.picture;
 
-    // Check license using local polyfilled message or directly
-    const licenseRes = await new Promise(resolve => {
-        chrome.runtime.sendMessage({ action: "api_check_license", email: email }, resolve);
-    });
+        // Check license using local polyfilled message or directly
+        const licenseRes = await new Promise(resolve => {
+            chrome.runtime.sendMessage({ action: "api_check_license", email: email }, resolve);
+        });
 
-    const localLic = await new Promise(resolve => {
-        chrome.storage.local.get({ licenseType: 'FREE', isPremium: false }, resolve);
-    });
+        const localLic = await new Promise(resolve => {
+            chrome.storage.local.get({ licenseType: 'FREE', isPremium: false }, resolve);
+        });
 
-    const isDriveAllowed = localLic.isPremium === true || localLic.licenseType !== 'FREE';
-    if (!isDriveAllowed) {
+        const isDriveAllowed = localLic.isPremium === true || localLic.licenseType !== 'FREE';
+        if (!isDriveAllowed) {
+            await new Promise(resolve => {
+                chrome.storage.local.set({ googleSyncEmail: email, googleSyncPicture: picture }, resolve);
+            });
+
+            // ── Tek Seferlik Geri Yükleme (One-time Restore) ──
+            const currentLocal = await new Promise(resolve => {
+                chrome.storage.local.get({ savedWords: [], lastGoogleSyncTime: 0 }, resolve);
+            });
+            const hasLocalWords = currentLocal.savedWords && currentLocal.savedWords.length > 0;
+            const hasEverSynced = !!currentLocal.lastGoogleSyncTime;
+
+            if (!hasLocalWords && !hasEverSynced) {
+                try {
+                    const restoreFileId = await findSyncFile(token);
+                    if (restoreFileId) {
+                        const cloudData = await downloadSyncFile(token, restoreFileId);
+                        if (cloudData && cloudData.savedWords && cloudData.savedWords.length > 0) {
+                            await new Promise(resolve => {
+                                chrome.storage.local.set({
+                                    savedWords:      cloudData.savedWords      || [],
+                                    deletedWords:    cloudData.deletedWords    || [],
+                                    gameStats:       cloudData.gameStats       || {},
+                                    achievements:    cloudData.achievements    || {},
+                                    srsStreakStats:  cloudData.srsStreakStats  || { currentStreak: 0, lastStudyDate: '', bestStreak: 0 },
+                                    srsSettings:     cloudData.srsSettings    || { newLimit: 10, sessionLimit: 20 },
+                                    onboardingCompleted: !!(cloudData.onboardingCompleted),
+                                }, resolve);
+                            });
+                            console.log(`[PV-Sync] One-time restore: ${cloudData.savedWords.length} kelime geri yüklendi.`);
+                        }
+                    }
+                } catch (restoreErr) {
+                    console.warn('[PV-Sync] One-time restore başarısız:', restoreErr);
+                }
+            }
+
+            throw new Error("PREMIUM_REQUIRED");
+        }
+
         await new Promise(resolve => {
             chrome.storage.local.set({ googleSyncEmail: email, googleSyncPicture: picture }, resolve);
         });
 
-        // ── Tek Seferlik Geri Yükleme (One-time Restore) ──
-        const currentLocal = await new Promise(resolve => {
-            chrome.storage.local.get({ savedWords: [], lastGoogleSyncTime: 0 }, resolve);
+        const localData = await new Promise(resolve => {
+            chrome.storage.local.get({
+                savedWords: [],
+                deletedWords: [],
+                gameStats: {},
+                achievements: {},
+                srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 },
+                srsSettings: { newLimit: 10, sessionLimit: 20 },
+                shortcuts: SYNC_DEFAULT_SHORTCUTS,
+                onboardingCompleted: false,
+                lastGoogleSyncTime: 0
+            }, resolve);
         });
-        const hasLocalWords = currentLocal.savedWords && currentLocal.savedWords.length > 0;
-        const hasEverSynced = !!currentLocal.lastGoogleSyncTime;
 
-        if (!hasLocalWords && !hasEverSynced) {
+        const syncSettingsData = await new Promise(resolve => {
+            chrome.storage.sync.get({ settings: {} }, resolve);
+        });
+        const localSettings = syncSettingsData.settings || {};
+
+        const fileId = await findSyncFile(token);
+        let cloudData = { savedWords: [], deletedWords: [], gameStats: {}, achievements: {} };
+        if (fileId) {
             try {
-                const restoreFileId = await findSyncFile(token);
-                if (restoreFileId) {
-                    const cloudData = await downloadSyncFile(token, restoreFileId);
-                    if (cloudData && cloudData.savedWords && cloudData.savedWords.length > 0) {
-                        await new Promise(resolve => {
-                            chrome.storage.local.set({
-                                savedWords:      cloudData.savedWords      || [],
-                                deletedWords:    cloudData.deletedWords    || [],
-                                gameStats:       cloudData.gameStats       || {},
-                                achievements:    cloudData.achievements    || {},
-                                srsStreakStats:  cloudData.srsStreakStats  || { currentStreak: 0, lastStudyDate: '', bestStreak: 0 },
-                                srsSettings:     cloudData.srsSettings    || { newLimit: 10, sessionLimit: 20 },
-                                onboardingCompleted: !!(cloudData.onboardingCompleted),
-                            }, resolve);
-                        });
-                        console.log(`[PV-Sync] One-time restore: ${cloudData.savedWords.length} kelime geri yüklendi.`);
-                    }
-                }
-            } catch (restoreErr) {
-                console.warn('[PV-Sync] One-time restore başarısız:', restoreErr);
+                cloudData = await downloadSyncFile(token, fileId);
+            } catch (e) {
+                console.error("[PV-Sync] Failed to download cloud file, using empty default", e);
             }
         }
 
-        throw new Error("PREMIUM_REQUIRED");
+        const mergedData = mergeSyncData(localData, cloudData, localSettings);
+
+        await new Promise(resolve => {
+            chrome.storage.local.set({
+                savedWords: mergedData.savedWords,
+                deletedWords: mergedData.deletedWords || [],
+                gameStats: mergedData.gameStats,
+                achievements: mergedData.achievements,
+                srsStreakStats: mergedData.srsStreakStats,
+                srsSettings: mergedData.srsSettings,
+                shortcuts: mergedData.shortcuts,
+                onboardingCompleted: mergedData.onboardingCompleted,
+                lastGoogleSyncTime: Date.now(),
+                googleSyncEmail: email,
+                googleSyncPicture: picture
+            }, resolve);
+        });
+
+        await new Promise(resolve => {
+            chrome.storage.sync.set({ settings: mergedData.settings }, resolve);
+        });
+
+        await uploadSyncFile(token, fileId, mergedData);
+
+        return { email, picture, totalWords: mergedData.savedWords.length, settings: mergedData.settings };
+    } finally {
+        window.isSyncInProgress = false;
     }
-
-    await new Promise(resolve => {
-        chrome.storage.local.set({ googleSyncEmail: email, googleSyncPicture: picture }, resolve);
-    });
-
-    const localData = await new Promise(resolve => {
-        chrome.storage.local.get({
-            savedWords: [],
-            deletedWords: [],
-            gameStats: {},
-            achievements: {},
-            srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0 },
-            srsSettings: { newLimit: 10, sessionLimit: 20 },
-            shortcuts: SYNC_DEFAULT_SHORTCUTS,
-            onboardingCompleted: false,
-            lastGoogleSyncTime: 0
-        }, resolve);
-    });
-
-    const syncSettingsData = await new Promise(resolve => {
-        chrome.storage.sync.get({ settings: {} }, resolve);
-    });
-    const localSettings = syncSettingsData.settings || {};
-
-    const fileId = await findSyncFile(token);
-    let cloudData = { savedWords: [], deletedWords: [], gameStats: {}, achievements: {} };
-    if (fileId) {
-        try {
-            cloudData = await downloadSyncFile(token, fileId);
-        } catch (e) {
-            console.error("[PV-Sync] Failed to download cloud file, using empty default", e);
-        }
-    }
-
-    const mergedData = mergeSyncData(localData, cloudData, localSettings);
-
-    await new Promise(resolve => {
-        chrome.storage.local.set({
-            savedWords: mergedData.savedWords,
-            deletedWords: mergedData.deletedWords || [],
-            gameStats: mergedData.gameStats,
-            achievements: mergedData.achievements,
-            srsStreakStats: mergedData.srsStreakStats,
-            srsSettings: mergedData.srsSettings,
-            shortcuts: mergedData.shortcuts,
-            onboardingCompleted: mergedData.onboardingCompleted,
-            lastGoogleSyncTime: Date.now(),
-            googleSyncEmail: email,
-            googleSyncPicture: picture
-        }, resolve);
-    });
-
-    await new Promise(resolve => {
-        chrome.storage.sync.set({ settings: mergedData.settings }, resolve);
-    });
-
-    await uploadSyncFile(token, fileId, mergedData);
-
-    return { email, picture, totalWords: mergedData.savedWords.length, settings: mergedData.settings };
 }
