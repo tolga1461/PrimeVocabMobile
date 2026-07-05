@@ -6,7 +6,7 @@
 // Varsayılan Yapılandırma (Build veya Ayarlar panelinden ezilebilir)
 var PV_CONFIG = {
   // Canlı GAS Web App URL'nizi buraya yerleştirin
-  apiUrl: "https://script.google.com/macros/s/AKfycbyeemo366iczUJ9qn0xBxlJ7nEStcDHTIG4hTzdy8ya7JXuFKgXhGFw7DWkSrE1HrSfIQ/exec", 
+  apiUrl: "https://script.google.com/macros/s/AKfycbzUWUy2Of_YPAtr8WgKzxP6bb1Jel4PQhr6aQSCWd6fh45uDLjS2zOcu_HP1HrWzoBTWg/exec", 
   // Sunucu tarafındaki API_SECRET ile birebir eşleşmelidir
   apiSecret: "PV_SECRET_SECURE_TOKEN_2026" 
 };
