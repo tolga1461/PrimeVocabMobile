@@ -13,6 +13,22 @@
   -webkit-focus-ring-color: transparent !important;
 }
 
+/* Dokunma / Tıklama Geri Bildirimi (Active Feedback) */
+.toolbar-btn:active,
+.tab:active,
+.filter-chip:active,
+.bottom-sheet-trigger:active,
+.bottom-sheet-option:active,
+.setting-btn:active,
+.save-btn:active,
+.close-card:active,
+.fc-close:active,
+.time-badge:active {
+  transform: scale(0.95) !important;
+  opacity: 0.85;
+  transition: transform 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.08s ease;
+}
+
 :root {
   --bg: #0a0f1e;
   --surface: #111827;
