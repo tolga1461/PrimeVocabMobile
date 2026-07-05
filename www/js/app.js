@@ -563,12 +563,14 @@ async function handleLogin() {
         // Silent license validation
         chrome.runtime.sendMessage({ action: "api_check_license", email: userInfo.email }, (res) => {
             const apiData = (res && res.success && res.data) ? res.data : null;
-            chrome.storage.local.get({ isPremium: false, licenseType: 'FREE', licenseStatus: 'FREE_USER' }, async (licData) => {
-                const isPremium = apiData ? (apiData.isPremium === true || apiData.licenseType !== 'FREE') : (licData.isPremium === true || licData.licenseType !== 'FREE');
+            chrome.storage.local.get({ licenseType: 'FREE', licenseStatus: 'FREE_USER' }, async (licData) => {
+                const licenseType = apiData ? apiData.licenseType : licData.licenseType;
                 const status = apiData ? apiData.status : licData.licenseStatus;
                 
+                const isPremium = ["MONTHLY", "YEARLY", "LIFETIME"].includes(String(licenseType).toUpperCase().trim());
+                
                 if (!isPremium) {
-                    console.log("[PV-core] Non-premium user login blocked on mobile. Status:", status);
+                    console.log("[PV-core] Non-premium user login blocked on mobile. Status:", status, "Type:", licenseType);
                     await forceLogoutWithoutConfirm();
                     showPremiumBlockerModal(userInfo.email, status === "NOT_FOUND");
                 } else {
