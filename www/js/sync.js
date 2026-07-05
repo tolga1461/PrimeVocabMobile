@@ -114,7 +114,7 @@ function getGoogleAuthToken(interactive = false) {
             reject(err);
         };
         if (oauthTokenClient) {
-            oauthTokenClient.requestAccessToken({ prompt: 'consent' });
+            oauthTokenClient.requestAccessToken({ prompt: '' });
         } else {
             reject(new Error("Google Identity Services client is not initialized. Please verify GOOGLE_CLIENT_ID in config.js"));
         }

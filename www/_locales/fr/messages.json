@@ -525,7 +525,7 @@
     "message": "Langue de l'extension"
   },
   "settings_lang_auto": {
-    "message": "Automatique (par défaut)"
+    "message": "Automatique (Langue du système)"
   },
   "settings_color_title": {
     "message": "Couleur de traduction :"
@@ -1534,5 +1534,89 @@
   },
   "srs_last_interval": {
     "message": "Dernier intervalle: $1"
+  },
+  "settings_delete_confirm_label": {
+    "message": "Confirmation de suppression"
+  },
+  "settings_delete_confirm_sublabel": {
+    "message": "Afficher un avertissement de confirmation lors de la suppression de mots"
+  },
+  "settings_about_label": {
+    "message": "À propos de PrimeVocab"
+  },
+  "settings_about_sublabel": {
+    "message": "Version de l'application, développeur et détails"
+  },
+  "info_settings_title": {
+    "message": "⚙️ Guide des paramètres"
+  },
+  "info_settings_desc": {
+    "message": "Vous pouvez modifier la langue de l'application, la taille de la police, les sons et les avertissements de confirmation.\n\nGestion des données: Exportez vos mots vers Anki ou sauvegardez/restaurez vos données.\n\nZone de danger: Réinitialisez l'historique SRS ou toutes les données de l'application."
+  },
+  "info_profile_title": {
+    "message": "👤 Guide du profil"
+  },
+  "info_profile_desc": {
+    "message": "Maintenez votre série quotidienne (Streak 🔥) en révisant au moins un mot chaque jour.\n\nEXP & Niveau: Gagnez de l'XP et montez en niveau en révisant et en jouant à des jeux.\n\nSynchronisation Cloud: Connectez-vous avec votre compte Google pour sauvegarder et synchroniser toutes vos données en toute sécurité dans le cloud."
+  },
+  "info_btn_about": {
+    "message": "À propos de PrimeVocab"
+  },
+  "info_btn_back": {
+    "message": "↩️ Retourner"
+  },
+  "archive_btn_review_title": {
+    "message": "Réviser les mots / Étudier les cartes"
+  },
+  "archive_btn_review": {
+    "message": "Réviser"
+  },
+  "archive_btn_refresh_title": {
+    "message": "Mettre à jour les données racine"
+  },
+  "archive_btn_refresh": {
+    "message": "Actualiser"
+  },
+  "archive_btn_clear_title": {
+    "message": "Supprimer tous les mots"
+  },
+  "archive_btn_clear": {
+    "message": "Effacer"
+  },
+  "profile_logout_confirm": {
+    "message": "Êtes-vous sûr de vouloir vous déconnecter? Vos données locales seront conservées."
+  },
+  "profile_logout_btn": {
+    "message": "Se déconnecter"
+  },
+  "profile_logged_out_toast": {
+    "message": "Déconnecté."
+  },
+  "info_archive_title": {
+    "message": "📚 Bibliothèque de mots"
+  },
+  "info_archive_desc": {
+    "message": "Vous pouvez rechercher des mots, utiliser les boutons de regroupement par racine (📚), afficher/masquer les tags (🏷️) et développer les détails (↕️). Utilisez le bouton 'Réviser' (🃏) pour ajouter des mots à la liste de répétition espacée et démarrer une session d'étude rapide."
+  },
+  "info_review_title": {
+    "message": "⚡ Étude & Jeux"
+  },
+  "info_review_desc": {
+    "message": "Pratique (SRS): Évaluez les cartes selon votre niveau de rappel. L'algorithme ajuste automatiquement le prochain intervalle d'étude.\n\nJeux (🎮): Renforcez les mots avec des jeux de choix multiples, textes à trous, mots mêlés, association et dictée.\n\nSuccès (🏆): À mesure que vous gagnez des points, votre niveau augmente et vous obtenez des badges."
+  },
+  "premium_connect_function_missing": {
+    "message": "Fonction de connexion introuvable."
+  },
+  "premium_connect_success": {
+    "message": "✅ $1 connecté! Redirection..."
+  },
+  "sync_success": {
+    "message": "Synchronisation terminée!"
+  },
+  "sync_premium_required": {
+    "message": "Vous devez disposer d'une licence Premium pour utiliser la synchronisation."
+  },
+  "sync_failed": {
+    "message": "Échec de la synchronisation: $1"
   }
 }

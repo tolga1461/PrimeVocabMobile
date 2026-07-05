@@ -537,7 +537,7 @@
     "message": "Eklenti Dili"
   },
   "settings_lang_auto": {
-    "message": "Otomatik (Tarayıcı Dili)"
+    "message": "Otomatik (Cihaz Dili)"
   },
   "settings_color_title": {
     "message": "Çeviri rengi:"
@@ -1579,5 +1579,47 @@
   },
   "profile_sync_active": {
     "message": "Eşitleme Aktif: $1"
+  },
+  "archive_btn_review_title": {
+    "message": "Kelimeleri Tekrar Et / Kart Çalış"
+  },
+  "archive_btn_review": {
+    "message": "Tekrar Et"
+  },
+  "archive_btn_refresh_title": {
+    "message": "Kök Verileri Güncelle"
+  },
+  "archive_btn_refresh": {
+    "message": "Güncelle"
+  },
+  "archive_btn_clear_title": {
+    "message": "Tüm Kelimeleri Sil"
+  },
+  "archive_btn_clear": {
+    "message": "Temizle"
+  },
+  "profile_logout_confirm": {
+    "message": "Çıkış yapmak istediğinize emin misiniz? Yerel verileriniz korunacaktır."
+  },
+  "profile_logout_btn": {
+    "message": "Çıkış Yap"
+  },
+  "profile_logged_out_toast": {
+    "message": "Çıkış yapıldı."
+  },
+  "premium_connect_function_missing": {
+    "message": "Bağlantı fonksiyonu bulunamadı."
+  },
+  "premium_connect_success": {
+    "message": "✅ $1 bağlandı! Yönlendiriliyorsunuz..."
+  },
+  "sync_success": {
+    "message": "Eşitleme tamamlandı!"
+  },
+  "sync_premium_required": {
+    "message": "Senkronizasyonu kullanabilmek için Premium lisansına sahip olmalısınız."
+  },
+  "sync_failed": {
+    "message": "Senkronizasyon başarısız: $1"
   }
 }

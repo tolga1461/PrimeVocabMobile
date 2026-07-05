@@ -527,13 +527,13 @@ async function handleSyncNow() {
         
         loadProfileData(); // Reload statistics, word counts, and achievements
         updateProfileUI();
-        showToast("Eşitleme tamamlandı!");
+        showToast(getMessage('sync_success') || "Eşitleme tamamlandı!");
     } catch (err) {
         console.error("[PV-core] Sync failed:", err);
         if (err.message === "PREMIUM_REQUIRED") {
-            showToast("Senkronizasyonu kullanabilmek için Premium lisansına sahip olmalısınız.");
+            showToast(getMessage('sync_premium_required') || "Senkronizasyonu kullanabilmek için Premium lisansına sahip olmalısınız.");
         } else {
-            showToast("Senkronizasyon başarısız: " + err.message);
+            showToast((getMessage('sync_failed') || "Senkronizasyon başarısız: $1").replace('$1', err.message));
         }
     } finally {
         const syncNowBtn = document.getElementById('profile-sync-now-btn');
@@ -573,7 +573,7 @@ async function handleLogin() {
 
 async function handleLogout() {
     showCustomConfirm(
-        "Çıkış yapmak istediğinize emin misiniz? Yerel verileriniz korunacaktır.",
+        "profile_logout_confirm",
         async () => {
             showToast(getMessage('profile_logging_out') || "Çıkış yapılıyor...");
 
@@ -606,10 +606,10 @@ async function handleLogout() {
                 ], resolve);
             });
             updateProfileUI();
-            showToast("Çıkış yapıldı.");
+            showToast(getMessage('profile_logged_out_toast') || "Çıkış yapıldı.");
         },
-        "Çıkış Yap",
-        "Vazgeç"
+        "profile_logout_btn",
+        "game_btn_cancel"
     );
 }
 
@@ -1083,7 +1083,7 @@ function initPullToRefresh() {
                 console.log("[PV-core] Pull-to-refresh triggered sync...");
                 await performGoogleDriveSync(false);
                 console.log("[PV-core] Pull-to-refresh sync completed.");
-                showToast("Eşitleme tamamlandı!");
+                showToast(getMessage('sync_success') || "Eşitleme tamamlandı!");
                 
                 // Reload list
                 if (typeof loadArchive === 'function') {
@@ -1092,9 +1092,9 @@ function initPullToRefresh() {
             } catch (err) {
                 console.warn("[PV-core] Pull-to-refresh sync failed:", err);
                 if (err.message === "PREMIUM_REQUIRED") {
-                    showToast("Senkronizasyon için Premium lisansına sahip olmalısınız.");
+                    showToast(getMessage('sync_premium_required') || "Senkronizasyon için Premium lisansına sahip olmalısınız.");
                 } else {
-                    showToast("Eşitleme başarısız: " + err.message);
+                    showToast((getMessage('sync_failed') || "Eşitleme başarısız: $1").replace('$1', err.message));
                 }
             } finally {
                 ptr.classList.remove('loading');

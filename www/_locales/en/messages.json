@@ -537,7 +537,7 @@
     "message": "Extension Language"
   },
   "settings_lang_auto": {
-    "message": "Automatic (Browser Default)"
+    "message": "Automatic (System Language)"
   },
   "settings_color_title": {
     "message": "Translation color:"
@@ -1416,40 +1416,40 @@
     "message": "⚙️ Manage Subscription"
   },
   "info_archive_title": {
-    "message": "📚 Dictionary Guide"
+    "message": "📚 Word Library"
   },
   "info_archive_desc": {
-    "message": "You can search words; use Word Families (📚), Toggle Tags (🏷️) and Expand Details (↕️) buttons. Use 'Review' (🃏) to quickly practice and add words to the spaced repetition study list."
+    "message": "You can search words, use Root Grouping (📚), Show/Hide Tags (🏷️), and Expand Details (↕️) buttons. Use the 'Practice' (🃏) button to add words to the spaced repetition list and start a quick study session."
   },
   "info_review_title": {
     "message": "⚡ Study & Games"
   },
   "info_review_desc": {
-    "message": "Practice (SRS): Rate cards based on your memory. The algorithm automatically schedules the next review interval.\n\nGames (🎮): Practice words using Multiple Choice, Fill Blanks, Scramble, Match, and Dictation games.\n\nAchievements (🏆): Gain EXP to level up and unlock special achievement badges."
+    "message": "Practice (SRS): Score cards based on your recall level. The algorithm automatically adjusts the next study interval.\n\nGames (🎮): Reinforce words with Multiple Choice, Fill in the Blanks, Word Scramble, Matching, and Dictation games.\n\nAchievements (🏆): As you earn points, your level rises and you get badges."
   },
   "info_settings_title": {
     "message": "⚙️ Settings Guide"
   },
   "info_settings_desc": {
-    "message": "Configure app language, font size, sound toggle, and delete warning settings.\n\nData Management: Export words to Anki, or backup/restore your local database.\n\nDanger Zone: Reset SRS progress, streak, game stats, or clear all app data."
+    "message": "You can change the app language, font size, sounds, and confirmation warnings.\n\nData Management: Export your words to Anki or backup/restore your data.\n\nDanger Zone: Reset SRS progress or all application data."
   },
   "info_profile_title": {
     "message": "👤 Profile Guide"
   },
   "info_profile_desc": {
-    "message": "Keep your study streak (Streak 🔥) alive by practicing at least one word every day.\n\nEXP & Level: Earn XP as you practice or play games, and watch your level rise.\n\nCloud Sync: Login with your Google account to securely backup and sync your progress across devices."
+    "message": "Keep your daily study streak (Streak 🔥) by practicing at least one word every day.\n\nEXP & Level: Earn XP and level up by practicing and playing games.\n\nCloud Sync: Log in with your Google account to securely backup and sync all your data in the cloud."
   },
   "info_btn_about": {
     "message": "About PrimeVocab"
   },
   "info_btn_back": {
-    "message": "↩️ Back"
+    "message": "↩️ Go Back"
   },
   "settings_about_label": {
     "message": "About PrimeVocab"
   },
   "settings_about_sublabel": {
-    "message": "App version, developer info and details"
+    "message": "App version, developer, and details"
   },
   "info_modal_title": {
     "message": "ℹ️ Info"
@@ -1582,5 +1582,47 @@
   },
   "srs_last_interval": {
     "message": "Last interval: $1"
+  },
+  "archive_btn_review_title": {
+    "message": "Review Words / Study Cards"
+  },
+  "archive_btn_review": {
+    "message": "Review"
+  },
+  "archive_btn_refresh_title": {
+    "message": "Update Root Data"
+  },
+  "archive_btn_refresh": {
+    "message": "Update"
+  },
+  "archive_btn_clear_title": {
+    "message": "Delete All Words"
+  },
+  "archive_btn_clear": {
+    "message": "Clear"
+  },
+  "profile_logout_confirm": {
+    "message": "Are you sure you want to log out? Your local data will be preserved."
+  },
+  "profile_logout_btn": {
+    "message": "Log Out"
+  },
+  "profile_logged_out_toast": {
+    "message": "Logged out."
+  },
+  "premium_connect_function_missing": {
+    "message": "Connection function not found."
+  },
+  "premium_connect_success": {
+    "message": "✅ $1 connected! Redirecting..."
+  },
+  "sync_success": {
+    "message": "Sync completed!"
+  },
+  "sync_premium_required": {
+    "message": "You must have a Premium license to use synchronization."
+  },
+  "sync_failed": {
+    "message": "Sync failed: $1"
   }
 }

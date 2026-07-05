@@ -554,11 +554,11 @@ async function handleBuyPremium(baseCheckoutUrl, licenseType) {
         showToast(getMessage('premium_connect_google_first') || 'Devam etmek için Google hesabınızı bağlayın...', 3000);
         try {
             if (typeof connectGoogleAccount !== 'function') {
-                showToast('Bağlantı fonksiyonu bulunamadı.', 3000);
+                showToast(getMessage('premium_connect_function_missing') || 'Bağlantı fonksiyonu bulunamadı.', 3000);
                 return;
             }
             const userInfo = await connectGoogleAccount();
-            showToast(`✅ ${userInfo.email} bağlandı! Yönlendiriliyorsunuz...`, 2500);
+            showToast(getMessage('premium_connect_success', userInfo.email) || `✅ ${userInfo.email} bağlandı! Yönlendiriliyorsunuz...`, 2500);
             // Bağlandıktan sonra ödeme sayfasını aç
             setTimeout(() => {
                 const checkoutUrl = buildLsCheckoutUrl(baseCheckoutUrl, userInfo.email, licenseType);

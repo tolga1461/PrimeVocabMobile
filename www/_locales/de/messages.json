@@ -525,7 +525,7 @@
     "message": "Eklentenisprache"
   },
   "settings_lang_auto": {
-    "message": "Automatisch"
+    "message": "Automatisch (Systemsprache)"
   },
   "settings_color_title": {
     "message": "Übersetzungsfarbe:"
@@ -1534,5 +1534,89 @@
   },
   "srs_last_interval": {
     "message": "Letztes Intervall: $1"
+  },
+  "settings_delete_confirm_label": {
+    "message": "Löschbestätigung"
+  },
+  "settings_delete_confirm_sublabel": {
+    "message": "Bestätigungswarnung beim Löschen von Wörtern anzeigen"
+  },
+  "settings_about_label": {
+    "message": "Über PrimeVocab"
+  },
+  "settings_about_sublabel": {
+    "message": "App-Version, Entwickler und Details"
+  },
+  "info_settings_title": {
+    "message": "⚙️ Einstellungsleitfaden"
+  },
+  "info_settings_desc": {
+    "message": "Sie können die App-Sprache, Schriftgröße, Töne und Bestätigungswarnungen ändern.\n\nDatenverwaltung: Exportieren Sie Ihre Wörter nach Anki oder sichern/wiederherstellen Sie Ihre Daten.\n\nGefahrenbereich: SRS-Verlauf oder alle App-Daten zurücksetzen."
+  },
+  "info_profile_title": {
+    "message": "👤 Profilleitfaden"
+  },
+  "info_profile_desc": {
+    "message": "Halten Sie Ihre tägliche Strähne (Streak 🔥), indem Sie jeden Tag mindestens ein Wort lernen.\n\nEXP & Level: Verdienen Sie XP und steigen Sie auf, indem Sie üben und Spiele spielen.\n\nCloud-Synchronisation: Melden Sie sich mit Ihrem Google-Konto an, um all Ihre Daten sicher in der Cloud zu sichern und zu synchronisieren."
+  },
+  "info_btn_about": {
+    "message": "Über PrimeVocab"
+  },
+  "info_btn_back": {
+    "message": "↩️ Zurück"
+  },
+  "archive_btn_review_title": {
+    "message": "Wörter wiederholen / Karte lernen"
+  },
+  "archive_btn_review": {
+    "message": "Wiederholen"
+  },
+  "archive_btn_refresh_title": {
+    "message": "Stamm-Daten aktualisieren"
+  },
+  "archive_btn_refresh": {
+    "message": "Aktualisieren"
+  },
+  "archive_btn_clear_title": {
+    "message": "Alle Wörter löschen"
+  },
+  "archive_btn_clear": {
+    "message": "Löschen"
+  },
+  "profile_logout_confirm": {
+    "message": "Möchten Sie sich wirklich abmelden? Ihre lokalen Daten bleiben erhalten."
+  },
+  "profile_logout_btn": {
+    "message": "Abmelden"
+  },
+  "profile_logged_out_toast": {
+    "message": "Abgemeldet."
+  },
+  "info_archive_title": {
+    "message": "📚 Wortbibliothek"
+  },
+  "info_archive_desc": {
+    "message": "Sie können nach Wörtern suchen und die Schaltflächen Stammgruppierung (📚), Tags ein-/ausblenden (🏷️) und Details erweitern (↕️) verwenden. Verwenden Sie die Schaltfläche 'Wiederholen' (🃏), um Wörter zur Liste für verteilte Wiederholungen hinzuzufügen und eine schnelle Lernsitzung zu starten."
+  },
+  "info_review_title": {
+    "message": "⚡ Lernen & Spiele"
+  },
+  "info_review_desc": {
+    "message": "Üben (SRS): Bewerten Sie Karten basierend auf Ihrem Erinnerungsniveau. Der Algorithmus passt das nächste Lernintervall automatisch an.\n\nSpiele (🎮): Festigen Sie Wörter mit Multiple-Choice, Lückentext, Wortsalat, Zuordnung und Diktat.\n\nErfolge (🏆): Wenn Sie Punkte sammeln, steigt Ihr Level und Sie erhalten Abzeichen."
+  },
+  "premium_connect_function_missing": {
+    "message": "Verbindungsfunktion nicht gefunden."
+  },
+  "premium_connect_success": {
+    "message": "✅ $1 verbunden! Weiterleitung..."
+  },
+  "sync_success": {
+    "message": "Synchronisierung abgeschlossen!"
+  },
+  "sync_premium_required": {
+    "message": "Sie müssen über eine Premium-Lizenz verfügen, um die Synchronisierung zu verwenden."
+  },
+  "sync_failed": {
+    "message": "Synchronisierung fehlgeschlagen: $1"
   }
 }
