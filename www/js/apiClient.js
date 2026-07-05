@@ -6,7 +6,7 @@
 // Varsayılan Yapılandırma (Build veya Ayarlar panelinden ezilebilir)
 var PV_CONFIG = {
   // Canlı GAS Web App URL'nizi buraya yerleştirin
-  apiUrl: "https://script.google.com/macros/s/AKfycbzyn6Fhxvu57IWwHR5FG-H4_OPCBdQ6APwZvQe669u9pdSkla6Wa-A2DdUyXLkv7axlAw/exec", 
+  apiUrl: "https://script.google.com/macros/s/AKfycbz_-b72rtKqv73plkRHZBpVwfKtlPWVc84V3FNcP1_ztjDxnDoDL5V2m8fw6I8ifsmAOQ/exec", 
   // Sunucu tarafındaki API_SECRET ile birebir eşleşmelidir
   apiSecret: "PV_SECRET_SECURE_TOKEN_2026" 
 };
@@ -130,7 +130,8 @@ globalThis.PV_ApiClient = (function () {
    */
   async function registerUser(email = "") {
     const userId = await getOrCreateUserId();
-    const response = await makeRequest('register', { userId, email });
+    const platform = (window.Capacitor && window.Capacitor.isNativePlatform()) ? 'mobile' : 'web_pwa';
+    const response = await makeRequest('register', { userId, email, platform });
     if (response.success && response.data) {
       await saveLicenseState(response.data);
     }
@@ -160,7 +161,8 @@ globalThis.PV_ApiClient = (function () {
       const syncData = await new Promise((r) => chrome.storage.local.get({ googleSyncEmail: "" }, r));
       email = syncData.googleSyncEmail || "";
     }
-    const response = await makeRequest('check-license', { userId, email });
+    const platform = (window.Capacitor && window.Capacitor.isNativePlatform()) ? 'mobile' : 'web_pwa';
+    const response = await makeRequest('check-license', { userId, email, platform });
     if (response.success && response.data) {
       await saveLicenseState(response.data);
     }
@@ -172,7 +174,8 @@ globalThis.PV_ApiClient = (function () {
    */
   async function syncUsage(count) {
     const userId = await getOrCreateUserId();
-    const response = await makeRequest('sync-usage', { userId, count });
+    const platform = (window.Capacitor && window.Capacitor.isNativePlatform()) ? 'mobile' : 'web_pwa';
+    const response = await makeRequest('sync-usage', { userId, count, platform });
     if (response.success && response.data) {
       await saveLicenseState(response.data);
     }
