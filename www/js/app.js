@@ -564,15 +564,20 @@ async function handleLogin() {
         chrome.runtime.sendMessage({ action: "api_check_license", email: userInfo.email }, (res) => {
             const apiData = (res && res.success && res.data) ? res.data : null;
             chrome.storage.local.get({ licenseType: 'FREE', licenseStatus: 'FREE_USER' }, async (licData) => {
-                const licenseType = apiData ? apiData.licenseType : licData.licenseType;
-                const status = apiData ? apiData.status : licData.licenseStatus;
+                const licenseType = String(apiData ? apiData.licenseType : licData.licenseType).toUpperCase().trim();
+                const status = String(apiData ? apiData.status : licData.licenseStatus).toUpperCase().trim();
                 
-                const isPremium = ["MONTHLY", "YEARLY", "LIFETIME"].includes(String(licenseType).toUpperCase().trim());
+                // Case 3 (Premium): Durum ACTIVE ve Lisans FREE değilse kullanabilsin
+                const isPremium = (status === "ACTIVE") && (licenseType !== "FREE");
                 
                 if (!isPremium) {
                     console.log("[PV-core] Non-premium user login blocked on mobile. Status:", status, "Type:", licenseType);
                     await forceLogoutWithoutConfirm();
-                    showPremiumBlockerModal(userInfo.email, status === "NOT_FOUND");
+                    
+                    // Case 1 (Yeni/Kayıtsız Kullanıcı): E-tabloda mail hiç yoksa (Sunucu yeni profil açtığı için durumu ACTIVE ama Lisans FREE olur)
+                    // Case 2 (Süresi Dolan/Ücretsiz Kullanıcı): Durum EXPIRED veya FREE_USER ise
+                    const isNewUser = (status === "ACTIVE" && licenseType === "FREE") || (status === "NOT_FOUND");
+                    showPremiumBlockerModal(userInfo.email, isNewUser);
                 } else {
                     updateProfileUI();
                     handleSyncNow(); // Attempt initial sync
