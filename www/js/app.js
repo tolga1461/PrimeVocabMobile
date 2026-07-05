@@ -561,13 +561,16 @@ async function handleLogin() {
         switchMainTab('profile');
         
         // Silent license validation
-        chrome.runtime.sendMessage({ action: "api_check_license", email: userInfo.email }, () => {
-            chrome.storage.local.get({ isPremium: false, licenseType: 'FREE' }, async (licData) => {
-                const isPremium = licData.isPremium === true || licData.licenseType !== 'FREE';
+        chrome.runtime.sendMessage({ action: "api_check_license", email: userInfo.email }, (res) => {
+            const apiData = (res && res.success && res.data) ? res.data : null;
+            chrome.storage.local.get({ isPremium: false, licenseType: 'FREE', licenseStatus: 'FREE_USER' }, async (licData) => {
+                const isPremium = apiData ? (apiData.isPremium === true || apiData.licenseType !== 'FREE') : (licData.isPremium === true || licData.licenseType !== 'FREE');
+                const status = apiData ? apiData.status : licData.licenseStatus;
+                
                 if (!isPremium) {
-                    console.log("[PV-core] Non-premium user login blocked on mobile.");
+                    console.log("[PV-core] Non-premium user login blocked on mobile. Status:", status);
                     await forceLogoutWithoutConfirm();
-                    showPremiumBlockerModal(userInfo.email);
+                    showPremiumBlockerModal(userInfo.email, status === "NOT_FOUND");
                 } else {
                     updateProfileUI();
                     handleSyncNow(); // Attempt initial sync
@@ -580,19 +583,41 @@ async function handleLogin() {
     }
 }
 
-function showPremiumBlockerModal(email) {
+function showPremiumBlockerModal(email, isNewUser) {
     let modal = document.getElementById('premium-blocker-modal');
     if (!modal) {
         modal = document.createElement('div');
         modal.id = 'premium-blocker-modal';
         modal.style.cssText = "display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:99999; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;";
+        document.body.appendChild(modal);
+    }
+    
+    if (isNewUser) {
+        // Case 1: E-posta e-tabloda hiç kayıtlı değil (Yeni hesap - eklentiye yönlendir)
+        modal.innerHTML = `
+            <div style="background:linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border:1px solid #818cf8; border-radius:16px; padding:24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 25px -5px rgba(0,0,0,0.5), 0 0 20px rgba(129, 140, 248, 0.15); box-sizing:border-box;">
+                <div style="font-size:48px; margin-bottom:16px;">🔍</div>
+                <h3 style="color:#c7d2fe; font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; margin:0 0 12px 0;">Hesap Bulunamadı</h3>
+                <p style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:14px; line-height:1.6; margin:0 0 24px 0;">
+                    Giriş yapmaya çalıştığınız e-posta adresi (<strong>${email}</strong>) ile kayıtlı bir PrimeVocab profili bulunamadı.<br><br>
+                    Mobil uygulamayı kullanabilmek için lütfen öncelikle bilgisayarınızda Chrome tarayıcısına <strong>PrimeVocab eklentisini</strong> kurup giriş yapın ve kelimelerinizi kaydedin.
+                </p>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    <button id="premium-blocker-close-btn" style="background:#818cf8; border:none; color:#0f172a; padding:12px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; cursor:pointer; font-weight:700; box-shadow:0 4px 12px rgba(129, 140, 248, 0.3);">
+                        Tamam
+                    </button>
+                </div>
+            </div>
+        `;
+    } else {
+        // Case 2: E-posta e-tabloda kayıtlı ama lisansı FREE (Upgrade butonu göster)
         modal.innerHTML = `
             <div style="background:linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border:1px solid #eab308; border-radius:16px; padding:24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 25px -5px rgba(0,0,0,0.5), 0 0 20px rgba(234, 179, 8, 0.15); box-sizing:border-box;">
                 <div style="font-size:48px; margin-bottom:16px;">👑</div>
                 <h3 style="color:#fef08a; font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; margin:0 0 12px 0;">Premium Üyelik Gerekli</h3>
                 <p style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:14px; line-height:1.6; margin:0 0 24px 0;">
                     PrimeVocab Mobil uygulaması, tarayıcı eklentisindeki kelimelerinizi eşitleyen <strong>Premium</strong> bir özelliktir.<br><br>
-                    Giriş yapmaya çalıştığınız hesap (<strong id="premium-blocker-email"></strong>) aktif bir Premium lisansa sahip görünmüyor. Eğer Premium satın aldıysanız, lütfen satın alım yaptığınız Google hesabı ile giriş yaptığınızdan emin olun.
+                    Giriş yapmaya çalıştığınız hesap (<strong>${email}</strong>) şu anda ücretsiz plandadır. Kelimelerinizi telefonda çalışabilmek ve senkronize etmek için Premium'a yükseltebilirsiniz.
                 </p>
                 <div style="display:flex; flex-direction:column; gap:10px;">
                     <a href="https://primevocab.lemonsqueezy.com/checkout/buy/21098d81-25ed-4ded-a487-fb2c9e02d30f" target="_blank" style="background:linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color:#0f172a; text-decoration:none; padding:12px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; font-weight:700; box-shadow:0 4px 12px rgba(234, 179, 8, 0.3); text-align:center;">
@@ -604,17 +629,11 @@ function showPremiumBlockerModal(email) {
                 </div>
             </div>
         `;
-        document.body.appendChild(modal);
-        
-        modal.querySelector('#premium-blocker-close-btn').addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
     }
     
-    const emailEl = modal.querySelector('#premium-blocker-email');
-    if (emailEl) {
-        emailEl.textContent = email;
-    }
+    modal.querySelector('#premium-blocker-close-btn').addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
     
     modal.style.display = 'flex';
 }
