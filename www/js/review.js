@@ -668,19 +668,19 @@ function srsLoadWords() {
             words.forEach((item) => {
                 const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[item.word.toLowerCase()];
                 let badgeHtml = isPhrasal
-                    ? `<span class="cefr-badge phrasal-badge" style="font-size:11px;padding:2px 5px;border-radius:4px;font-weight:600;">Phrasal</span>`
-                    : (() => { const c = cefrColors[item.cefrLevel] || '#64748b'; return `<span class="cefr-badge" style="color:${c};background:${c}22;border:1px solid ${c}44;font-size:11px;padding:2px 5px;border-radius:4px;font-weight:600;">${item.cefrLevel}</span>`; })();
+                    ? `<span class="cefr-badge phrasal-badge srs-word-badge" style="padding:2px 5px;border-radius:4px;font-weight:600;">Phrasal</span>`
+                    : (() => { const c = cefrColors[item.cefrLevel] || '#64748b'; return `<span class="cefr-badge srs-word-badge" style="color:${c};background:${c}22;border:1px solid ${c}44;padding:2px 5px;border-radius:4px;font-weight:600;">${item.cefrLevel}</span>`; })();
                 let reviewBadgeHtml = '';
                 if (item.learned) {
-                    reviewBadgeHtml = `<span style="font-size:11px;color:#10b981;background:rgba(16,185,129,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(16,185,129,0.2);">${getMessage("srs_status_learned") || '📖 Learned'}</span>`;
+                    reviewBadgeHtml = `<span class="srs-word-status-badge" style="color:#10b981;background:rgba(16,185,129,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(16,185,129,0.2);">${getMessage("srs_status_learned") || '📖 Learned'}</span>`;
                 }
                 else if (!item.reviewCount || !item.nextReview) {
-                    reviewBadgeHtml = `<span style="font-size:11px;color:#3b82f6;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(59,130,246,0.2);">${getMessage("srs_status_new") || '🆕 New'}</span>`;
+                    reviewBadgeHtml = `<span class="srs-word-status-badge" style="color:#3b82f6;background:rgba(59,130,246,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(59,130,246,0.2);">${getMessage("srs_status_new") || '🆕 New'}</span>`;
                 }
                 else {
                     const diffMs = item.nextReview - Date.now();
                     if (diffMs <= 0) {
-                        reviewBadgeHtml = `<span style="font-size:11px;color:#f59e0b;background:rgba(245,158,11,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(245,158,11,0.2);">${getMessage("srs_status_due") || '⏳ Due'}</span>`;
+                        reviewBadgeHtml = `<span class="srs-word-status-badge" style="color:#f59e0b;background:rgba(245,158,11,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(245,158,11,0.2);">${getMessage("srs_status_due") || '⏳ Due'}</span>`;
                     }
                     else {
                         const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
@@ -688,7 +688,7 @@ function srsLoadWords() {
                             : days < 7 ? (getMessage("srs_status_days_later") || '{days}d later').replace('{days}', days)
                                 : days < 30 ? (getMessage("srs_status_weeks_later") || '{weeks}w later').replace('{weeks}', Math.round(days / 7))
                                     : (getMessage("srs_status_months_later") || '{months}m later').replace('{months}', Math.round(days / 30));
-                        reviewBadgeHtml = `<span style="font-size:11px;color:#94a3b8;background:rgba(148,163,184,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(148,163,184,0.2);">📅 ${label}</span>`;
+                        reviewBadgeHtml = `<span class="srs-word-status-badge" style="color:#94a3b8;background:rgba(148,163,184,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(148,163,184,0.2);">📅 ${label}</span>`;
                     }
                 }
                 const div = document.createElement('div');
@@ -697,7 +697,7 @@ function srsLoadWords() {
                 div.innerHTML = `
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-size:17px;font-weight:700;color:#818cf8;">${esc(item.word)}</span>
+            <span class="srs-word-item-word" style="font-weight:700;color:#818cf8;">${esc(item.word)}</span>
             ${badgeHtml} ${reviewBadgeHtml}
           </div>
           <label class="custom-checkbox-container">
@@ -706,7 +706,7 @@ function srsLoadWords() {
             <span>${getMessage("srs_rate_learned") || 'Öğrendim'}</span>
           </label>
         </div>
-        <div style="font-size:17px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.translation || '—')}</div>
+        <div class="srs-word-item-translation" style="color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.translation || '—')}</div>
       `;
                 const chk = div.querySelector('.srs-learned-chk');
                 if (chk)
@@ -853,7 +853,7 @@ function srsShowCard() {
     document.getElementById('srs-card-context-back').textContent = ctx2;
     const intEl = document.getElementById('srs-card-interval');
     if (item.reviewCount > 0) {
-        intEl.textContent = `Son aralık: ${srsIntervalLabel(item.interval ?? 0)}`;
+        intEl.textContent = getMessage('srs_last_interval', srsIntervalLabel(item.interval ?? 0));
         intEl.style.display = '';
     }
     else

@@ -471,7 +471,7 @@
     "message": "🔥 Reset Streak"
   },
   "settings_reset_streak_confirm": {
-    "message": "Your day streak and best streak record will be completely reset. Do you want to continue?"
+    "message": "Your daily streak and record data will be completely reset. Do you want to continue?"
   },
   "settings_reset_streak_done": {
     "message": "Your study day streak and record have been reset."
@@ -669,7 +669,7 @@
     "message": "w"
   },
   "settings_backup_title": {
-    "message": "Backup Data (JSON)"
+    "message": "Backup Data"
   },
   "settings_restore_title": {
     "message": "Restore Backup"
@@ -1077,7 +1077,7 @@
     "message": "🏆 Reset Progress"
   },
   "settings_reset_games_confirm": {
-    "message": "Your game statistics, total points (EXP), and all achievements will be reset. Do you want to continue?"
+    "message": "Your game stats, total score (EXP), and all achievements will be reset. Do you want to continue?"
   },
   "settings_reset_games_done": {
     "message": "Game and achievements progress has been reset."
@@ -1281,7 +1281,7 @@
     "message": "Developer:"
   },
   "info_contact": {
-    "message": "Contact :"
+    "message": "Contact:"
   },
   "info_legal": {
     "message": "Privacy & Terms:"
@@ -1414,5 +1414,173 @@
   },
   "profile_manage_subscription_btn": {
     "message": "⚙️ Manage Subscription"
+  },
+  "info_archive_title": {
+    "message": "📚 Dictionary Guide"
+  },
+  "info_archive_desc": {
+    "message": "You can search words; use Word Families (📚), Toggle Tags (🏷️) and Expand Details (↕️) buttons. Use 'Review' (🃏) to quickly practice and add words to the spaced repetition study list."
+  },
+  "info_review_title": {
+    "message": "⚡ Study & Games"
+  },
+  "info_review_desc": {
+    "message": "Practice (SRS): Rate cards based on your memory. The algorithm automatically schedules the next review interval.\n\nGames (🎮): Practice words using Multiple Choice, Fill Blanks, Scramble, Match, and Dictation games.\n\nAchievements (🏆): Gain EXP to level up and unlock special achievement badges."
+  },
+  "info_settings_title": {
+    "message": "⚙️ Settings Guide"
+  },
+  "info_settings_desc": {
+    "message": "Configure app language, font size, sound toggle, and delete warning settings.\n\nData Management: Export words to Anki, or backup/restore your local database.\n\nDanger Zone: Reset SRS progress, streak, game stats, or clear all app data."
+  },
+  "info_profile_title": {
+    "message": "👤 Profile Guide"
+  },
+  "info_profile_desc": {
+    "message": "Keep your study streak (Streak 🔥) alive by practicing at least one word every day.\n\nEXP & Level: Earn XP as you practice or play games, and watch your level rise.\n\nCloud Sync: Login with your Google account to securely backup and sync your progress across devices."
+  },
+  "info_btn_about": {
+    "message": "About PrimeVocab"
+  },
+  "info_btn_back": {
+    "message": "↩️ Back"
+  },
+  "settings_about_label": {
+    "message": "About PrimeVocab"
+  },
+  "settings_about_sublabel": {
+    "message": "App version, developer info and details"
+  },
+  "info_modal_title": {
+    "message": "ℹ️ Info"
+  },
+  "info_about_btn": {
+    "message": "About PrimeVocab"
+  },
+  "info_back_btn": {
+    "message": "Go Back"
+  },
+  "settings_app_lang_title": {
+    "message": "App Language"
+  },
+  "settings_app_lang_desc": {
+    "message": "Change the interface language"
+  },
+  "settings_fontsize_title": {
+    "message": "Font Size"
+  },
+  "settings_fontsize_desc": {
+    "message": "Adjust the font size across the app"
+  },
+  "settings_sounds_title": {
+    "message": "App Sounds"
+  },
+  "settings_sounds_desc": {
+    "message": "Play sounds during study and games"
+  },
+  "settings_anki_title": {
+    "message": "Export to Anki"
+  },
+  "settings_anki_desc": {
+    "message": "Export your words as Anki deck (.txt)"
+  },
+  "settings_backup_desc": {
+    "message": "Save all words as a JSON file"
+  },
+  "settings_restore_desc": {
+    "message": "Upload your JSON backup file to the app"
+  },
+  "settings_reset_srs_title": {
+    "message": "Reset SRS Progress"
+  },
+  "settings_reset_streak_title": {
+    "message": "Reset Daily Streak"
+  },
+  "settings_reset_games_title": {
+    "message": "Reset Games & Achievements"
+  },
+  "settings_reset_all_title": {
+    "message": "RESET ALL WORDS AND DATA"
+  },
+  "settings_reset_all_confirm": {
+    "message": "All your words and study data will be permanently deleted. This action cannot be undone! Continue?"
+  },
+  "srs_words_sort_label_time_asc": {
+    "message": "Time Ascending (Soonest)"
+  },
+  "srs_words_sort_label_time_desc": {
+    "message": "Time Descending (Furthest)"
+  },
+  "srs_words_sort_label_alphabetical": {
+    "message": "Alphabetical (A → Z)"
+  },
+  "srs_words_sort_label_learned_first": {
+    "message": "Learned First"
+  },
+  "srs_words_sort_label_new_first": {
+    "message": "New Cards First"
+  },
+  "fontsize_normal": {
+    "message": "Normal"
+  },
+  "fontsize_medium": {
+    "message": "Medium"
+  },
+  "fontsize_large": {
+    "message": "Large"
+  },
+  "archive_sort_title": {
+    "message": "Word Sorting"
+  },
+  "archive_source_filter_title": {
+    "message": "Filter by Source"
+  },
+  "archive_tag_filter_title": {
+    "message": "Filter by Tag"
+  },
+  "archive_level_filter_title": {
+    "message": "Select Level"
+  },
+  "archive_level_prefix": {
+    "message": "Level: "
+  },
+  "settings_danger_zone_title": {
+    "message": "⚠️ Danger Zone (Reset)"
+  },
+  "settings_reset_all_done": {
+    "message": "All data has been successfully reset!"
+  },
+  "profile_stats_title": {
+    "message": "📊 Stats & Level"
+  },
+  "profile_achievements_title": {
+    "message": "🏆 Achievements"
+  },
+  "profile_sync_title": {
+    "message": "🔄 Cloud Sync"
+  },
+  "profile_days_count": {
+    "message": "$1 Days"
+  },
+  "profile_level_display": {
+    "message": "Level $1 ($2 / 1000 XP)"
+  },
+  "profile_words_saved_today": {
+    "message": "$1 words saved"
+  },
+  "profile_premium_badge": {
+    "message": "PREMIUM 👑"
+  },
+  "profile_days_left": {
+    "message": "Days Left"
+  },
+  "profile_free_badge": {
+    "message": "FREE"
+  },
+  "profile_sync_active": {
+    "message": "Sync Active: $1"
+  },
+  "srs_last_interval": {
+    "message": "Last interval: $1"
   }
 }

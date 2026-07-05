@@ -669,7 +669,7 @@
     "message": "h"
   },
   "settings_backup_title": {
-    "message": "Veriyi Yedekle (JSON)"
+    "message": "Verileri Yedekle (Yedek Al)"
   },
   "settings_restore_title": {
     "message": "Yedeği Geri Yükle"
@@ -1414,5 +1414,170 @@
   },
   "profile_manage_subscription_btn": {
     "message": "⚙️ Aboneliği Yönet"
+  },
+  "info_archive_title": {
+    "message": "📚 Sözlük Kılavuzu"
+  },
+  "info_archive_desc": {
+    "message": "Kelimeleri arayabilir; Kök Gruplama (📚), Etiket Göster/Gizle (🏷️) ve Detayları Genişlet (↕️) butonlarını kullanabilirsiniz. Kelimeleri aralıklı tekrar listesine eklemek ve hızlı antrenman yapmak için 'Tekrar Et' (🃏) butonunu kullanın."
+  },
+  "info_review_title": {
+    "message": "⚡ Çalışma ve Oyunlar"
+  },
+  "info_review_desc": {
+    "message": "Antrenman (SRS): Kartları hatırlama durumunuza göre puanlayın. Algoritma bir sonraki çalışma süresini otomatik ayarlar.\n\nOyunlar (🎮): Çoktan Seçmeli, Boşluk Doldurma, Kelime Karıştırma, Eşleştirme ve Dikte oyunları ile kelimeleri pekiştirin.\n\nBaşarımlar (🏆): Puan kazandıkça seviyeniz yükselir ve rozetler elde edersiniz."
+  },
+  "info_settings_title": {
+    "message": "⚙️ Ayarlar Kılavuzu"
+  },
+  "info_settings_desc": {
+    "message": "Uygulama dilini, yazı boyutunu, ses ve onay uyarılarını değiştirebilirsiniz.\n\nVeri Yönetimi: Kelimelerinizi Anki'ye aktarabilir veya yedek alıp/yükleyebilirsiniz.\n\nTehlikeli Bölge: SRS geçmişini veya tüm uygulama verilerini sıfırlayabilirsiniz."
+  },
+  "info_profile_title": {
+    "message": "👤 Profil Kılavuzu"
+  },
+  "info_profile_desc": {
+    "message": "Çalışma serinizi (Streak 🔥) korumak için her gün en az bir kelime antrenmanı yapın.\n\nEXP & Seviye: Antrenman yaptıkça ve oyun oynadıkça XP kazanıp seviye atlarsınız.\n\nBulut Eşitleme: Google hesabınızla giriş yaparak tüm verilerinizi güvenle bulutta yedekleyebilir ve eşitleyebilirsiniz."
+  },
+  "info_btn_about": {
+    "message": "PrimeVocab Hakkında"
+  },
+  "info_btn_back": {
+    "message": "↩️ Geri Dön"
+  },
+  "settings_about_label": {
+    "message": "PrimeVocab Hakkında"
+  },
+  "settings_about_sublabel": {
+    "message": "Uygulama sürümü, geliştirici ve detaylar"
+  },
+  "info_modal_title": {
+    "message": "ℹ️ Bilgi"
+  },
+  "info_about_btn": {
+    "message": "PrimeVocab Hakkında"
+  },
+  "info_back_btn": {
+    "message": "Geri Dön"
+  },
+  "settings_app_lang_title": {
+    "message": "Uygulama Dili"
+  },
+  "settings_app_lang_desc": {
+    "message": "Arayüz dilini değiştirin"
+  },
+  "settings_fontsize_title": {
+    "message": "Yazı Boyutu"
+  },
+  "settings_fontsize_desc": {
+    "message": "Uygulama genelindeki yazı boyutunu ayarlayın"
+  },
+  "settings_sounds_title": {
+    "message": "Uygulama Sesleri"
+  },
+  "settings_sounds_desc": {
+    "message": "Çalışırken ve oyunlarda ses oynatın"
+  },
+  "settings_anki_title": {
+    "message": "Anki'ye Aktar"
+  },
+  "settings_anki_desc": {
+    "message": "Kelimelerinizi Anki destesi (.txt) olarak aktarın"
+  },
+  "settings_backup_desc": {
+    "message": "Tüm kelimeleri JSON dosyası olarak kaydedin"
+  },
+  "settings_restore_desc": {
+    "message": "JSON yedek dosyanızı uygulamaya yükleyin"
+  },
+  "settings_reset_srs_title": {
+    "message": "SRS İlerlemesini Sıfırla"
+  },
+  "settings_reset_streak_title": {
+    "message": "Günlük Çalışma Serisini Sıfırla"
+  },
+  "settings_reset_games_title": {
+    "message": "Oyun ve Başarımları Sıfırla"
+  },
+  "settings_reset_all_title": {
+    "message": "TÜM KELİMELERİ VE VERİLERİ SIFIRLA"
+  },
+  "settings_reset_all_confirm": {
+    "message": "Tüm kelimeleriniz ve öğrenme verileriniz kalıcı olarak silinecektir. Bu işlem geri alınamaz! Devam?"
+  },
+  "srs_words_sort_label_time_asc": {
+    "message": "Süreye Göre Artan (En Yakın)"
+  },
+  "srs_words_sort_label_time_desc": {
+    "message": "Süreye Göre Azalan (En Uzak)"
+  },
+  "srs_words_sort_label_alphabetical": {
+    "message": "Kelime (A → Z)"
+  },
+  "srs_words_sort_label_learned_first": {
+    "message": "Öğrenilenler Önce"
+  },
+  "srs_words_sort_label_new_first": {
+    "message": "Yeni Kartlar Önce"
+  },
+  "fontsize_normal": {
+    "message": "Normal"
+  },
+  "fontsize_medium": {
+    "message": "Orta"
+  },
+  "fontsize_large": {
+    "message": "Büyük"
+  },
+  "archive_sort_title": {
+    "message": "Kelime Sıralaması"
+  },
+  "archive_source_filter_title": {
+    "message": "Kaynağa Göre Filtrele"
+  },
+  "archive_tag_filter_title": {
+    "message": "Etikete Göre Filtrele"
+  },
+  "archive_level_filter_title": {
+    "message": "Seviye Seçin"
+  },
+  "archive_level_prefix": {
+    "message": "Seviye: "
+  },
+  "settings_danger_zone_title": {
+    "message": "⚠️ Tehlikeli Bölge (Sıfırlama)"
+  },
+  "settings_reset_all_done": {
+    "message": "Tüm veriler başarıyla sıfırlandı!"
+  },
+  "profile_stats_title": {
+    "message": "📊 İstatistikler ve Seviye"
+  },
+  "profile_achievements_title": {
+    "message": "🏆 Başarımlar"
+  },
+  "profile_sync_title": {
+    "message": "🔄 Bulut Eşitleme"
+  },
+  "profile_days_count": {
+    "message": "$1 Gün"
+  },
+  "profile_level_display": {
+    "message": "Seviye $1 ($2 / 1000 XP)"
+  },
+  "profile_words_saved_today": {
+    "message": "$1 kelime kaydedildi"
+  },
+  "profile_premium_badge": {
+    "message": "PREMIUM 👑"
+  },
+  "profile_days_left": {
+    "message": "Gün Kaldı"
+  },
+  "profile_free_badge": {
+    "message": "FREE"
+  },
+  "profile_sync_active": {
+    "message": "Eşitleme Aktif: $1"
   }
 }

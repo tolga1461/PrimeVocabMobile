@@ -100,7 +100,7 @@ function updateProfileUI() {
 
         if (membershipBadge) {
             if (isPremium) {
-                let badgeText = 'PREMIUM 👑';
+                let badgeText = getMessage('profile_premium_badge') || 'PREMIUM 👑';
                 if (data.licenseType === 'LIFETIME') {
                     badgeText += ' (LIFETIME)';
                 } else if (data.licenseExpiration) {
@@ -108,14 +108,14 @@ function updateProfileUI() {
                     const todayMs = Date.now();
                     const diffMs = expMs - todayMs;
                     const diffDays = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
-                    badgeText += ` (${diffDays} Gün Kaldı)`;
+                    badgeText += ` (${diffDays} ${getMessage('profile_days_left') || 'Gün Kaldı'})`;
                 }
                 membershipBadge.textContent = badgeText;
                 membershipBadge.style.color = '#fbbf24';
                 membershipBadge.style.background = '#0f172a';
                 membershipBadge.style.border = '1px solid #fbbf24';
             } else {
-                membershipBadge.textContent = 'FREE';
+                membershipBadge.textContent = getMessage('profile_free_badge') || 'FREE';
                 membershipBadge.style.color = '#818cf8';
                 membershipBadge.style.background = '#0f172a';
                 membershipBadge.style.border = '1px solid #818cf8';
@@ -179,7 +179,7 @@ function updateProfileUI() {
             if (usernameEl) usernameEl.textContent = displayUsername;
             if (logoutBtn) logoutBtn.style.display = 'block';
             if (syncStatus) {
-                syncStatus.textContent = `Eşitleme Aktif: ${data.googleSyncEmail}`;
+                syncStatus.textContent = getMessage('profile_sync_active', data.googleSyncEmail);
             }
             if (syncNowBtn) {
                 syncNowBtn.style.display = 'block';
@@ -339,7 +339,7 @@ function loadProfileData() {
         const expEl = document.getElementById('profile-exp');
         
         if (totalWordsEl) totalWordsEl.textContent = totalWords.toLocaleString();
-        if (streakEl) streakEl.textContent = `${streak} Gün`;
+        if (streakEl) streakEl.textContent = getMessage('profile_days_count', String(streak));
         if (expEl) expEl.textContent = exp.toLocaleString();
 
         // XP Level calculations
@@ -348,7 +348,7 @@ function loadProfileData() {
         const levelEl = document.getElementById('profile-level');
         const levelBarEl = document.getElementById('profile-level-bar');
         if (levelEl) {
-            levelEl.textContent = `Seviye ${level} (${exp % 1000} / 1000 XP)`;
+            levelEl.textContent = getMessage('profile_level_display', [String(level), String(exp % 1000)]);
         }
         if (levelBarEl) levelBarEl.style.width = `${nextLevelProgress}%`;
 
@@ -360,7 +360,7 @@ function loadProfileData() {
         }).length;
         const todayActivityEl = document.getElementById('profile-today-activity');
         if (todayActivityEl) {
-            todayActivityEl.textContent = `${wordsSavedToday} kelime kaydedildi`;
+            todayActivityEl.textContent = getMessage('profile_words_saved_today', String(wordsSavedToday));
         }
 
         // Render achievements ratio
@@ -409,12 +409,73 @@ function loadProfileData() {
     });
 }
 
+// Dynamic Info Modal logic
+function updateAndShowInfoModal(tabName) {
+    const overlay = document.getElementById('info-overlay');
+    if (!overlay) return;
+
+    const dynamicView = document.getElementById('info-dynamic-view');
+    const aboutView = document.getElementById('info-about-view');
+    const titleEl = document.getElementById('info-modal-title');
+    const contentEl = document.getElementById('info-dynamic-content');
+
+    // Reset view to dynamic guide first
+    if (dynamicView) dynamicView.style.display = 'flex';
+    if (aboutView) aboutView.style.display = 'none';
+
+    const activeTab = tabName || sessionStorage.getItem('activeMainTab') || 'archive';
+    
+    let titleKey = 'info_archive_title';
+    let descKey = 'info_archive_desc';
+
+    if (activeTab === 'review') {
+        titleKey = 'info_review_title';
+        descKey = 'info_review_desc';
+    } else if (activeTab === 'settings') {
+        titleKey = 'info_settings_title';
+        descKey = 'info_settings_desc';
+    } else if (activeTab === 'profile') {
+        titleKey = 'info_profile_title';
+        descKey = 'info_profile_desc';
+    }
+
+    if (titleEl) titleEl.textContent = getMessage(titleKey) || "Bilgi";
+    
+    if (contentEl) {
+        // Handle newlines correctly in desc
+        const descText = getMessage(descKey) || "";
+        contentEl.textContent = descText;
+    }
+
+    // Localize buttons in modal
+    const aboutBtnText = document.getElementById('info-about-btn-text');
+    if (aboutBtnText) aboutBtnText.textContent = getMessage('info_btn_about') || "PrimeVocab Hakkında";
+    const backBtnText = document.getElementById('info-back-btn-text');
+    if (backBtnText) backBtnText.textContent = getMessage('info_btn_back') || "Geri Dön";
+
+    overlay.style.display = 'flex';
+}
+
+function showAboutModal() {
+    const overlay = document.getElementById('info-overlay');
+    if (!overlay) return;
+
+    const dynamicView = document.getElementById('info-dynamic-view');
+    const aboutView = document.getElementById('info-about-view');
+    const titleEl = document.getElementById('info-modal-title');
+
+    if (dynamicView) dynamicView.style.display = 'none';
+    if (aboutView) aboutView.style.display = 'flex';
+    if (titleEl) titleEl.textContent = "ℹ️ " + (getMessage('info_btn_about') || "PrimeVocab Hakkında");
+
+    overlay.style.display = 'flex';
+}
+
 // Info overlay events
 const infoBtn = document.getElementById('info-btn');
 if (infoBtn) {
     infoBtn.addEventListener('click', () => {
-        const overlay = document.getElementById('info-overlay');
-        if (overlay) overlay.style.display = 'flex';
+        updateAndShowInfoModal();
     });
 }
 const infoCloseBtn = document.getElementById('info-close');
@@ -424,6 +485,27 @@ if (infoCloseBtn) {
         if (overlay) overlay.style.display = 'none';
     });
 }
+const infoAboutBtn = document.getElementById('info-about-btn');
+if (infoAboutBtn) {
+    infoAboutBtn.addEventListener('click', () => {
+        showAboutModal();
+    });
+}
+const infoBackBtn = document.getElementById('info-back-btn');
+if (infoBackBtn) {
+    infoBackBtn.addEventListener('click', () => {
+        updateAndShowInfoModal();
+    });
+}
+
+// Settings 'About PrimeVocab' row trigger
+const aboutTriggerRow = document.getElementById('about-trigger-row');
+if (aboutTriggerRow) {
+    aboutTriggerRow.addEventListener('click', () => {
+        showAboutModal();
+    });
+}
+
 
 // ── Google OAuth Action Binders ──
 async function handleSyncNow() {
@@ -780,42 +862,49 @@ function initBottomSheetController() {
     const sortTrigger = document.getElementById('sort-trigger-btn');
     if (sortTrigger) {
         sortTrigger.addEventListener('click', () => {
-            openBottomSheet('archive-sort', 'Kelime Sıralaması');
+            openBottomSheet('archive-sort', getMessage('archive_sort_title') || 'Kelime Sıralaması');
         });
     }
 
     const sourceTrigger = document.getElementById('source-trigger-btn');
     if (sourceTrigger) {
         sourceTrigger.addEventListener('click', () => {
-            openBottomSheet('archive-source-select', 'Kaynağa Göre Filtrele');
+            openBottomSheet('archive-source-select', getMessage('archive_source_filter_title') || 'Kaynağa Göre Filtrele');
         });
     }
 
     const tagTrigger = document.getElementById('tag-trigger-btn');
     if (tagTrigger) {
         tagTrigger.addEventListener('click', () => {
-            openBottomSheet('archive-tag-select', 'Etikete Göre Filtrele');
+            openBottomSheet('archive-tag-select', getMessage('archive_tag_filter_title') || 'Etikete Göre Filtrele');
         });
     }
 
     const langTrigger = document.getElementById('lang-trigger-row');
     if (langTrigger) {
         langTrigger.addEventListener('click', () => {
-            openBottomSheet('app-lang-select', 'Uygulama Dili');
+            openBottomSheet('app-lang-select', getMessage('settings_app_lang_title') || 'Uygulama Dili');
+        });
+    }
+
+    const fontsizeTrigger = document.getElementById('fontsize-trigger-row');
+    if (fontsizeTrigger) {
+        fontsizeTrigger.addEventListener('click', () => {
+            openBottomSheet('app-fontsize-select', getMessage('settings_fontsize_title') || 'Yazı Boyutu');
         });
     }
 
     const srsSortTrigger = document.getElementById('srs-words-sort-trigger');
     if (srsSortTrigger) {
         srsSortTrigger.addEventListener('click', () => {
-            openBottomSheet('srs-words-sort', 'Sıralama Seçenekleri');
+            openBottomSheet('srs-words-sort', getMessage('srs_words_sort_title') || 'Sıralama Seçenekleri');
         });
     }
 
     const filterTrigger = document.getElementById('filter-trigger-btn');
     if (filterTrigger) {
         filterTrigger.addEventListener('click', () => {
-            openBottomSheet('archive-filter-select', 'Seviye Seçin');
+            openBottomSheet('archive-filter-select', getMessage('archive_level_filter_title') || 'Seviye Seçin');
         });
     }
 
@@ -826,6 +915,7 @@ function initBottomSheetController() {
             { id: 'archive-source-select', btnId: 'source-trigger-btn', labelId: 'source-trigger-label' },
             { id: 'archive-tag-select', btnId: 'tag-trigger-btn', labelId: 'tag-trigger-label' },
             { id: 'app-lang-select', btnId: 'lang-trigger-row', labelId: 'app-lang-value' },
+            { id: 'app-fontsize-select', btnId: 'fontsize-trigger-row', labelId: 'app-fontsize-value' },
             { id: 'srs-words-sort', btnId: 'srs-words-sort-trigger', labelId: 'srs-words-sort-label' },
             { id: 'archive-filter-select', btnId: 'filter-trigger-btn', labelId: 'filter-trigger-label' }
         ];
@@ -847,7 +937,7 @@ function initBottomSheetController() {
             if (selectEl.selectedIndex >= 0) {
                 let selectedOptText = selectEl.options[selectEl.selectedIndex].textContent;
                 if (item.id === 'archive-filter-select') {
-                    selectedOptText = `Seviye: ${selectedOptText}`;
+                    selectedOptText = `${getMessage('archive_level_prefix') || 'Seviye: '}${selectedOptText}`;
                 }
                 labelEl.textContent = selectedOptText;
             }

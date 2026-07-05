@@ -444,7 +444,7 @@
     "message": "🔄 Restablecer SRS"
   },
   "settings_reset_srs_confirm": {
-    "message": "Se restablecerá tu progreso de SRS. Las palabras no se borrarán. ¿Continuar?"
+    "message": "Se restablecerá su progreso de SRS. Las palabras no se eliminarán. ¿Continuar?"
   },
   "settings_reset_srs_done": {
     "message": "Se ha restablecido tu progreso de SRS."
@@ -459,7 +459,7 @@
     "message": "🔥 Restablecer racha"
   },
   "settings_reset_streak_confirm": {
-    "message": "Su racha de días y su récord se restablecerán por completo. ¿Desea continuar?"
+    "message": "Su racha diaria y datos de récord se restablecerán por completo. ¿Desea continuar?"
   },
   "settings_reset_streak_done": {
     "message": "Su racha de días y su récord han sido restablecidos."
@@ -657,7 +657,7 @@
     "message": "s"
   },
   "settings_backup_title": {
-    "message": "Copia de seguridad (JSON)"
+    "message": "Copia de seguridad"
   },
   "settings_restore_title": {
     "message": "Restaurar copia de seguridad"
@@ -1065,7 +1065,7 @@
     "message": "🏆 Reiniciar Progreso"
   },
   "settings_reset_games_confirm": {
-    "message": "Se restablecerán tus estadísticas de juego, puntos totales (EXP) y todos los logros. ¿Deseas continuar?"
+    "message": "Se restablecerán sus estadísticas de juego, puntuación total (EXP) y todos los logros. ¿Desea continuar?"
   },
   "settings_reset_games_done": {
     "message": "Se ha restablecido el progreso de los juegos y logros."
@@ -1402,5 +1402,137 @@
   },
   "profile_manage_subscription_btn": {
     "message": "⚙️ Gestionar suscripción"
+  },
+  "info_modal_title": {
+    "message": "ℹ️ Info"
+  },
+  "info_about_btn": {
+    "message": "Acerca de PrimeVocab"
+  },
+  "info_back_btn": {
+    "message": "Volver"
+  },
+  "settings_app_lang_title": {
+    "message": "Idioma de la aplicación"
+  },
+  "settings_app_lang_desc": {
+    "message": "Cambiar el idioma de la interfaz"
+  },
+  "settings_fontsize_title": {
+    "message": "Tamaño de fuente"
+  },
+  "settings_fontsize_desc": {
+    "message": "Ajustar el tamaño de fuente en toda la aplicación"
+  },
+  "settings_sounds_title": {
+    "message": "Sonidos de la aplicación"
+  },
+  "settings_sounds_desc": {
+    "message": "Reproducir sonidos durante el estudio y los juegos"
+  },
+  "settings_anki_title": {
+    "message": "Exportar a Anki"
+  },
+  "settings_anki_desc": {
+    "message": "Exportar sus palabras como mazo de Anki (.txt)"
+  },
+  "settings_backup_desc": {
+    "message": "Guardar todas las palabras como un archivo JSON"
+  },
+  "settings_restore_desc": {
+    "message": "Cargar su archivo de copia de seguridad JSON en la aplicación"
+  },
+  "settings_reset_srs_title": {
+    "message": "Restablecer el progreso de SRS"
+  },
+  "settings_reset_streak_title": {
+    "message": "Restablecer la racha diaria"
+  },
+  "settings_reset_games_title": {
+    "message": "Restablecer juegos y logros"
+  },
+  "settings_reset_all_title": {
+    "message": "RESTABLECER TODAS LAS PALABRAS Y DATOS"
+  },
+  "settings_reset_all_confirm": {
+    "message": "Todas sus palabras y datos de aprendizaje se eliminarán de forma permanente. ¡Esta acción no se puede deshacer! ¿Continuar?"
+  },
+  "srs_words_sort_label_time_asc": {
+    "message": "Tiempo ascendente (Más cercano)"
+  },
+  "srs_words_sort_label_time_desc": {
+    "message": "Tiempo descendente (Más lejano)"
+  },
+  "srs_words_sort_label_alphabetical": {
+    "message": "Alfabético (A → Z)"
+  },
+  "srs_words_sort_label_learned_first": {
+    "message": "Aprendido primero"
+  },
+  "srs_words_sort_label_new_first": {
+    "message": "Nuevas tarjetas primero"
+  },
+  "fontsize_normal": {
+    "message": "Normal"
+  },
+  "fontsize_medium": {
+    "message": "Medio"
+  },
+  "fontsize_large": {
+    "message": "Grande"
+  },
+  "archive_sort_title": {
+    "message": "Orden de palabras"
+  },
+  "archive_source_filter_title": {
+    "message": "Filtrar por origen"
+  },
+  "archive_tag_filter_title": {
+    "message": "Filtrar por etiqueta"
+  },
+  "archive_level_filter_title": {
+    "message": "Seleccionar nivel"
+  },
+  "archive_level_prefix": {
+    "message": "Nivel: "
+  },
+  "settings_danger_zone_title": {
+    "message": "⚠️ Zona de peligro (Restablecer)"
+  },
+  "settings_reset_all_done": {
+    "message": "¡Todos los datos han sido restablecidos con éxito!"
+  },
+  "profile_stats_title": {
+    "message": "📊 Estadísticas y Nivel"
+  },
+  "profile_achievements_title": {
+    "message": "🏆 Logros"
+  },
+  "profile_sync_title": {
+    "message": "🔄 Sincronización en la nube"
+  },
+  "profile_days_count": {
+    "message": "$1 Días"
+  },
+  "profile_level_display": {
+    "message": "Nivel $1 ($2 / 1000 XP)"
+  },
+  "profile_words_saved_today": {
+    "message": "$1 palabras guardadas"
+  },
+  "profile_premium_badge": {
+    "message": "PREMIUM 👑"
+  },
+  "profile_days_left": {
+    "message": "Días restantes"
+  },
+  "profile_free_badge": {
+    "message": "FREE"
+  },
+  "profile_sync_active": {
+    "message": "Sincronización activa: $1"
+  },
+  "srs_last_interval": {
+    "message": "Último intervalo: $1"
   }
 }

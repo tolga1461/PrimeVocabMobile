@@ -528,6 +528,18 @@
       font-weight: 600 !important;
     }
 
+    /* Default SRS Word List styling */
+    .srs-word-item-word {
+      font-size: 17px !important;
+    }
+    .srs-word-item-translation {
+      font-size: 17px !important;
+    }
+    .srs-word-badge,
+    .srs-word-status-badge {
+      font-size: 11px !important;
+    }
+
     .srs-session-header {
       margin-bottom: 20px !important;
       gap: 12px !important;
@@ -1349,6 +1361,12 @@
       border: 1px solid var(--border2);
     }
 
+    .profile-logged-out-title { font-size: 22px !important; }
+    .profile-logged-out-desc { font-size: 14px !important; }
+    .profile-level-row { font-size: 14px !important; }
+    .profile-achievements-row { font-size: 14px !important; }
+    .profile-sync-subcard { font-size: 13px !important; }
+
     .profile-google-btn {
       width: 100%;
       display: flex;
@@ -1812,6 +1830,357 @@
       margin: 0 !important;
       line-height: 1.2 !important;
     }
+
+    /* ── App-wide Font Size Adjustments ── */
+    body.font-size-medium {
+      font-size: 16px !important;
+    }
+    body.font-size-medium .word-item-word,
+    body.font-size-medium .word-item-trans {
+      font-size: 19.5px !important;
+    }
+    body.font-size-medium .word-item-context,
+    body.font-size-medium .word-item-family {
+      font-size: 15.5px !important;
+    }
+    body.font-size-medium .search-input,
+    body.font-size-medium .search-container input {
+      font-size: 17px !important;
+    }
+    body.font-size-medium .settings-row,
+    body.font-size-medium .mobile-settings-row,
+    body.font-size-medium .mobile-settings-action-row {
+      font-size: 17px !important;
+    }
+    body.font-size-medium .settings-row-label,
+    body.font-size-medium .mobile-settings-row .settings-row-label,
+    body.font-size-medium .mobile-settings-action-row .settings-row-label {
+      font-size: 16px !important;
+    }
+    body.font-size-medium .settings-row-sublabel,
+    body.font-size-medium .mobile-settings-row .settings-row-sublabel,
+    body.font-size-medium .mobile-settings-action-row .settings-row-sublabel {
+      font-size: 12.5px !important;
+    }
+    body.font-size-medium .srs-card-word,
+    body.font-size-medium .fc-word {
+      font-size: 32px !important;
+    }
+    body.font-size-medium .srs-card-translation,
+    body.font-size-medium .fc-translation {
+      font-size: 23px !important;
+    }
+    body.font-size-medium .srs-card-context,
+    body.font-size-medium .fc-context {
+      font-size: 17px !important;
+    }
+    body.font-size-medium .tab {
+      font-size: 13.5px !important;
+    }
+    body.font-size-medium .word-item-header {
+      height: auto !important;
+      min-height: 44px !important;
+    }
+    body.font-size-medium .family-word {
+      font-size: 11px !important;
+    }
+    body.font-size-medium .custom-tag-chip {
+      font-size: 12px !important;
+    }
+    /* Info Panel, Empty States, Games Hub, Profile Scaling */
+    body.font-size-medium #info-overlay h3 { font-size: 18px !important; }
+    body.font-size-medium #info-overlay small { font-size: 12px !important; }
+    body.font-size-medium #info-overlay p,
+    body.font-size-medium #info-overlay span,
+    body.font-size-medium #info-dynamic-content { font-size: 15px !important; }
+    body.font-size-medium .empty-state p { font-size: 15px !important; }
+    body.font-size-medium .empty-state small { font-size: 12px !important; }
+    body.font-size-medium #profile-username { font-size: 23px !important; }
+    body.font-size-medium #profile-email { font-size: 15px !important; }
+    body.font-size-medium .profile-stat-val { font-size: 21px !important; }
+    body.font-size-medium .profile-stat-lbl { font-size: 12.5px !important; }
+    body.font-size-medium .profile-benefit-item { font-size: 15px !important; }
+    body.font-size-medium #profile-sync-status,
+    body.font-size-medium #profile-last-sync-time { font-size: 15px !important; }
+    body.font-size-medium .achievements-page-title { font-size: 21px !important; }
+    body.font-size-medium .stats-section-title { font-size: 16px !important; }
+    body.font-size-medium .stats-mini-num { font-size: 27px !important; }
+    body.font-size-medium .stats-mini-label { font-size: 12.5px !important; }
+    body.font-size-medium .stats-legend-item,
+    body.font-size-medium .stats-legend-pct { font-size: 15px !important; }
+    body.font-size-medium .stats-no-data { font-size: 16px !important; }
+    body.font-size-medium .stats-table td,
+    body.font-size-medium .stats-table th { font-size: 15px !important; }
+    body.font-size-medium .achievement-card-title { font-size: 15px !important; }
+    body.font-size-medium .achievement-card-desc { font-size: 14px !important; }
+    body.font-size-medium .achievement-card-date { font-size: 12px !important; }
+    body.font-size-medium .user-exp-label { font-size: 15px !important; }
+    body.font-size-medium .user-exp-value { font-size: 41px !important; }
+    body.font-size-medium .game-card-title { font-size: 17px !important; }
+    body.font-size-medium .game-card-desc { font-size: 14px !important; }
+    body.font-size-medium .resume-game-title { font-size: 18.5px !important; }
+    body.font-size-medium .resume-game-desc { font-size: 16px !important; }
+    body.font-size-medium .game-play-title { font-size: 17px !important; }
+    body.font-size-medium .game-play-score { font-size: 15px !important; }
+    body.font-size-medium .mc-word { font-size: 30px !important; }
+    body.font-size-medium .blank-sentence { font-size: 17px !important; }
+    body.font-size-medium .blank-hint { font-size: 15px !important; }
+    body.font-size-medium .mc-btn { font-size: 16.5px !important; }
+    body.font-size-medium .scramble-btn { font-size: 16px !important; }
+    body.font-size-medium .match-tile { font-size: 16px !important; }
+    body.font-size-medium .dictation-hint { font-size: 17px !important; }
+    body.font-size-medium .dictation-listen-btn { font-size: 18.5px !important; }
+    body.font-size-medium .dictation-input { font-size: 21px !important; }
+    body.font-size-medium .game-result-title { font-size: 23px !important; }
+    body.font-size-medium .game-result-desc { font-size: 17px !important; }
+    body.font-size-medium .bottom-sheet-trigger,
+    body.font-size-medium .bottom-sheet-trigger span,
+    body.font-size-medium .bottom-sheet-trigger div { font-size: 14px !important; }
+    body.font-size-medium .logo-text { font-size: 23px !important; }
+    body.font-size-medium .info-btn,
+    body.font-size-medium .profile-btn { font-size: 16px !important; }
+    body.font-size-medium .custom-confirm-body { font-size: 15px !important; }
+    body.font-size-medium .custom-confirm-btn { font-size: 16px !important; }
+    body.font-size-medium .bottom-sheet-title { font-size: 16px !important; }
+    body.font-size-medium .bottom-sheet-option { font-size: 16px !important; }
+    body.font-size-medium .cefr-badge,
+    body.font-size-medium .hard-badge,
+    body.font-size-medium .inactive-sub-badge { font-size: 12.5px !important; }
+    body.font-size-medium .toast,
+    body.font-size-medium #toast { font-size: 15px !important; }
+    body.font-size-medium #settings-login-btn,
+    body.font-size-medium #settings-sync-now-btn,
+    body.font-size-medium #settings-logout-btn,
+    body.font-size-medium #anki-export-btn,
+    body.font-size-medium #backup-btn,
+    body.font-size-medium #restore-btn,
+    body.font-size-medium #reset-data-btn,
+    body.font-size-medium #profile-login-btn,
+    body.font-size-medium #profile-sync-now-btn,
+    body.font-size-medium #profile-logout-btn,
+    body.font-size-medium .srs-reveal-btn,
+    body.font-size-medium .srs-start-btn,
+    body.font-size-medium .srs-words-btn,
+    body.font-size-medium .fc-restart-btn,
+    body.font-size-medium .fc-reveal-btn,
+    body.font-size-medium .fc-btn,
+    body.font-size-medium .dictation-check-btn,
+    body.font-size-medium .dictation-skip-btn,
+    body.font-size-medium .resume-game-btn,
+    body.font-size-medium .resume-discard-btn { font-size: 16px !important; }
+    body.font-size-medium .archive-search { font-size: 15px !important; }
+    body.font-size-medium .mobile-settings-card-title { font-size: 13.5px !important; }
+    body.font-size-medium .srs-stat-num { font-size: 27px !important; }
+    body.font-size-medium .badge, body.font-size-medium .badge-due { font-size: 11px !important; }
+    body.font-size-medium .scramble-stage .blank-sentence { font-size: 16px !important; }
+    body.font-size-medium .scramble-input-letter { font-size: 18.5px !important; width: 32px !important; height: 32px !important; }
+    body.font-size-medium .scramble-tile { font-size: 18.5px !important; width: 38px !important; height: 38px !important; }
+    /* SRS (Practice) Elements & Settings Panel Scaling */
+    body.font-size-medium .srs-stat-label { font-size: 13.5px !important; }
+    body.font-size-medium .srs-heatmap-title,
+    body.font-size-medium .srs-chart-title,
+    body.font-size-medium .srs-chart-summary { font-size: 15px !important; }
+    body.font-size-medium .srs-settings-title { font-size: 14px !important; }
+    body.font-size-medium .srs-settings-label { font-size: 16px !important; }
+    body.font-size-medium .srs-settings-help { font-size: 12.5px !important; }
+    body.font-size-medium .srs-settings-group .setting-btn { font-size: 15px !important; }
+    body.font-size-medium .srs-card-interval,
+    body.font-size-medium .srs-card-level-badge { font-size: 15px !important; }
+    body.font-size-medium .srs-rate-label { font-size: 15px !important; }
+    body.font-size-medium .srs-rate-interval { font-size: 12.5px !important; }
+    body.font-size-medium .srs-quit-btn { font-size: 15px !important; }
+    body.font-size-medium .srs-words-sticky-title-wrap h3 { font-size: 18px !important; }
+    body.font-size-medium #srs-words-search { font-size: 15px !important; }
+    body.font-size-medium #srs-words-sort { font-size: 15px !important; }
+    body.font-size-medium #srs-words-stat { font-size: 14px !important; }
+    body.font-size-medium .srs-word-item-word { font-size: 19px !important; }
+    body.font-size-medium .srs-word-item-translation { font-size: 19px !important; }
+    body.font-size-medium .srs-word-badge,
+    body.font-size-medium .srs-word-status-badge { font-size: 12.5px !important; }
+    body.font-size-medium .custom-checkbox-container { font-size: 15px !important; }
+    body.font-size-medium .review-subtab { font-size: 15px !important; }
+    body.font-size-medium .heatmap-legend-label { font-size: 12.5px !important; }
+    body.font-size-medium .profile-logged-out-title { font-size: 25px !important; }
+    body.font-size-medium .profile-logged-out-desc { font-size: 16px !important; }
+    body.font-size-medium .profile-level-row { font-size: 16px !important; }
+    body.font-size-medium .profile-achievements-row { font-size: 16px !important; }
+    body.font-size-medium .profile-sync-subcard { font-size: 15px !important; }
+    body.font-size-medium #profile-membership-badge { font-size: 12.5px !important; }
+
+    body.font-size-large {
+      font-size: 18px !important;
+    }
+    body.font-size-large .word-item-word,
+    body.font-size-large .word-item-trans {
+      font-size: 22px !important;
+    }
+    body.font-size-large .word-item-context,
+    body.font-size-large .word-item-family {
+      font-size: 17.5px !important;
+    }
+    body.font-size-large .search-input,
+    body.font-size-large .search-container input {
+      font-size: 19px !important;
+    }
+    body.font-size-large .settings-row,
+    body.font-size-large .mobile-settings-row,
+    body.font-size-large .mobile-settings-action-row {
+      font-size: 19px !important;
+    }
+    body.font-size-large .settings-row-label,
+    body.font-size-large .mobile-settings-row .settings-row-label,
+    body.font-size-large .mobile-settings-action-row .settings-row-label {
+      font-size: 18px !important;
+    }
+    body.font-size-large .settings-row-sublabel,
+    body.font-size-large .mobile-settings-row .settings-row-sublabel,
+    body.font-size-large .mobile-settings-action-row .settings-row-sublabel {
+      font-size: 14px !important;
+    }
+    body.font-size-large .srs-card-word,
+    body.font-size-large .fc-word {
+      font-size: 36px !important;
+    }
+    body.font-size-large .srs-card-translation,
+    body.font-size-large .fc-translation {
+      font-size: 26px !important;
+    }
+    body.font-size-large .srs-card-context,
+    body.font-size-large .fc-context {
+      font-size: 19px !important;
+    }
+    body.font-size-large .tab {
+      font-size: 15px !important;
+    }
+    body.font-size-large .word-item-header {
+      height: auto !important;
+      min-height: 48px !important;
+    }
+    body.font-size-large .family-word {
+      font-size: 12px !important;
+    }
+    body.font-size-large .custom-tag-chip {
+      font-size: 13px !important;
+    }
+    /* Info Panel, Empty States, Games Hub, Profile Scaling */
+    body.font-size-large #info-overlay h3 { font-size: 21px !important; }
+    body.font-size-large #info-overlay small { font-size: 14px !important; }
+    body.font-size-large #info-overlay p,
+    body.font-size-large #info-overlay span,
+    body.font-size-large #info-dynamic-content { font-size: 17px !important; }
+    body.font-size-large .empty-state p { font-size: 17px !important; }
+    body.font-size-large .empty-state small { font-size: 14px !important; }
+    body.font-size-large #profile-username { font-size: 26px !important; }
+    body.font-size-large #profile-email { font-size: 17px !important; }
+    body.font-size-large .profile-stat-val { font-size: 24px !important; }
+    body.font-size-large .profile-stat-lbl { font-size: 14px !important; }
+    body.font-size-large .profile-benefit-item { font-size: 17px !important; }
+    body.font-size-large #profile-sync-status,
+    body.font-size-large #profile-last-sync-time { font-size: 17px !important; }
+    body.font-size-large .achievements-page-title { font-size: 24px !important; }
+    body.font-size-large .stats-section-title { font-size: 18px !important; }
+    body.font-size-large .stats-mini-num { font-size: 31px !important; }
+    body.font-size-large .stats-mini-label { font-size: 14px !important; }
+    body.font-size-large .stats-legend-item,
+    body.font-size-large .stats-legend-pct { font-size: 17px !important; }
+    body.font-size-large .stats-no-data { font-size: 18px !important; }
+    body.font-size-large .stats-table td,
+    body.font-size-large .stats-table th { font-size: 17px !important; }
+    body.font-size-large .achievement-card-title { font-size: 17px !important; }
+    body.font-size-large .achievement-card-desc { font-size: 16px !important; }
+    body.font-size-large .achievement-card-date { font-size: 14px !important; }
+    body.font-size-large .user-exp-label { font-size: 17px !important; }
+    body.font-size-large .user-exp-value { font-size: 46px !important; }
+    body.font-size-large .game-card-title { font-size: 20px !important; }
+    body.font-size-large .game-card-desc { font-size: 16.5px !important; }
+    body.font-size-large .resume-game-title { font-size: 21px !important; }
+    body.font-size-large .resume-game-desc { font-size: 18.5px !important; }
+    body.font-size-large .game-play-title { font-size: 20px !important; }
+    body.font-size-large .game-play-score { font-size: 17px !important; }
+    body.font-size-large .mc-word { font-size: 34px !important; }
+    body.font-size-large .blank-sentence { font-size: 19.5px !important; }
+    body.font-size-large .blank-hint { font-size: 17px !important; }
+    body.font-size-large .mc-btn { font-size: 19px !important; }
+    body.font-size-large .scramble-btn { font-size: 18px !important; }
+    body.font-size-large .match-tile { font-size: 18px !important; }
+    body.font-size-large .dictation-hint { font-size: 19.5px !important; }
+    body.font-size-large .dictation-listen-btn { font-size: 21px !important; }
+    body.font-size-large .dictation-input { font-size: 24px !important; }
+    body.font-size-large .game-result-title { font-size: 26px !important; }
+    body.font-size-large .game-result-desc { font-size: 19.5px !important; }
+    body.font-size-large .bottom-sheet-trigger,
+    body.font-size-large .bottom-sheet-trigger span,
+    body.font-size-large .bottom-sheet-trigger div { font-size: 15.5px !important; }
+    body.font-size-large .logo-text { font-size: 26px !important; }
+    body.font-size-large .info-btn,
+    body.font-size-large .profile-btn { font-size: 18px !important; }
+    body.font-size-large .custom-confirm-body { font-size: 17px !important; }
+    body.font-size-large .custom-confirm-btn { font-size: 18px !important; }
+    body.font-size-large .bottom-sheet-title { font-size: 18px !important; }
+    body.font-size-large .bottom-sheet-option { font-size: 18px !important; }
+    body.font-size-large .cefr-badge,
+    body.font-size-large .hard-badge,
+    body.font-size-large .inactive-sub-badge { font-size: 14px !important; }
+    body.font-size-large .toast,
+    body.font-size-large #toast { font-size: 17px !important; }
+    body.font-size-large #settings-login-btn,
+    body.font-size-large #settings-sync-now-btn,
+    body.font-size-large #settings-logout-btn,
+    body.font-size-large #anki-export-btn,
+    body.font-size-large #backup-btn,
+    body.font-size-large #restore-btn,
+    body.font-size-large #reset-data-btn,
+    body.font-size-large #profile-login-btn,
+    body.font-size-large #profile-sync-now-btn,
+    body.font-size-large #profile-logout-btn,
+    body.font-size-large .srs-reveal-btn,
+    body.font-size-large .srs-start-btn,
+    body.font-size-large .srs-words-btn,
+    body.font-size-large .fc-restart-btn,
+    body.font-size-large .fc-reveal-btn,
+    body.font-size-large .fc-btn,
+    body.font-size-large .dictation-check-btn,
+    body.font-size-large .dictation-skip-btn,
+    body.font-size-large .resume-game-btn,
+    body.font-size-large .resume-discard-btn { font-size: 18px !important; }
+    body.font-size-large .archive-search { font-size: 17px !important; }
+    body.font-size-large .mobile-settings-card-title { font-size: 15px !important; }
+    body.font-size-large .srs-stat-num { font-size: 31px !important; }
+    body.font-size-large .badge, body.font-size-large .badge-due { font-size: 12px !important; }
+    body.font-size-large .scramble-stage .blank-sentence { font-size: 18px !important; }
+    body.font-size-large .scramble-input-letter { font-size: 21px !important; width: 36px !important; height: 36px !important; }
+    body.font-size-large .scramble-tile { font-size: 21px !important; width: 42px !important; height: 42px !important; }
+    /* SRS (Practice) Elements & Settings Panel Scaling */
+    body.font-size-large .srs-stat-label { font-size: 15px !important; }
+    body.font-size-large .srs-heatmap-title,
+    body.font-size-large .srs-chart-title,
+    body.font-size-large .srs-chart-summary { font-size: 17px !important; }
+    body.font-size-large .srs-settings-title { font-size: 16px !important; }
+    body.font-size-large .srs-settings-label { font-size: 18px !important; }
+    body.font-size-large .srs-settings-help { font-size: 14px !important; }
+    body.font-size-large .srs-settings-group .setting-btn { font-size: 17px !important; }
+    body.font-size-large .srs-card-interval,
+    body.font-size-large .srs-card-level-badge { font-size: 17px !important; }
+    body.font-size-large .srs-rate-label { font-size: 17px !important; }
+    body.font-size-large .srs-rate-interval { font-size: 14px !important; }
+    body.font-size-large .srs-quit-btn { font-size: 17px !important; }
+    body.font-size-large .srs-words-sticky-title-wrap h3 { font-size: 21px !important; }
+    body.font-size-large #srs-words-search { font-size: 17px !important; }
+    body.font-size-large #srs-words-sort { font-size: 17px !important; }
+    body.font-size-large #srs-words-stat { font-size: 16px !important; }
+    body.font-size-large .srs-word-item-word { font-size: 22px !important; }
+    body.font-size-large .srs-word-item-translation { font-size: 22px !important; }
+    body.font-size-large .srs-word-badge,
+    body.font-size-large .srs-word-status-badge { font-size: 14px !important; }
+    body.font-size-large .custom-checkbox-container { font-size: 17px !important; }
+    body.font-size-large .review-subtab { font-size: 17px !important; }
+    body.font-size-large .heatmap-legend-label { font-size: 14px !important; }
+    body.font-size-large .profile-logged-out-title { font-size: 28px !important; }
+    body.font-size-large .profile-logged-out-desc { font-size: 18px !important; }
+    body.font-size-large .profile-level-row { font-size: 18px !important; }
+    body.font-size-large .profile-achievements-row { font-size: 18px !important; }
+    body.font-size-large .profile-sync-subcard { font-size: 17px !important; }
+    body.font-size-large #profile-membership-badge { font-size: 14px !important; }
   </style>
 </head>
 
@@ -1855,31 +2224,60 @@
     <div class="shortcuts-overlay" id="info-overlay" style="display:none">
       <div class="shortcuts-modal" style="max-width: 320px;">
         <div class="shortcuts-header">
-          <span data-i18n="info_title">ℹ️ PrimeVocab Hakkında</span>
+          <span id="info-modal-title" data-i18n="info_modal_title">ℹ️ Bilgi</span>
           <button class="shortcuts-close" id="info-close">✕</button>
         </div>
         <div class="info-body"
           style="display: flex; flex-direction: column; gap: 14px; font-size: 13px; color: var(--text-dim); line-height: 1.5; padding: 4px 0 0 0;">
-          <div style="text-align: center; margin-bottom: 4px;">
-            <h3 style="margin: 0; font-size: 16px; color: var(--text); font-weight: 700; font-family: var(--font);">
-              PrimeVocab Mobile</h3>
-            <small style="color: var(--text-muted); font-weight: 500;">v1.0 (Companion App)</small>
+          
+          <!-- Dinamik Yardım Ekranı -->
+          <div id="info-dynamic-view" style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+            <div id="info-dynamic-content" style="font-family: var(--font); white-space: pre-wrap;"></div>
+            
+            <hr style="border: none; border-top: 1px solid var(--border2); margin: 6px 0 2px 0;">
+            <button id="info-about-btn" class="bottom-sheet-trigger" 
+              style="width: 100%; justify-content: center; gap: 6px; padding: 8px !important; background: rgba(255, 255, 255, 0.02) !important; border-color: var(--border2) !important;">
+              <span>ℹ️</span>
+              <span id="info-about-btn-text" style="font-size: 11px; font-weight: 700;" data-i18n="info_about_btn">PrimeVocab Hakkında</span>
+            </button>
           </div>
 
-          <p style="margin: 0; text-align: center; font-family: var(--font);" data-i18n="info_desc">
-            PrimeVocab, video izlerken çift altyazı ve aralıklı tekrar yöntemiyle dil öğrenmenizi sağlayan akıllı bir
-            eklentidir. Bu mobil uygulama, masaüstünden eklediğiniz kelimeleri tekrar etmenizi ve oyun oynamanızı
-            sağlar.
-          </p>
-
-          <hr style="border: none; border-top: 1px solid var(--border2); margin: 2px 0;">
-
-          <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span style="color: var(--text-muted);" data-i18n="info_developer">Geliştirici:</span>
-              <span style="font-weight: 600; color: var(--text);">Tolga KASAP</span>
+          <!-- Uygulama Hakkında Künyesi -->
+          <div id="info-about-view" style="display: none; flex-direction: column; gap: 12px; width: 100%;">
+            <div style="text-align: center; margin-bottom: 4px;">
+              <h3 style="margin: 0; font-size: 16px; color: var(--text); font-weight: 700; font-family: var(--font);">
+                PrimeVocab Mobile</h3>
+              <small style="color: var(--text-muted); font-weight: 500;">v1.0 (Companion App)</small>
             </div>
+
+            <p style="margin: 0; text-align: center; font-family: var(--font);" data-i18n="info_desc">
+              PrimeVocab, video izlerken çift altyazı ve aralıklı tekrar yöntemiyle dil öğrenmenizi sağlayan akıllı bir
+              eklentidir. Bu mobil uygulama, masaüstünden eklediğiniz kelimeleri tekrar etmenizi ve oyun oynamanızı
+              sağlar.
+            </p>
+
+            <hr style="border: none; border-top: 1px solid var(--border2); margin: 2px 0;">
+
+            <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font);">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-muted);" data-i18n="info_developer">Geliştirici:</span>
+                <span style="font-weight: 600; color: var(--text);">Tolga KASAP</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-muted);" data-i18n="info_contact">İletişim:</span>
+                <span style="font-weight: 600; color: var(--text-brand, #a5b4fc); font-size: 11px;">
+                  <a href="mailto:primevocabextension@gmail.com" style="color: inherit; text-decoration: none;">primevocabextension@gmail.com</a>
+                </span>
+              </div>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid var(--border2); margin: 6px 0 2px 0;">
+            <button id="info-back-btn" class="bottom-sheet-trigger" 
+              style="width: 100%; justify-content: center; gap: 6px; padding: 8px !important; background: rgba(255, 255, 255, 0.02) !important; border-color: var(--border2) !important;">
+              <span id="info-back-btn-text" style="font-size: 11px; font-weight: 700;" data-i18n="info_back_btn">Geri Dön</span>
+            </button>
           </div>
+
         </div>
       </div>
     </div>
@@ -2328,15 +2726,15 @@
       <div id="profile-logged-out-view" style="display: flex; flex-direction: column; gap: 16px; width: 100%;">
         <div class="profile-logged-out-card">
           <div class="logged-out-icon-pulse">👤</div>
-          <h2 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 800; color: var(--text); font-family: var(--font);">Hesabınızı Eşitleyin</h2>
-          <p style="margin: 0 0 24px 0; font-size: 14px; color: var(--text-muted); line-height: 1.5; font-family: var(--font);">
+          <h2 class="profile-logged-out-title" style="margin: 0 0 8px 0; font-weight: 800; color: var(--text); font-family: var(--font);">Hesabınızı Eşitleyin</h2>
+          <p class="profile-logged-out-desc" style="margin: 0 0 24px 0; color: var(--text-muted); line-height: 1.5; font-family: var(--font);">
             İlerlemenizi buluta kaydederek hiçbir kelimenizi kaybetmeyin ve diğer cihazlarınızla anında senkronize olun.
           </p>
 
           <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; margin-bottom: 12px; font-family: var(--font);">
             <div class="profile-benefit-item">
               <span style="font-size: 18px;">💾</span>
-              <span>Kelime listenizi ve ilerlemenizi güvenceye alın</span>
+              <span>Kelime listenizi ve ilerlemenizi güvenceye edin</span>
             </div>
             <div class="profile-benefit-item">
               <span style="font-size: 18px;">🔄</span>
@@ -2372,11 +2770,11 @@
         </div>
 
         <!-- İstatistikler Grubu -->
-        <div class="mobile-settings-card-title">📊 İstatistikler ve Seviye</div>
+        <div class="mobile-settings-card-title" data-i18n="profile_stats_title">📊 İstatistikler ve Seviye</div>
         <div class="profile-subcard">
           <!-- Seviye ve İlerleme Barı -->
           <div style="display: flex; flex-direction: column; gap: 8px; font-family: var(--font);">
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+            <div class="profile-level-row" style="display: flex; justify-content: space-between; align-items: center;">
               <span style="color: var(--text-muted); font-weight: 500;" data-i18n="profile_level_label">Mevcut Seviye:</span>
               <span style="font-weight: 800; color: var(--accent);" id="profile-level">Level 1</span>
             </div>
@@ -2410,9 +2808,9 @@
         </div>
 
         <!-- Kazanılan Başarımlar -->
-        <div class="mobile-settings-card-title">🏆 Başarımlar</div>
+        <div class="mobile-settings-card-title" data-i18n="profile_achievements_title">🏆 Başarımlar</div>
         <div class="profile-subcard" style="font-family: var(--font);">
-          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px;">
+          <div class="profile-achievements-row" style="display: flex; justify-content: space-between; align-items: center;">
             <span style="color: var(--text-muted); font-weight: 500;" data-i18n="profile_achievements_label">Başarımlar:</span>
             <span style="font-weight: 700; color: var(--text);" id="profile-achievements-ratio">0 / 0</span>
           </div>
@@ -2420,11 +2818,11 @@
         </div>
 
         <!-- Senkronizasyon Durumu -->
-        <div class="mobile-settings-card-title">🔄 Bulut Eşitleme</div>
-        <div class="profile-subcard" style="font-family: var(--font); font-size: 13px;">
+        <div class="mobile-settings-card-title" data-i18n="profile_sync_title">🔄 Bulut Eşitleme</div>
+        <div class="profile-subcard profile-sync-subcard" style="font-family: var(--font);">
           <div id="profile-sync-status-row" style="display: flex; justify-content: space-between; align-items: center; color: var(--text-muted);">
             <span id="profile-sync-status" data-i18n="profile_sync_status_unlinked">Senkronizasyon Kapalı</span>
-            <button id="profile-sync-now-btn" class="toolbar-btn" style="display: none; background: var(--accent-dim) !important; border: 1px solid var(--border) !important; color: #818cf8 !important; padding: 6px 12px !important; border-radius: 6px !important; font-size: 12px !important; font-weight: 600 !important;"><span data-i18n="profile_sync_now">Şimdi Eşitle</span></button>
+            <button id="profile-sync-now-btn" class="toolbar-btn" style="display: none; background: var(--accent-dim) !important; border: 1px solid var(--border) !important; color: #818cf8 !important; padding: 6px 12px !important; border-radius: 6px !important; font-weight: 600 !important;"><span data-i18n="profile_sync_now">Şimdi Eşitle</span></button>
           </div>
           <div id="profile-last-sync-row" style="color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
             <span data-i18n="profile_last_sync_label">Son Eşitleme:</span>
@@ -2434,7 +2832,7 @@
 
         <!-- Çıkış Yap Butonu -->
         <div id="profile-logout-row" style="margin-top: 12px; margin-bottom: 30px; width: 100%;">
-          <button id="profile-logout-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; color: #ef4444 !important; padding: 12px !important; border-radius: 12px !important; font-size: 14px !important; font-weight: 700 !important; width: 100%; text-align: center;" data-i18n="profile_logout">Çıkış Yap</button>
+          <button id="profile-logout-btn" class="toolbar-btn" style="background: rgba(239, 68, 68, 0.1) !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; color: #ef4444 !important; padding: 12px !important; border-radius: 12px !important; font-weight: 700 !important; width: 100%; text-align: center;" data-i18n="profile_logout">Çıkış Yap</button>
         </div>
       </div>
     </div>
@@ -2450,8 +2848,8 @@
           <div class="settings-row-left">
             <span class="settings-row-icon">🌐</span>
             <div class="settings-row-text">
-              <span class="settings-row-label">Uygulama Dili</span>
-              <span class="settings-row-sublabel">Arayüz dilini değiştirin</span>
+              <span class="settings-row-label" data-i18n="settings_app_lang_title">Uygulama Dili</span>
+              <span class="settings-row-sublabel" data-i18n="settings_app_lang_desc">Arayüz dilini değiştirin</span>
             </div>
           </div>
           <div class="settings-row-right">
@@ -2461,12 +2859,33 @@
         </div>
         <!-- Hidden select for compatibility with app.js / settings.js -->
         <select id="app-lang-select" style="display:none !important">
-          <option value="auto">Otomatik</option>
-          <option value="tr">Türkçe</option>
-          <option value="en">English</option>
-          <option value="de">Deutsch</option>
-          <option value="fr">Français</option>
-          <option value="es">Español</option>
+          <option value="auto" data-i18n="settings_lang_auto">Otomatik</option>
+          <option value="tr" data-i18n="lang_tr">Türkçe</option>
+          <option value="en" data-i18n="lang_en">English</option>
+          <option value="de" data-i18n="lang_de">Deutsch</option>
+          <option value="fr" data-i18n="lang_fr">Français</option>
+          <option value="es" data-i18n="lang_es">Español</option>
+        </select>
+
+        <!-- Yazı Boyutu (Bottom Sheet Trigger Row) -->
+        <div class="mobile-settings-row" id="fontsize-trigger-row" style="cursor: pointer;">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">🔍</span>
+            <div class="settings-row-text">
+              <span class="settings-row-label" data-i18n="settings_fontsize_title">Yazı Boyutu</span>
+              <span class="settings-row-sublabel" data-i18n="settings_fontsize_desc">Uygulama genelindeki yazı boyutunu ayarlayın</span>
+            </div>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-value" id="app-fontsize-value">Normal</span>
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+        <!-- Hidden select for compatibility with settings logic -->
+        <select id="app-fontsize-select" style="display:none !important">
+          <option value="normal" data-i18n="fontsize_normal">Normal</option>
+          <option value="medium" data-i18n="fontsize_medium">Orta</option>
+          <option value="large" data-i18n="fontsize_large">Büyük</option>
         </select>
 
         <!-- Uygulama Sesleri -->
@@ -2474,8 +2893,8 @@
           <div class="settings-row-left">
             <span class="settings-row-icon">🔊</span>
             <div class="settings-row-text">
-              <span class="settings-row-label">Uygulama Sesleri</span>
-              <span class="settings-row-sublabel">Çalışırken ve oyunlarda ses oynatın</span>
+              <span class="settings-row-label" data-i18n="settings_sounds_title">Uygulama Sesleri</span>
+              <span class="settings-row-sublabel" data-i18n="settings_sounds_desc">Çalışırken ve oyunlarda ses oynatın</span>
             </div>
           </div>
           <div class="settings-row-right">
@@ -2503,10 +2922,25 @@
           </div>
         </div>
 
+        <!-- PrimeVocab Hakkında -->
+        <div class="mobile-settings-action-row" id="about-trigger-row" style="cursor: pointer;">
+          <div class="settings-row-left">
+            <span class="settings-row-icon">ℹ️</span>
+            <div class="settings-row-text">
+              <span class="settings-row-label" data-i18n="settings_about_label">PrimeVocab Hakkında</span>
+              <span class="settings-row-sublabel" data-i18n="settings_about_sublabel">Uygulama sürümü, geliştirici ve detaylar</span>
+            </div>
+          </div>
+          <div class="settings-row-right">
+            <span class="settings-row-value">v1.0</span>
+            <span class="settings-row-chevron">❯</span>
+          </div>
+        </div>
+
       </div>
 
       <!-- Veri Yönetimi Grubu -->
-      <div class="mobile-settings-card-title">📦 Veri Yönetimi</div>
+      <div class="mobile-settings-card-title" data-i18n="settings_section_data">📦 Veri Yönetimi</div>
       <div class="mobile-settings-card">
 
         <!-- Anki'ye Aktar -->
@@ -2514,8 +2948,8 @@
           <div class="settings-row-left">
             <span class="settings-row-icon color-orange">⭐</span>
             <div class="settings-row-text">
-              <span class="settings-row-label">Anki'ye Aktar</span>
-              <span class="settings-row-sublabel">Kelimelerinizi Anki destesi (.txt) olarak aktarın</span>
+              <span class="settings-row-label" data-i18n="settings_anki_title">Anki'ye Aktar</span>
+              <span class="settings-row-sublabel" data-i18n="settings_anki_desc">Kelimelerinizi Anki destesi (.txt) olarak aktarın</span>
             </div>
           </div>
           <div class="settings-row-right">
@@ -2528,8 +2962,8 @@
           <div class="settings-row-left">
             <span class="settings-row-icon color-green">📥</span>
             <div class="settings-row-text">
-              <span class="settings-row-label">Verileri Yedekle (Yedek Al)</span>
-              <span class="settings-row-sublabel">Tüm kelimeleri JSON dosyası olarak kaydedin</span>
+              <span class="settings-row-label" data-i18n="settings_backup_title">Verileri Yedekle (Yedek Al)</span>
+              <span class="settings-row-sublabel" data-i18n="settings_backup_desc">Tüm kelimeleri JSON dosyası olarak kaydedin</span>
             </div>
           </div>
           <div class="settings-row-right">
@@ -2542,8 +2976,8 @@
           <div class="settings-row-left">
             <span class="settings-row-icon color-blue">📤</span>
             <div class="settings-row-text">
-              <span class="settings-row-label">Yedeği Geri Yükle</span>
-              <span class="settings-row-sublabel">JSON yedek dosyanızı uygulamaya yükleyin</span>
+              <span class="settings-row-label" data-i18n="settings_restore_title">Yedeği Geri Yükle</span>
+              <span class="settings-row-sublabel" data-i18n="settings_restore_desc">JSON yedek dosyanızı uygulamaya yükleyin</span>
             </div>
           </div>
           <div class="settings-row-right">
@@ -2555,14 +2989,14 @@
       </div>
 
       <!-- Sıfırlama İşlemleri (Danger Zone) -->
-      <div class="mobile-settings-card-title color-red">⚠️ Tehlikeli Bölge (Sıfırlama)</div>
-      <div class="mobile-settings-card border-red">
+      <div class="mobile-settings-card-title color-red" data-i18n="settings_danger_zone_title">⚠️ Tehlikeli Bölge (Sıfırlama)</div>
+      <div class="mobile-settings-card border-red" style="margin-bottom: 30px;">
 
         <!-- SRS Sıfırla -->
         <div class="mobile-settings-action-row danger-row" id="reset-srs-btn">
           <div class="settings-row-left">
             <span class="settings-row-icon">🔁</span>
-            <span class="settings-row-label">SRS İlerlemesini Sıfırla</span>
+            <span class="settings-row-label" data-i18n="settings_reset_srs_title">SRS İlerlemesini Sıfırla</span>
           </div>
           <div class="settings-row-right">
             <span class="settings-row-chevron">❯</span>
@@ -2573,7 +3007,7 @@
         <div class="mobile-settings-action-row danger-row" id="reset-streak-btn">
           <div class="settings-row-left">
             <span class="settings-row-icon">🔥</span>
-            <span class="settings-row-label">Günlük Çalışma Serisini Sıfırla</span>
+            <span class="settings-row-label" data-i18n="settings_reset_streak_title">Günlük Çalışma Serisini Sıfırla</span>
           </div>
           <div class="settings-row-right">
             <span class="settings-row-chevron">❯</span>
@@ -2584,7 +3018,7 @@
         <div class="mobile-settings-action-row danger-row" id="reset-games-btn">
           <div class="settings-row-left">
             <span class="settings-row-icon">🏆</span>
-            <span class="settings-row-label">Oyun ve Başarımları Sıfırla</span>
+            <span class="settings-row-label" data-i18n="settings_reset_games_title">Oyun ve Başarımları Sıfırla</span>
           </div>
           <div class="settings-row-right">
             <span class="settings-row-chevron">❯</span>
@@ -2595,7 +3029,7 @@
         <div class="mobile-settings-action-row danger-row master-danger" id="reset-data-btn">
           <div class="settings-row-left">
             <span class="settings-row-icon">☠️</span>
-            <span class="settings-row-label" style="font-weight: 800;">TÜM KELİMELERİ VE VERİLERİ SIFIRLA</span>
+            <span class="settings-row-label" style="font-weight: 800;" data-i18n="settings_reset_all_title">TÜM KELİMELERİ VE VERİLERİ SIFIRLA</span>
           </div>
           <div class="settings-row-right">
             <span class="settings-row-chevron">❯</span>

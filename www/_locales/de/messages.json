@@ -459,7 +459,7 @@
     "message": "🔥 Serie zurücksetzen"
   },
   "settings_reset_streak_confirm": {
-    "message": "Ihre Tages-Serie und Ihr Rekord werden vollständig zurückgesetzt. Möchten Sie fortfahren?"
+    "message": "Ihre tägliche Strähne und Rekorddaten werden vollständig zurückgesetzt. Möchten Sie fortfahren?"
   },
   "settings_reset_streak_done": {
     "message": "Ihre Tages-Serie und Ihr Rekord wurden zurückgesetzt."
@@ -657,10 +657,10 @@
     "message": "W"
   },
   "settings_backup_title": {
-    "message": "Daten sichern (JSON)"
+    "message": "Daten sichern"
   },
   "settings_restore_title": {
-    "message": "Sicherung wiederherstellen"
+    "message": "Backup wiederherstellen"
   },
   "settings_backup_help": {
     "message": "Exportieren Sie alle gespeicherten Wörter und den Lernfortschritt als JSON-Datei."
@@ -1065,7 +1065,7 @@
     "message": "🏆 Fortschritt zurücksetzen"
   },
   "settings_reset_games_confirm": {
-    "message": "Deine Spielstatistiken, Gesamt-EXP und alle Erfolge werden zurückgesetzt. Möchtest du fortfahren?"
+    "message": "Ihre Spielstatistiken, die Gesamtpunktzahl (EXP) und alle Erfolge werden zurückgesetzt. Möchten Sie fortfahren?"
   },
   "settings_reset_games_done": {
     "message": "Fortschritt der Spiele und Erfolge wurde zurückgesetzt."
@@ -1402,5 +1402,137 @@
   },
   "profile_manage_subscription_btn": {
     "message": "⚙️ Abonnement verwalten"
+  },
+  "info_modal_title": {
+    "message": "ℹ️ Info"
+  },
+  "info_about_btn": {
+    "message": "Über PrimeVocab"
+  },
+  "info_back_btn": {
+    "message": "Zurück"
+  },
+  "settings_app_lang_title": {
+    "message": "App-Sprache"
+  },
+  "settings_app_lang_desc": {
+    "message": "Benutzeroberflächensprache ändern"
+  },
+  "settings_fontsize_title": {
+    "message": "Schriftgröße"
+  },
+  "settings_fontsize_desc": {
+    "message": "Schriftgröße in der gesamten App anpassen"
+  },
+  "settings_sounds_title": {
+    "message": "App-Töne"
+  },
+  "settings_sounds_desc": {
+    "message": "Töne beim Lernen und Spielen abspielen"
+  },
+  "settings_anki_title": {
+    "message": "Nach Anki exportieren"
+  },
+  "settings_anki_desc": {
+    "message": "Exportieren Sie Ihre Wörter als Anki-Deck (.txt)"
+  },
+  "settings_backup_desc": {
+    "message": "Alle Wörter als JSON-Datei speichern"
+  },
+  "settings_restore_desc": {
+    "message": "Laden Sie Ihre JSON-Backup-Datei in die App hoch"
+  },
+  "settings_reset_srs_title": {
+    "message": "SRS-Fortschritt zurücksetzen"
+  },
+  "settings_reset_streak_title": {
+    "message": "Tägliche Strähne zurücksetzen"
+  },
+  "settings_reset_games_title": {
+    "message": "Spiele & Erfolge zurücksetzen"
+  },
+  "settings_reset_all_title": {
+    "message": "ALLE WÖRTER UND DATEN ZURÜCKSETZEN"
+  },
+  "settings_reset_all_confirm": {
+    "message": "Alle Ihre Wörter und Lerndaten werden dauerhaft gelöscht. Diese Aktion kann nicht rückgängig gemacht werden! Fortfahren?"
+  },
+  "srs_words_sort_label_time_asc": {
+    "message": "Zeit aufsteigend (Am nächsten)"
+  },
+  "srs_words_sort_label_time_desc": {
+    "message": "Zeit absteigend (Am weitesten)"
+  },
+  "srs_words_sort_label_alphabetical": {
+    "message": "Alphabetisch (A → Z)"
+  },
+  "srs_words_sort_label_learned_first": {
+    "message": "Gelernt zuerst"
+  },
+  "srs_words_sort_label_new_first": {
+    "message": "Neue Karten zuerst"
+  },
+  "fontsize_normal": {
+    "message": "Normal"
+  },
+  "fontsize_medium": {
+    "message": "Mittel"
+  },
+  "fontsize_large": {
+    "message": "Groß"
+  },
+  "archive_sort_title": {
+    "message": "Wortsortierung"
+  },
+  "archive_source_filter_title": {
+    "message": "Nach Quelle filtern"
+  },
+  "archive_tag_filter_title": {
+    "message": "Nach Tag filtern"
+  },
+  "archive_level_filter_title": {
+    "message": "Stufe auswählen"
+  },
+  "archive_level_prefix": {
+    "message": "Stufe: "
+  },
+  "settings_danger_zone_title": {
+    "message": "⚠️ Gefahrenbereich (Zurücksetzen)"
+  },
+  "settings_reset_all_done": {
+    "message": "Alle Daten wurden erfolgreich zurückgesetzt!"
+  },
+  "profile_stats_title": {
+    "message": "📊 Statistiken & Level"
+  },
+  "profile_achievements_title": {
+    "message": "🏆 Erfolge"
+  },
+  "profile_sync_title": {
+    "message": "🔄 Cloud-Synchronisation"
+  },
+  "profile_days_count": {
+    "message": "$1 Tage"
+  },
+  "profile_level_display": {
+    "message": "Stufe $1 ($2 / 1000 XP)"
+  },
+  "profile_words_saved_today": {
+    "message": "$1 Wörter gespeichert"
+  },
+  "profile_premium_badge": {
+    "message": "PREMIUM 👑"
+  },
+  "profile_days_left": {
+    "message": "Tage übrig"
+  },
+  "profile_free_badge": {
+    "message": "FREE"
+  },
+  "profile_sync_active": {
+    "message": "Synchronisierung aktiv: $1"
+  },
+  "srs_last_interval": {
+    "message": "Letztes Intervall: $1"
   }
 }

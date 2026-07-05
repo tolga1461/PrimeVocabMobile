@@ -296,7 +296,7 @@ function loadSettings() {
             }
         });
 
-        chrome.storage.sync.get({ settings: { appLanguage: 'auto', gamesSound: true, deleteConfirm: true, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
+        chrome.storage.sync.get({ settings: { appLanguage: 'auto', appFontSize: 'normal', gamesSound: true, deleteConfirm: true, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
         if (!settings)
             settings = {};
         const ensureInit = (key) => {
@@ -365,6 +365,10 @@ function loadSettings() {
         const appLangSelect = document.getElementById('app-lang-select');
         if (appLangSelect)
             appLangSelect.value = settings.appLanguage || 'auto';
+        const appFontSizeSelect = document.getElementById('app-fontsize-select');
+        if (appFontSizeSelect)
+            appFontSizeSelect.value = settings.appFontSize || 'normal';
+        applyAppFontSize(settings.appFontSize || 'normal');
         document.querySelectorAll('#panel-font-size-group .setting-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.value === (ps.panelFontSize || '14px'));
         });
@@ -454,7 +458,7 @@ function saveSetting(key, value) {
         ensureInit('youtube');
         ensureInit('prime');
         ensureInit('netflix');
-        if (key === 'appLanguage' || key === 'gamesSound' || key === 'deleteConfirm') {
+        if (key === 'appLanguage' || key === 'appFontSize' || key === 'gamesSound' || key === 'deleteConfirm') {
             settings[key] = value;
         }
         else {
@@ -483,6 +487,10 @@ function applyFamilyBtnState(show) {
 function applyPanelFontSize(size) {
     document.querySelectorAll('.word-chip, .transcript-row').forEach(el => { el.style.fontSize = size; });
     document.documentElement.style.setProperty('--panel-font-size', size);
+}
+function applyAppFontSize(size) {
+    document.body.classList.remove('font-size-normal', 'font-size-medium', 'font-size-large');
+    document.body.classList.add('font-size-' + size);
 }
 // ── Ayar Event Listener'ları ──────────────────────────────────────────────────
 document.querySelectorAll('#font-size-group .setting-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('#font-size-group .setting-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); saveSetting('fontSize', btn.dataset.value); }); });
@@ -748,6 +756,16 @@ if (targetSelectEl)
 const appLangSelectEl = document.getElementById('app-lang-select');
 if (appLangSelectEl) {
     appLangSelectEl.addEventListener('change', (e) => { saveSetting('appLanguage', e.target.value); setTimeout(() => window.location.reload(), 150); });
+}
+const appFontSizeSelectEl = document.getElementById('app-fontsize-select');
+if (appFontSizeSelectEl) {
+    appFontSizeSelectEl.addEventListener('change', (e) => { 
+        saveSetting('appFontSize', e.target.value); 
+        applyAppFontSize(e.target.value); 
+        if (typeof loadArchive === 'function') {
+            loadArchive();
+        }
+    });
 }
 // ── Sıfırlama Butonları ───────────────────────────────────────────────────────
 const resetSrsBtn = document.getElementById('reset-srs-btn');
@@ -1140,12 +1158,12 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 const resetDataBtn = document.getElementById('reset-data-btn');
 if (resetDataBtn) {
     resetDataBtn.addEventListener('click', () => {
-        showCustomConfirm("Tüm kayıtlı kelimelerinizi, ayarlarınızı ve ilerlemenizi tamamen sıfırlamak istediğinize emin misiniz? Bu işlem geri alınamaz!", () => {
+        showCustomConfirm("settings_reset_all_confirm", () => {
             chrome.storage.local.clear(() => {
-                showToast("Tüm veriler başarıyla sıfırlandı!");
+                showToast(getMessage("settings_reset_all_done") || "Tüm veriler başarıyla sıfırlandı!");
                 setTimeout(() => window.location.reload(), 1000);
             });
-        }, "Sıfırla", "Vazgeç");
+        }, "btn_confirm_reset", "game_btn_cancel");
     });
 }
 

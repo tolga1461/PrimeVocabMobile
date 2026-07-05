@@ -211,26 +211,45 @@ function throttle(fn, ms) {
 }
 
 function estimateItemHeight(item, showFamily, showTags, isExpanded) {
-    let height = 58; // Header base height on mobile (increased slightly matching header height adjustments)
+    let scale = 1.0;
+    if (document.body.classList.contains('font-size-medium')) {
+        scale = 1.15;
+    } else if (document.body.classList.contains('font-size-large')) {
+        scale = 1.30;
+    }
+
+    // Exact base height matching physical heights: header (38/44/48) + padding (24) + safe buffer
+    let height = 64; 
+    if (scale === 1.15) height = 70;
+    else if (scale === 1.30) height = 76;
+
     if (isExpanded) {
         if (item.context) {
             const charCount = item.context.length;
-            const lines = Math.max(1, Math.ceil(charCount / 38)); // Slightly lower denominator for safer wrap estimation
-            height += 14 + (lines * 17.5);
+            // Modern screens fit more characters even at large sizes due to narrow font width
+            const charsPerLine = scale === 1.30 ? 52 : (scale === 1.15 ? 56 : 60);
+            const lines = Math.max(1, Math.ceil(charCount / charsPerLine));
+            const contextLineHeight = scale === 1.30 ? 28 : (scale === 1.15 ? 25 : 22);
+            height += 8 + (lines * contextLineHeight);
         }
         if (showFamily && Array.isArray(item.wordFamily) && item.wordFamily.length) {
             const totalChars = 14 + item.wordFamily.reduce((sum, w) => sum + w.length + 2, 0);
-            const lines = Math.max(1, Math.ceil(totalChars / 36)); // Lower denominator since flex-wrapped chips take more line height space
-            height += 15 + (lines * 19.5); // Allocate more height per wrapped chip line
+            // Family chips are small (10px-12px), fitting more text per line
+            const charsPerLine = scale === 1.30 ? 52 : (scale === 1.15 ? 56 : 60);
+            const lines = Math.max(1, Math.ceil(totalChars / charsPerLine));
+            const familyLineHeight = scale === 1.30 ? 22 : (scale === 1.15 ? 20 : 18);
+            height += 13 + (lines * familyLineHeight);
         }
     }
     if (showTags) {
         const tags = item.tags || [];
         const totalChars = tags.reduce((sum, t) => sum + t.length + 4, 0) + 5;
-        const lines = Math.max(1, Math.ceil(totalChars / 32));
-        height += 12 + (lines * 24); // Allocate more height per wrapped tag line
+        const charsPerLine = scale === 1.30 ? 45 : (scale === 1.15 ? 50 : 55);
+        const lines = Math.max(1, Math.ceil(totalChars / charsPerLine));
+        const tagsLineHeight = scale === 1.30 ? 24 : (scale === 1.15 ? 22 : 20);
+        height += 8 + (lines * tagsLineHeight);
     }
-    height += 8; // gap/margin
+    height += 8; // Margin bottom gap
     return Math.ceil(height);
 }
 
