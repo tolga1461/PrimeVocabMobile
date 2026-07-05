@@ -330,6 +330,33 @@
       }
     }
 
+    /* Absolute positioning for bottom tab notification badges */
+    .tab {
+      position: relative !important;
+    }
+
+    .tab .badge {
+      position: absolute !important;
+      top: 6px !important;
+      left: calc(50% + 8px) !important;
+      background: var(--accent) !important;
+      color: #fff !important;
+      font-size: 9px !important;
+      font-weight: 800 !important;
+      padding: 1px 4px !important;
+      border-radius: 9px !important;
+      min-width: 14px !important;
+      height: 14px !important;
+      line-height: 12px !important;
+      text-align: center !important;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.45) !important;
+      z-index: 10 !important;
+    }
+
+    .tab .badge-due {
+      background: #f97316 !important;
+    }
+
     /* ── Mobile UI Sizing Scaling & Accessibility Improvements ── */
 
     /* Spacious list items in Word Archive */
