@@ -23,8 +23,32 @@
 .save-btn:active,
 .close-card:active,
 .fc-close:active,
-.time-badge:active {
-  transform: scale(0.95) !important;
+.time-badge:active,
+.mobile-settings-action-row:active,
+.danger-row:active,
+.color-dot:active,
+.switch-container:active,
+.switch:active,
+.slider:active,
+.setting-select-inline:active,
+.setting-select:active,
+.archive-source-select:active,
+.archive-sort-select:active,
+.expand-toggle-icon:active,
+.mc-btn:active,
+.scramble-btn:active,
+.match-tile:active,
+.dictation-listen-btn:active,
+.dictation-check-btn:active,
+.dictation-skip-btn:active,
+.srs-start-btn:active,
+.srs-words-btn:active,
+.srs-reveal-btn:active,
+.srs-rate-btn:active,
+.srs-hint-btn:active,
+.srs-quit-btn:active,
+.card-speak-btn:active {
+  transform: scale(0.96) !important;
   opacity: 0.85;
   transition: transform 0.08s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.08s ease;
 }
@@ -4467,4 +4491,22 @@ input:checked+.slider:before {
 }
 .word-list-pulling #word-list {
   transition: none !important; /* disable transitions when pulling for absolute touch tracking responsiveness */
+}
+
+/* Full-screen Slide Up & Fade In Animations for Study Panels */
+@keyframes slideUpFullScreen {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#srs-session,
+#srs-result,
+.srs-words-overlay {
+  animation: slideUpFullScreen 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94) forwards !important;
 }

@@ -1580,6 +1580,9 @@
   "profile_sync_active": {
     "message": "Eşitleme Aktif: $1"
   },
+  "srs_last_interval": {
+    "message": "Son aralık: $1"
+  },
   "archive_btn_review_title": {
     "message": "Kelimeleri Tekrar Et / Kart Çalış"
   },
