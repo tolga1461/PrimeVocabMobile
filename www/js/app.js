@@ -52,19 +52,22 @@ function updateArchiveBadge() {
 }
 
 function updateReviewBadge() {
-    chrome.storage.local.get({ savedWords: [], srsSettings: { newLimit: 10, sessionLimit: 20 } }, (data) => {
+    chrome.storage.local.get({ savedWords: [], srsSettings: { newLimit: 10 } }, (data) => {
         const badge = document.getElementById('review-badge');
         if (!badge) return;
 
-        const dueWords = (data.savedWords || []).filter(w => {
-            if (w.isLearned) return false;
-            if (!w.nextReviewTime) return true; // new card
-            return w.nextReviewTime <= Date.now();
-        });
+        const savedWords = data.savedWords || [];
+        const srsSettings = data.srsSettings || { newLimit: 10 };
+        const now = Date.now(), today = new Date().toDateString();
+        const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
+        const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
+        const introducedToday = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && w.firstReviewDate === today).length;
+        const newLimit = srsSettings.newLimit ?? 10;
+        const newAvailable = newLimit === 0 ? newCards.length : Math.max(0, Math.min(newCards.length, newLimit - introducedToday));
+        const total = reviewDue.length + newAvailable;
 
-        const count = dueWords.length;
-        badge.textContent = count;
-        badge.style.display = count > 0 ? '' : 'none';
+        badge.textContent = total;
+        badge.style.display = total > 0 ? '' : 'none';
     });
 }
 
