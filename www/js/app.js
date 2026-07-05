@@ -560,29 +560,46 @@ async function handleLogin() {
         // Switch to profile tab so user sees their info
         switchMainTab('profile');
         
-        // Silent license validation
+        // Silent license validation — 3 durum:
+        // Case 1: Kullanıcı tabloda hiç yok (isNewRegistration: true)
+        // Case 2: Kullanıcı tabloda var ama lisansı FREE (status: FREE_USER)
+        // Case 3: Kullanıcı tabloda var ve lisansı MONTHLY/YEARLY/LIFETIME (isPremium: true)
         chrome.runtime.sendMessage({ action: "api_check_license", email: userInfo.email }, (res) => {
             const apiData = (res && res.success && res.data) ? res.data : null;
-            chrome.storage.local.get({ licenseType: 'FREE', licenseStatus: 'FREE_USER' }, async (licData) => {
-                const licenseType = String(apiData ? apiData.licenseType : licData.licenseType).toUpperCase().trim();
-                const status = String(apiData ? apiData.status : licData.licenseStatus).toUpperCase().trim();
-                
-                // Case 3 (Premium): Durum ACTIVE ve Lisans FREE değilse kullanabilsin
-                const isPremium = (status === "ACTIVE") && (licenseType !== "FREE");
-                
-                if (!isPremium) {
-                    console.log("[PV-core] Non-premium user login blocked on mobile. Status:", status, "Type:", licenseType);
-                    await forceLogoutWithoutConfirm();
-                    
-                    // Case 1 (Yeni/Kayıtsız Kullanıcı): E-tabloda mail hiç yoksa (Sunucu yeni profil açtığı için durumu ACTIVE ama Lisans FREE olur)
-                    // Case 2 (Süresi Dolan/Ücretsiz Kullanıcı): Durum EXPIRED veya FREE_USER ise
-                    const isNewUser = (status === "ACTIVE" && licenseType === "FREE") || (status === "NOT_FOUND");
-                    showPremiumBlockerModal(userInfo.email, isNewUser);
-                } else {
-                    updateProfileUI();
-                    handleSyncNow(); // Attempt initial sync
-                }
-            });
+            
+            // API tamamen başarısız olduysa — ağ hatası gibi durumlar.
+            // Bu durumda kullanıcıyı yanlış engellememek için premium olmayan bloğu göster ama case 2 olarak
+            if (!apiData) {
+                console.warn("[PV-core] License API failed, showing fallback modal. Error:", res && res.message);
+                forceLogoutWithoutConfirm().then(() => showPremiumBlockerModal(userInfo.email, 2));
+                return;
+            }
+            
+            const licenseType = String(apiData.licenseType || 'FREE').toUpperCase().trim();
+            const status = String(apiData.status || 'FREE_USER').toUpperCase().trim();
+            const isNewRegistration = apiData.isNewRegistration === true;
+            
+            // Case 3 (Premium): isPremium true veya ACTIVE + FREE olmayan lisans
+            const isPremium = apiData.isPremium === true || ((status === "ACTIVE") && (licenseType !== "FREE"));
+            
+            if (isPremium) {
+                // Case 3: Premium kullanıcı — devam et
+                console.log("[PV-core] Premium user verified. LicenseType:", licenseType, "Status:", status);
+                updateProfileUI();
+                handleSyncNow(); // Attempt initial sync
+            } else {
+                // Premium değil — case 1 mi case 2 mi belirle
+                console.log("[PV-core] Non-premium user login blocked. isNewRegistration:", isNewRegistration, "Status:", status, "Type:", licenseType);
+                forceLogoutWithoutConfirm().then(() => {
+                    if (isNewRegistration || status === "NOT_FOUND") {
+                        // Case 1: Tabloda hiç kayıtlı değil — eklenti kullanmasını öneririz, satın alma butonu YOK
+                        showPremiumBlockerModal(userInfo.email, 1);
+                    } else {
+                        // Case 2: Tabloda kayıtlı ama FREE — satın alma butonu VAR
+                        showPremiumBlockerModal(userInfo.email, 2);
+                    }
+                });
+            }
         });
     } catch (err) {
         console.error("[PV-core] Google login failed:", err);
@@ -590,7 +607,9 @@ async function handleLogin() {
     }
 }
 
-function showPremiumBlockerModal(email, isNewUser) {
+// userCase: 1 = Tabloda hiç kayıtlı değil (eklentiye yönlendir, satın alma YOK)
+//           2 = Tabloda kayıtlı ama FREE lisans (satın alma VAR)
+function showPremiumBlockerModal(email, userCase) {
     let modal = document.getElementById('premium-blocker-modal');
     if (!modal) {
         modal = document.createElement('div');
@@ -599,38 +618,52 @@ function showPremiumBlockerModal(email, isNewUser) {
         document.body.appendChild(modal);
     }
     
-    if (isNewUser) {
-        // Case 1: E-posta e-tabloda hiç kayıtlı değil (Yeni hesap - eklentiye yönlendir)
+    if (userCase === 1) {
+        // Case 1: E-posta tabloda hiç kayıtlı değil
+        // Kullanıcı satın alsa bile mobil app'i hemen kullanamaz çünkü eklentide verisi yok.
+        // Bu yüzden satın alma butonu gösterme, eklentiyi kullanmasını öner.
         modal.innerHTML = `
-            <div style="background:linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border:1px solid #818cf8; border-radius:16px; padding:24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 25px -5px rgba(0,0,0,0.5), 0 0 20px rgba(129, 140, 248, 0.15); box-sizing:border-box;">
-                <div style="font-size:48px; margin-bottom:16px;">🔍</div>
-                <h3 style="color:#c7d2fe; font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; margin:0 0 12px 0;">Hesap Bulunamadı</h3>
-                <p style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:14px; line-height:1.6; margin:0 0 24px 0;">
-                    Giriş yapmaya çalıştığınız e-posta adresi (<strong>${email}</strong>) ile kayıtlı bir PrimeVocab profili bulunamadı.<br><br>
-                    Mobil uygulamayı kullanabilmek için lütfen öncelikle bilgisayarınızda Chrome tarayıcısına <strong>PrimeVocab eklentisini</strong> kurup giriş yapın ve kelimelerinizi kaydedin.
+            <div style="background:linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border:1px solid #818cf8; border-radius:16px; padding:28px 24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 25px -5px rgba(0,0,0,0.5), 0 0 20px rgba(129, 140, 248, 0.15); box-sizing:border-box;">
+                <div style="font-size:52px; margin-bottom:16px;">🔍</div>
+                <h3 style="color:#c7d2fe; font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; margin:0 0 10px 0;">Hesap Bulunamadı</h3>
+                <p style="color:#94a3b8; font-family:'Outfit', sans-serif; font-size:13px; line-height:1.7; margin:0 0 8px 0;">
+                    <strong style="color:#c7d2fe;">${email}</strong> adresiyle kayıtlı bir PrimeVocab hesabı bulunamadı.
                 </p>
+                <div style="background:rgba(129,140,248,0.08); border:1px solid rgba(129,140,248,0.2); border-radius:10px; padding:14px; margin:16px 0; text-align:left;">
+                    <p style="color:#c7d2fe; font-family:'Outfit', sans-serif; font-size:13px; font-weight:600; margin:0 0 8px 0;">📌 Mobil uygulamayı kullanmak için:</p>
+                    <ol style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:13px; line-height:1.8; margin:0; padding-left:18px;">
+                        <li>Bilgisayarınıza <strong>PrimeVocab Chrome Eklentisi</strong>'ni kurun</li>
+                        <li>Eklentide bu e-posta ile giriş yapın</li>
+                        <li>Kelimelerinizi kaydedin ve senkronize edin</li>
+                        <li>Mobil uygulamaya tekrar giriş yapın</li>
+                    </ol>
+                </div>
                 <div style="display:flex; flex-direction:column; gap:10px;">
-                    <button id="premium-blocker-close-btn" style="background:#818cf8; border:none; color:#0f172a; padding:12px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; cursor:pointer; font-weight:700; box-shadow:0 4px 12px rgba(129, 140, 248, 0.3);">
-                        Tamam
+                    <a href="https://chrome.google.com/webstore" target="_blank" style="background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color:#fff; text-decoration:none; padding:12px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; font-weight:700; box-shadow:0 4px 12px rgba(99,102,241,0.3); text-align:center; display:block;">
+                        Chrome Eklentisini İndir
+                    </a>
+                    <button id="premium-blocker-close-btn" style="background:transparent; border:1px solid #334155; color:#64748b; padding:10px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:13px; cursor:pointer; font-weight:500;">
+                        Kapat
                     </button>
                 </div>
             </div>
         `;
     } else {
-        // Case 2: E-posta e-tabloda kayıtlı ama lisansı FREE (Upgrade butonu göster)
+        // Case 2: E-posta tabloda kayıtlı ama lisansı FREE
+        // Bu kullanıcı satın alırsa Drive'daki verileri yüklenir, uygulama çalışır.
         modal.innerHTML = `
-            <div style="background:linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border:1px solid #eab308; border-radius:16px; padding:24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 25px -5px rgba(0,0,0,0.5), 0 0 20px rgba(234, 179, 8, 0.15); box-sizing:border-box;">
-                <div style="font-size:48px; margin-bottom:16px;">👑</div>
-                <h3 style="color:#fef08a; font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; margin:0 0 12px 0;">Premium Üyelik Gerekli</h3>
-                <p style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:14px; line-height:1.6; margin:0 0 24px 0;">
-                    PrimeVocab Mobil uygulaması, tarayıcı eklentisindeki kelimelerinizi eşitleyen <strong>Premium</strong> bir özelliktir.<br><br>
-                    Giriş yapmaya çalıştığınız hesap (<strong>${email}</strong>) şu anda ücretsiz plandadır. Kelimelerinizi telefonda çalışabilmek ve senkronize etmek için Premium'a yükseltebilirsiniz.
+            <div style="background:linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border:1px solid #eab308; border-radius:16px; padding:28px 24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 25px -5px rgba(0,0,0,0.5), 0 0 20px rgba(234, 179, 8, 0.15); box-sizing:border-box;">
+                <div style="font-size:52px; margin-bottom:16px;">👑</div>
+                <h3 style="color:#fef08a; font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; margin:0 0 10px 0;">Premium Üyelik Gerekli</h3>
+                <p style="color:#94a3b8; font-family:'Outfit', sans-serif; font-size:13px; line-height:1.7; margin:0 0 16px 0;">
+                    PrimeVocab Mobil, tarayıcı eklentisindeki kelimelerinizi senkronize eden bir <strong style="color:#fef08a;">Premium</strong> özelliktir.<br><br>
+                    <strong style="color:#cbd5e1;">${email}</strong> hesabınız şu anda ücretsiz plandadır. Premium'a geçerek kelimelerinizi her cihazdan erişebilirsiniz.
                 </p>
                 <div style="display:flex; flex-direction:column; gap:10px;">
-                    <a href="https://primevocab.lemonsqueezy.com/checkout/buy/21098d81-25ed-4ded-a487-fb2c9e02d30f" target="_blank" style="background:linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color:#0f172a; text-decoration:none; padding:12px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; font-weight:700; box-shadow:0 4px 12px rgba(234, 179, 8, 0.3); text-align:center;">
-                        Premium Satın Al / Yükselt
+                    <a href="https://primevocab.lemonsqueezy.com/checkout/buy/21098d81-25ed-4ded-a487-fb2c9e02d30f" target="_blank" style="background:linear-gradient(135deg, #eab308 0%, #ca8a04 100%); color:#0f172a; text-decoration:none; padding:13px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; font-weight:700; box-shadow:0 4px 12px rgba(234, 179, 8, 0.35); text-align:center; display:block;">
+                        ✨ Premium Satın Al / Yükselt
                     </a>
-                    <button id="premium-blocker-close-btn" style="background:transparent; border:1px solid #475569; color:#94a3b8; padding:10px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; cursor:pointer; font-weight:500;">
+                    <button id="premium-blocker-close-btn" style="background:transparent; border:1px solid #334155; color:#64748b; padding:10px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:13px; cursor:pointer; font-weight:500;">
                         Kapat
                     </button>
                 </div>
