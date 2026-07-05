@@ -710,14 +710,14 @@ function srsLoadWords() {
       `;
                 const chk = div.querySelector('.srs-learned-chk');
                 if (chk) {
-                    chk.addEventListener('change', (e) => {
+                    chk.addEventListener('change', () => {
                         // Kelime kartının hafifçe küçülüp silinme animasyonu
                         div.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease';
                         div.style.transform = 'scale(0.96) translateY(2px)';
                         div.style.opacity = '0.5';
                         
                         setTimeout(() => {
-                            toggleLearnWordFromSrsList(parseInt(e.target.dataset.index));
+                            toggleLearnWordFromSrsList(parseInt(chk.dataset.index));
                         }, 300);
                     });
                 }
