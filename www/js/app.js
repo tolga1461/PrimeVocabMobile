@@ -562,13 +562,46 @@ async function handleLogin() {
         
         // Silent license validation
         chrome.runtime.sendMessage({ action: "api_check_license", email: userInfo.email }, () => {
-            updateProfileUI();
-            handleSyncNow(); // Attempt initial sync
+            chrome.storage.local.get({ isPremium: false, licenseType: 'FREE' }, async (licData) => {
+                const isPremium = licData.isPremium === true || licData.licenseType !== 'FREE';
+                if (!isPremium) {
+                    console.log("[PV-core] Non-premium user login blocked on mobile.");
+                    await forceLogoutWithoutConfirm();
+                    if (typeof showPremiumModal === 'function') {
+                        showPremiumModal(
+                            getMessage('premium_modal_required_title') || "👑 Premium Üyelik Gerekli",
+                            getMessage('premium_modal_required_desc') || "PrimeVocab Mobil uygulaması, tarayıcı eklentisindeki kelimelerinizi eşitleyen Premium bir özelliktir. Giriş yapmaya çalıştığınız hesap Premium lisansa sahip görünmüyor. Eğer Premium satın aldıysanız, lütfen doğru Google hesabıyla giriş yaptığınızdan emin olun. Üye olmak için tarayıcı eklentimizi veya web sitemizi ziyaret edebilirsiniz."
+                        );
+                    } else {
+                        alert("👑 Premium Üyelik Gerekli\n\nPrimeVocab Mobil uygulaması, tarayıcı eklentisindeki kelimelerinizi eşitleyen Premium bir özelliktir. Giriş yapmaya çalıştığınız hesap Premium lisansa sahip görünmüyor.");
+                    }
+                } else {
+                    updateProfileUI();
+                    handleSyncNow(); // Attempt initial sync
+                }
+            });
         });
     } catch (err) {
         console.error("[PV-core] Google login failed:", err);
         showToast("Giriş yapılamadı: " + err.message);
     }
+}
+
+async function forceLogoutWithoutConfirm() {
+    await clearGoogleAuthToken();
+    await new Promise(resolve => {
+        chrome.storage.local.remove([
+            'googleSyncEmail', 
+            'googleSyncPicture', 
+            'googleSyncEnabled', 
+            'lastGoogleSyncTime',
+            'isPremium',
+            'licenseType',
+            'licenseStatus',
+            'licenseExpiration'
+        ], resolve);
+    });
+    updateProfileUI();
 }
 
 async function handleLogout() {
