@@ -86,10 +86,17 @@ async function getGoogleAuthToken(interactive = false) {
             // Listen for Capacitor App Deep Link URL open
             if (window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
                 if (window.pvDeepLinkListener) {
-                    window.pvDeepLinkListener.remove().catch(() => {});
+                    try {
+                        if (typeof window.pvDeepLinkListener.remove === 'function') {
+                            const removeRes = window.pvDeepLinkListener.remove();
+                            if (removeRes && typeof removeRes.catch === 'function') {
+                                removeRes.catch(() => {});
+                            }
+                        }
+                    } catch (e) {}
                 }
                 
-                window.Capacitor.Plugins.App.addListener('appUrlOpen', async function handleDeepLink(data) {
+                const listener = window.Capacitor.Plugins.App.addListener('appUrlOpen', async function handleDeepLink(data) {
                     console.log("[PV-Sync] App opened with deep link URL:", data.url);
                     if (data.url && data.url.startsWith("primevocab://auth")) {
                         const rawParams = data.url.split("?")[1];
@@ -138,9 +145,15 @@ async function getGoogleAuthToken(interactive = false) {
                             }
                         }
                     }
-                }).then(listener => {
-                    window.pvDeepLinkListener = listener;
                 });
+
+                if (listener && typeof listener.then === 'function') {
+                    listener.then(resolvedListener => {
+                        window.pvDeepLinkListener = resolvedListener;
+                    });
+                } else {
+                    window.pvDeepLinkListener = listener;
+                }
             }
             
             // Open system browser for Google OAuth Login
