@@ -4,6 +4,7 @@
   "main": "sw.js",
   "scripts": {
     "build": "npx cap sync && git add . && git commit -m \"[build] PrimeVocab release\" --allow-empty && git push origin main",
+    "vercel-build": "echo 'Vercel build bypass'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
