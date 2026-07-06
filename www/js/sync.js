@@ -106,7 +106,7 @@ async function getGoogleAuthToken(interactive = false) {
                             if (code) {
                                 console.log("[PV-Sync] Received authorization code from deep link, exchanging for tokens...");
                                 try {
-                                    const exchangeRes = await fetch("https://prime-vocab-mobile.vercel.app/api/token", {
+                                    const exchangeRes = await fetch("https://prime-vocab-mobile.vercel.app/api/token.js", {
                                         method: "POST",
                                         headers: {
                                             "Content-Type": "application/json"
@@ -237,7 +237,7 @@ async function refreshAccessToken() {
         throw new Error("No refresh token available");
     }
     
-    const response = await fetch("/api/refresh", {
+    const response = await fetch("/api/refresh.js", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

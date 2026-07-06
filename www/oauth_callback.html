@@ -77,7 +77,7 @@
                 // Web PWA Flow - Exchange code for tokens via our Serverless Function
                 const redirectUri = window.location.origin + window.location.pathname; // standard callback url
                 
-                fetch('/api/token', {
+                fetch('/api/token.js', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
