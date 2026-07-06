@@ -157,11 +157,6 @@ function getOrCreateSheet() {
     } else if (sheet.getLastColumn() === 0) {
         sheet.appendRow(headers);
         sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
-    } else {
-        var existingHeaders = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-        if (existingHeaders.indexOf("SonAktifPlatform") === -1) {
-            sheet.getRange(1, existingHeaders.length + 1).setValue("SonAktifPlatform").setFontWeight("bold");
-        }
     }
     return sheet;
 }
@@ -176,6 +171,80 @@ function isPremiumLicenseType(licenseType) {
     if (!licenseType) return false;
     var type = licenseType.toString().toUpperCase().trim();
     return type === "MONTHLY" || type === "YEARLY" || type === "LIFETIME";
+}
+
+/**
+ * Google Sheets'ten gelen farklı tarih formatlarını güvenli bir şekilde Javascript Date nesnesine dönüştürür.
+ * @param {*} val - Tarih hücresinden gelen değer
+ * @returns {Date|null}
+ */
+function parseSheetDate(val) {
+    if (!val) return null;
+
+    // 1. Zaten geçerli bir Date nesnesi ise
+    if (Object.prototype.toString.call(val) === '[object Date]') {
+        if (!isNaN(val.getTime())) {
+            return val;
+        }
+    }
+
+    // 2. Sayı ise (Spreadsheet seri numarası formatı)
+    if (typeof val === 'number') {
+        var baseDate = new Date(1899, 11, 30);
+        return new Date(baseDate.getTime() + val * 24 * 60 * 60 * 1000);
+    }
+
+    // 3. String ise temizle ve parse et
+    var str = val.toString().trim();
+    if (!str) return null;
+
+    var d = new Date(str);
+    if (!isNaN(d.getTime())) {
+        return d;
+    }
+
+    // YYYY-MM-DD veya YYYY-M-D (örn: 2026-07-7T19:29:10.120Z) gibi ISO benzeri ama eksik sıfırlı formatları kontrol et
+    var isoLikeRegex = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})(?:[T\s](\d{1,2}):(\d{2})(?::(\d{2})(?:\.(\d{3}))?)?)?(?:Z|[+-]\d{2}:?\d{2})?$/;
+    var isoMatch = str.match(isoLikeRegex);
+    if (isoMatch) {
+        var year = parseInt(isoMatch[1], 10);
+        var month = parseInt(isoMatch[2], 10) - 1; // JS'de aylar 0-indexed
+        var day = parseInt(isoMatch[3], 10);
+        var hour = isoMatch[4] ? parseInt(isoMatch[4], 10) : 0;
+        var min = isoMatch[5] ? parseInt(isoMatch[5], 10) : 0;
+        var sec = isoMatch[6] ? parseInt(isoMatch[6], 10) : 0;
+        var ms = isoMatch[7] ? parseInt(isoMatch[7], 10) : 0;
+
+        // Tarayıcı/sunucu saat dilimi uyuşmazlığını önlemek için UTC olarak oluşturabiliriz (sonda Z varsa)
+        var parsedDate;
+        if (str.endsWith('Z') || str.includes('+') || (str.split('-').length > 3 && str.includes('-'))) {
+            parsedDate = new Date(Date.UTC(year, month, day, hour, min, sec, ms));
+        } else {
+            parsedDate = new Date(year, month, day, hour, min, sec, ms);
+        }
+        if (!isNaN(parsedDate.getTime())) {
+            return parsedDate;
+        }
+    }
+
+    // DD.MM.YYYY veya DD/MM/YYYY veya DD-MM-YYYY formatlarını kontrol et (Örn: 05.07.2026 veya 05/07/2026)
+    var trDateRegex = /^(\d{1,2})[\.\/-](\d{1,2})[\.\/-](\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/;
+    var match = str.match(trDateRegex);
+    if (match) {
+        var day = parseInt(match[1], 10);
+        var month = parseInt(match[2], 10) - 1; // JS'de aylar 0'dan başlar
+        var year = parseInt(match[3], 10);
+        var hour = match[4] ? parseInt(match[4], 10) : 0;
+        var min = match[5] ? parseInt(match[5], 10) : 0;
+        var sec = match[6] ? parseInt(match[6], 10) : 0;
+
+        var parsedDate = new Date(year, month, day, hour, min, sec);
+        if (!isNaN(parsedDate.getTime())) {
+            return parsedDate;
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -262,7 +331,6 @@ function getHeadersMap(sheet) {
 function handleRegister(sheet, data) {
     var userId = data.userId;
     var email = (data.email || "").toLowerCase().trim();
-    var platform = data.platform || "extension";
 
     if (!userId) {
         return jsonResponse(false, "Kullanıcı ID (userId) belirtilmelidir.");
@@ -333,7 +401,7 @@ function handleRegister(sheet, data) {
 
         sheet.getRange(existingEmailRow, headers.SonIstekTarihi).setValue(nowIso);
         if (headers.SonAktifPlatform) {
-            sheet.getRange(existingEmailRow, headers.SonAktifPlatform).setValue(platform);
+            sheet.getRange(existingEmailRow, headers.SonAktifPlatform).setValue(data.platform || "extension");
         }
 
         // Eğer eski bir geçici UUID satırı kaldıysa ve bu satırdan farklıysa onu temizle/sil (Çift kayıt olmaması için)
@@ -345,16 +413,32 @@ function handleRegister(sheet, data) {
         var status = rowData[headers.Durum - 1] || "ACTIVE";
         var expDate = rowData[headers.BitisTarihi - 1];
 
+        // --- OTOMATİK YÜKSELTME: FREE kullanıcının BitisTarihi doldurulmuşsa Premium yap ---
+        // Admin tablodan manuel tarih girdiğinde LisansTipi hâlâ FREE kalabilir.
+        // Tarih geçerli ve gelecekteyse MONTHLY'e yükselt ve tabloya yaz.
+        if (!isPremiumLicenseType(licenseType) && expDate) {
+            var parsedExpAuto = parseSheetDate(expDate);
+            if (parsedExpAuto && parsedExpAuto.toISOString() > nowIso) {
+                sheet.getRange(existingEmailRow, headers.LisansTipi).setValue("MONTHLY");
+                sheet.getRange(existingEmailRow, headers.Durum).setValue("ACTIVE");
+                licenseType = "MONTHLY";
+                status = "ACTIVE";
+            }
+        }
+
         // Normalize if not defined
         var normalizedLicenseType = isPremiumLicenseType(licenseType) ? licenseType : "FREE";
         var isPremium = isPremiumLicenseType(licenseType) && status === "ACTIVE";
+
+        var parsedExp = parseSheetDate(expDate);
 
         return jsonResponse(true, "Giriş yapıldı, lisans birleştirildi.", {
             licenseType: normalizedLicenseType,
             status: isPremium ? status : "FREE_USER",
             isPremium: isPremium,
+            isNewRegistration: false,
             dailyUsage: rowData[headers.GunlukKullanimSayisi - 1] || 0,
-            expirationDate: isPremium ? expDate : ""
+            expirationDate: (isPremium && parsedExp) ? parsedExp.toISOString() : ""
         });
     }
 
@@ -364,23 +448,38 @@ function handleRegister(sheet, data) {
         sheet.getRange(existingUserRow, headers.Eposta).setValue(email);
         sheet.getRange(existingUserRow, headers.SonIstekTarihi).setValue(nowIso);
         if (headers.SonAktifPlatform) {
-            sheet.getRange(existingUserRow, headers.SonAktifPlatform).setValue(platform);
+            sheet.getRange(existingUserRow, headers.SonAktifPlatform).setValue(data.platform || "extension");
         }
 
         var rowData = values[existingUserRow - 1];
         var licenseType = rowData[headers.LisansTipi - 1] || "FREE";
         var status = rowData[headers.Durum - 1] || "ACTIVE";
+        var expDate = rowData[headers.BitisTarihi - 1];
+
+        // --- OTOMATİK YÜKSELTME: UUID satırında da BitisTarihi varsa Premium yap ---
+        if (!isPremiumLicenseType(licenseType) && expDate) {
+            var parsedExpAuto = parseSheetDate(expDate);
+            if (parsedExpAuto && parsedExpAuto.toISOString() > nowIso) {
+                sheet.getRange(existingUserRow, headers.LisansTipi).setValue("MONTHLY");
+                sheet.getRange(existingUserRow, headers.Durum).setValue("ACTIVE");
+                licenseType = "MONTHLY";
+                status = "ACTIVE";
+            }
+        }
 
         // Normalize if not defined
         var normalizedLicenseType = isPremiumLicenseType(licenseType) ? licenseType : "FREE";
         var isPremium = isPremiumLicenseType(licenseType) && status === "ACTIVE";
 
+        var parsedExp = parseSheetDate(expDate);
+
         return jsonResponse(true, "E-posta bağlandı.", {
             licenseType: normalizedLicenseType,
             status: isPremium ? status : "FREE_USER",
             isPremium: isPremium,
+            isNewRegistration: false,
             dailyUsage: rowData[headers.GunlukKullanimSayisi - 1] || 0,
-            expirationDate: isPremium ? (rowData[headers.BitisTarihi - 1] || "") : ""
+            expirationDate: (isPremium && parsedExp) ? parsedExp.toISOString() : ""
         });
     }
 
@@ -399,7 +498,7 @@ function handleRegister(sheet, data) {
     newRow[headers.GunlukKullanimSayisi - 1] = 0;
     newRow[headers.SonKullanimTarihi - 1] = todayStr;
     if (headers.SonAktifPlatform) {
-        newRow[headers.SonAktifPlatform - 1] = platform;
+        newRow[headers.SonAktifPlatform - 1] = data.platform || "extension";
     }
 
     var rowData = [];
@@ -412,6 +511,7 @@ function handleRegister(sheet, data) {
         licenseType: "FREE",
         status: "ACTIVE",
         isPremium: false,
+        isNewRegistration: true,
         dailyUsage: 0,
         expirationDate: ""
     });
@@ -425,7 +525,6 @@ function handleActivateLicense(sheet, data) {
     var userId = data.userId;
     var licenseKey = data.licenseKey;
     var email = data.email;
-    var platform = data.platform || "extension";
 
     if (!userId || !licenseKey || !email) {
         return jsonResponse(false, "Eksik parametre (userId, licenseKey veya email).");
@@ -464,8 +563,8 @@ function handleActivateLicense(sheet, data) {
     // Lisansın süresi dolmuş mu?
     var now = new Date();
     if (expirationDate) {
-        var expTime = new Date(expirationDate);
-        if (now > expTime) {
+        var expTime = parseSheetDate(expirationDate);
+        if (expTime && now > expTime) {
             sheet.getRange(licenseRow, headers.Durum).setValue("EXPIRED");
             return jsonResponse(false, "Bu lisansın süresi dolmuştur.");
         }
@@ -490,18 +589,19 @@ function handleActivateLicense(sheet, data) {
     sheet.getRange(licenseRow, headers.Durum).setValue("ACTIVE");
     sheet.getRange(licenseRow, headers.SonIstekTarihi).setValue(new Date().toISOString());
     if (headers.SonAktifPlatform) {
-        sheet.getRange(licenseRow, headers.SonAktifPlatform).setValue(platform);
+        sheet.getRange(licenseRow, headers.SonAktifPlatform).setValue(data.platform || "extension");
     }
 
     // Eğer kullanıcının register kaydı ayrı bir satırsa, o satırı güncelle veya temizle.
     // Basitlik açısından, lisans satırına kullanıcının cihaz UUID'sini ekledik. Eklenti artık bu lisans üzerinden sorgulama yapacak.
 
     var isPremium = isPremiumLicenseType(licenseType);
+    var parsedExp = parseSheetDate(expirationDate);
     return jsonResponse(true, "Lisans başarıyla aktif edildi.", {
         licenseType: isPremium ? licenseType : "FREE",
         status: isPremium ? "ACTIVE" : "FREE_USER",
         isPremium: isPremium,
-        expirationDate: isPremium ? expirationDate : ""
+        expirationDate: (isPremium && parsedExp) ? parsedExp.toISOString() : ""
     });
 }
 
@@ -510,7 +610,6 @@ function handleActivateLicense(sheet, data) {
  */
 function handleCheckLicense(sheet, data) {
     var userId = data.userId;
-    var platform = data.platform || "extension";
     if (!userId) {
         return jsonResponse(false, "Kullanıcı ID (userId) gereklidir.");
     }
@@ -524,39 +623,54 @@ function handleCheckLicense(sheet, data) {
     var isPremium = false;
     var email = data.email;
 
-    // 1. Adım: E-posta ile Premium sorgula (Eğer e-posta verilmişse)
+    // 1. Adım: E-posta ile sorgula (Eğer e-posta verilmişse)
     if (email) {
         for (var i = 1; i < values.length; i++) {
             var rowEmail = values[i][headers.Eposta - 1] || "";
             if (rowEmail.toLowerCase() === email.toLowerCase()) {
                 var status = values[i][headers.Durum - 1];
                 var licenseType = values[i][headers.LisansTipi - 1];
+                var expirationDate = values[i][headers.BitisTarihi - 1];
 
+                // Eğer aktif bir premium lisansı varsa öncelikli olarak eşleştir
                 if (isPremiumLicenseType(licenseType) && status === "ACTIVE") {
-                    var expirationDate = values[i][headers.BitisTarihi - 1];
                     if (expirationDate) {
-                        var expTime = new Date(expirationDate).toISOString();
-                        if (nowIso > expTime) {
-                            // Süresi dolmuş!
-                            sheet.getRange(i + 1, headers.Durum).setValue("EXPIRED");
-                            sheet.getRange(i + 1, headers.LisansTipi).setValue("FREE");
-                            continue; // Diğer satırlara bak
+                        var parsedExp = parseSheetDate(expirationDate);
+                        if (parsedExp) {
+                            var expTime = parsedExp.toISOString();
+                            if (nowIso > expTime) {
+                                // Süresi dolmuş!
+                                sheet.getRange(i + 1, headers.Durum).setValue("EXPIRED");
+                                sheet.getRange(i + 1, headers.LisansTipi).setValue("FREE");
+                                status = "EXPIRED";
+                                licenseType = "FREE";
+                            } else {
+                                isPremium = true;
+                            }
                         }
+                    } else {
+                        isPremium = true;
                     }
 
-                    // Eşleşti! Cihazı otomatik bağla (UUID listesinde yoksa)
-                    var devicesStr = values[i][headers.CihazUUIDleri - 1] || "";
-                    var devices = devicesStr ? devicesStr.split(",") : [];
-                    if (devices.indexOf(userId) === -1) {
-                        if (devices.length < MAX_DEVICES) {
-                            devices.push(userId);
-                            sheet.getRange(i + 1, headers.CihazUUIDleri).setValue(devices.join(","));
-                            sheet.getRange(i + 1, headers.CihazSayisi).setValue(devices.length);
+                    if (isPremium) {
+                        // Eşleşti! Cihazı otomatik bağla (UUID listesinde yoksa)
+                        var devicesStr = values[i][headers.CihazUUIDleri - 1] || "";
+                        var devices = devicesStr ? devicesStr.split(",") : [];
+                        if (devices.indexOf(userId) === -1) {
+                            if (devices.length < MAX_DEVICES) {
+                                devices.push(userId);
+                                sheet.getRange(i + 1, headers.CihazUUIDleri).setValue(devices.join(","));
+                                sheet.getRange(i + 1, headers.CihazSayisi).setValue(devices.length);
+                            }
                         }
+                        foundRow = i + 1;
+                        break;
                     }
+                }
+
+                // Premium olmasa bile e-posta eşleştiği için en azından bu satırı bulduk olarak işaretleyelim.
+                if (foundRow === -1) {
                     foundRow = i + 1;
-                    isPremium = true;
-                    break;
                 }
             }
         }
@@ -576,17 +690,20 @@ function handleCheckLicense(sheet, data) {
                 }
                 var status = values[i][headers.Durum - 1];
                 var licenseType = values[i][headers.LisansTipi - 1];
+                var expirationDate = values[i][headers.BitisTarihi - 1];
 
                 // Eğer Premium tiplerden biriyse ve aktifse
                 if (isPremiumLicenseType(licenseType) && status === "ACTIVE") {
-                    var expirationDate = values[i][headers.BitisTarihi - 1];
                     if (expirationDate) {
-                        var expTime = new Date(expirationDate).toISOString();
-                        if (nowIso > expTime) {
-                            // Süresi dolmuş!
-                            sheet.getRange(i + 1, headers.Durum).setValue("EXPIRED");
-                            sheet.getRange(i + 1, headers.LisansTipi).setValue("FREE");
-                            continue; // Diğer satırlara bak
+                        var parsedExp = parseSheetDate(expirationDate);
+                        if (parsedExp) {
+                            var expTime = parsedExp.toISOString();
+                            if (nowIso > expTime) {
+                                // Süresi dolmuş!
+                                sheet.getRange(i + 1, headers.Durum).setValue("EXPIRED");
+                                sheet.getRange(i + 1, headers.LisansTipi).setValue("FREE");
+                                continue; // Diğer satırlara bak
+                            }
                         }
                     }
                     foundRow = i + 1;
@@ -602,7 +719,7 @@ function handleCheckLicense(sheet, data) {
     if (foundRow !== -1) {
         sheet.getRange(foundRow, headers.SonIstekTarihi).setValue(nowIso);
         if (headers.SonAktifPlatform) {
-            sheet.getRange(foundRow, headers.SonAktifPlatform).setValue(platform);
+            sheet.getRange(foundRow, headers.SonAktifPlatform).setValue(data.platform || "extension");
         }
         var rowData = values[foundRow - 1];
 
@@ -616,17 +733,31 @@ function handleCheckLicense(sheet, data) {
             sheet.getRange(foundRow, headers.SonKullanimTarihi).setValue(todayStr);
         }
 
+        var rowStatus = rowData[headers.Durum - 1] || "FREE_USER";
+        var rowLicenseType = rowData[headers.LisansTipi - 1] || "FREE";
+        var currentIsPremium = isPremiumLicenseType(rowLicenseType) && rowStatus === "ACTIVE";
+
+        var parsedExp = parseSheetDate(rowData[headers.BitisTarihi - 1]);
         return jsonResponse(true, "Lisans durumu doğrulandı.", {
-            licenseType: isPremium ? rowData[headers.LisansTipi - 1] : "FREE",
-            status: isPremium ? "ACTIVE" : "FREE_USER",
-            isPremium: isPremium,
-            expirationDate: isPremium ? rowData[headers.BitisTarihi - 1] : "",
+            licenseType: currentIsPremium ? rowLicenseType : "FREE",
+            status: currentIsPremium ? "ACTIVE" : rowStatus,
+            isPremium: currentIsPremium,
+            isNewRegistration: false,
+            expirationDate: (currentIsPremium && parsedExp) ? parsedExp.toISOString() : "",
             dailyUsage: dailyUsage
         });
     }
 
-    // Hiç kayıt yoksa ücretsiz kullanıcı olarak kaydet (veya register çağrısı yaptır)
-    return handleRegister(sheet, { userId: userId, email: email, platform: platform });
+    // Hiç kayıt bulunamadı → Tabloya yazma, direkt NOT_FOUND döndür.
+    // Kayıt açmak register action'ının işidir, check-license sadece kontrol eder.
+    return jsonResponse(true, "Kayıt bulunamadı.", {
+        licenseType: "FREE",
+        status: "NOT_FOUND",
+        isPremium: false,
+        isNewRegistration: true,
+        expirationDate: "",
+        dailyUsage: 0
+    });
 }
 
 /**
@@ -635,7 +766,6 @@ function handleCheckLicense(sheet, data) {
 function handleSyncUsage(sheet, data) {
     var userId = data.userId;
     var count = parseInt(data.count || 0); // Eklenen kelime/işlem adedi
-    var platform = data.platform || "extension";
 
     if (!userId) {
         return jsonResponse(false, "Kullanıcı ID (userId) gereklidir.");
@@ -657,7 +787,7 @@ function handleSyncUsage(sheet, data) {
             var status = values[i][headers.Durum - 1];
             if (isPremiumLicenseType(licenseType) && status === "ACTIVE") {
                 if (headers.SonAktifPlatform) {
-                    sheet.getRange(foundRow, headers.SonAktifPlatform).setValue(platform);
+                    sheet.getRange(foundRow, headers.SonAktifPlatform).setValue(data.platform || "extension");
                 }
                 return jsonResponse(true, "Premium kullanıcı, limitsiz kullanım.", {
                     licenseType: licenseType,
@@ -691,7 +821,7 @@ function handleSyncUsage(sheet, data) {
     sheet.getRange(foundRow, headers.GunlukKullanimSayisi).setValue(newUsage);
     sheet.getRange(foundRow, headers.SonIstekTarihi).setValue(nowIso);
     if (headers.SonAktifPlatform) {
-        sheet.getRange(foundRow, headers.SonAktifPlatform).setValue(platform);
+        sheet.getRange(foundRow, headers.SonAktifPlatform).setValue(data.platform || "extension");
     }
 
     return jsonResponse(true, "Kullanım senkronize edildi.", {
@@ -708,9 +838,9 @@ function handleSyncUsage(sheet, data) {
  * AYLIK ABONELİK (subscription_*) event'lerini karşılar.
  * 
  * LS Dashboard Webhook Ayarları:
- *   URL: <GAS_WEB_APP_URL>
- *   Events: subscription_created, subscription_renewed,
- *           subscription_cancelled, subscription_expired
+ *   URL: <GAS_WEB_APP_URL>?secret=PV_LS_WEBHOOK_SECRET_2026
+ *   Events: subscription_created, subscription_updated,
+ *           subscription_cancelled, subscription_expired, subscription_resumed
  *   (isteğe bağlı: order_created da eklenebilir)
  * 
  * Checkout URL'e eklenen parametreler (eklentiden otomatik eklenir):
@@ -739,8 +869,8 @@ function handleWebhookLemonSqueezy(sheet, lsPayload, e) {
 
     // === ABONELİK EVENT'LERİ ===
 
-    // Abonelik başladı, yenilendi veya duraklatmadan geri döndü → Premium yap
-    if (eventName === "subscription_created" || eventName === "subscription_payment_success" || eventName === "subscription_resumed") {
+    // Abonelik başladı, güncellendi, yenilendi veya duraklatmadan geri döndü → Premium yap
+    if (eventName === "subscription_created" || eventName === "subscription_updated" || eventName === "subscription_resumed") {
         // Ürün veya Varyant adına göre Lisans Tipini belirle (Aylık / Yıllık / Ömür Boyu)
         var licenseType = determineLicenseType(customData, attributes);
 
@@ -860,16 +990,18 @@ function handleWebhookLemonSqueezy(sheet, lsPayload, e) {
  */
 function determineLicenseType(customData, attributes) {
     var firstItem = attributes.first_order_item || {};
-    var variantName = (attributes.variant_name || firstItem.variant_name || "").toString().toUpperCase().trim();
-    var productName = (attributes.product_name || firstItem.product_name || "").toString().toUpperCase().trim();
+    var variantName = (attributes.variant_name || firstItem.variant_name || "").toString().toUpperCase();
+    var productName = (attributes.product_name || firstItem.product_name || "").toString().toUpperCase();
 
-    // Öncelik: variant_name veya product_name (birebir tam eşleşme)
-    if (variantName === "MONTHLY" || variantName === "YEARLY" || variantName === "LIFETIME") {
-        return variantName;
-    }
-    if (productName === "MONTHLY" || productName === "YEARLY" || productName === "LIFETIME") {
-        return productName;
-    }
+    // 1. Yol: İçerme Kontrolü (Includes)
+    if (variantName.indexOf("LIFETIME") !== -1 || variantName.indexOf("ÖMÜR") !== -1 || variantName.indexOf("OMUR") !== -1) return "LIFETIME";
+    if (productName.indexOf("LIFETIME") !== -1 || productName.indexOf("ÖMÜR") !== -1 || productName.indexOf("OMUR") !== -1) return "LIFETIME";
+
+    if (variantName.indexOf("YEARLY") !== -1 || variantName.indexOf("YILLIK") !== -1 || variantName.indexOf("ANNUAL") !== -1) return "YEARLY";
+    if (productName.indexOf("YEARLY") !== -1 || productName.indexOf("YILLIK") !== -1 || productName.indexOf("ANNUAL") !== -1) return "YEARLY";
+
+    if (variantName.indexOf("MONTHLY") !== -1 || variantName.indexOf("AYLIK") !== -1) return "MONTHLY";
+    if (productName.indexOf("MONTHLY") !== -1 || productName.indexOf("AYLIK") !== -1) return "MONTHLY";
 
     // Fallback: custom_data içindeki kesin plan tipi
     var customType = (customData.license_type || "").toString().toUpperCase().trim();
@@ -877,7 +1009,7 @@ function determineLicenseType(customData, attributes) {
         return customType;
     }
 
-    return "FREE"; // Tam eşleşme yoksa doğrudan FREE
+    return "FREE"; // Tam eşleşme veya anahtar kelime yoksa doğrudan FREE
 }
 
 /**
