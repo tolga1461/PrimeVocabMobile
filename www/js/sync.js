@@ -38,17 +38,33 @@ function initGoogleAuthClient() {
  * @param {boolean} interactive Kullanıcı arayüzü gösterilsin mi? (Show UI prompt?)
  * @returns {Promise<string>} Access Token
  */
-function getGoogleAuthToken(interactive = false) {
+async function getGoogleAuthToken(interactive = false) {
     const cachedToken = localStorage.getItem('google_sync_token');
     const cachedExpires = localStorage.getItem('google_sync_token_expires');
     const isTokenValid = cachedToken && cachedExpires && parseInt(cachedExpires) > Date.now();
     
     if (isTokenValid) {
-        return Promise.resolve(cachedToken);
+        return cachedToken;
+    }
+
+    // Try silent refresh if refresh token is available
+    const refreshToken = localStorage.getItem('google_sync_refresh_token');
+    if (refreshToken) {
+        try {
+            console.log("[PV-Sync] Access token expired, attempting silent refresh...");
+            const newToken = await refreshAccessToken();
+            console.log("[PV-Sync] Silent token refresh successful.");
+            return newToken;
+        } catch (refreshErr) {
+            console.warn("[PV-Sync] Silent token refresh failed, clearing credentials:", refreshErr);
+            localStorage.removeItem('google_sync_token');
+            localStorage.removeItem('google_sync_token_expires');
+            localStorage.removeItem('google_sync_refresh_token');
+        }
     }
     
     if (!interactive) {
-        return Promise.reject(new Error("No valid cached token, interactive login required"));
+        throw new Error("No valid cached token, interactive login required");
     }
     
     // Check if running in Capacitor Native Environment
@@ -65,33 +81,65 @@ function getGoogleAuthToken(interactive = false) {
             const clientId = window.CONFIG.GOOGLE_CLIENT_ID;
             const scopes = encodeURIComponent(window.CONFIG.GOOGLE_SCOPES);
             const redirectUri = encodeURIComponent("https://prime-vocab-mobile.vercel.app/oauth_callback.html");
-            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=${scopes}&state=android`;
+            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scopes}&state=android&access_type=offline&prompt=consent`;
             
             // Listen for Capacitor App Deep Link URL open
             if (window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
-                window.Capacitor.Plugins.App.addListener('appUrlOpen', function handleDeepLink(data) {
+                if (window.pvDeepLinkListener) {
+                    window.pvDeepLinkListener.remove().catch(() => {});
+                }
+                
+                window.Capacitor.Plugins.App.addListener('appUrlOpen', async function handleDeepLink(data) {
                     console.log("[PV-Sync] App opened with deep link URL:", data.url);
                     if (data.url && data.url.startsWith("primevocab://auth")) {
                         const rawParams = data.url.split("?")[1];
                         if (rawParams) {
                             const params = new URLSearchParams(rawParams);
-                            const token = params.get("token");
-                            const expiresIn = params.get("expires_in") || "3600";
-                            if (token) {
-                                const expiresAt = Date.now() + (parseInt(expiresIn) * 1000);
-                                localStorage.setItem('google_sync_token', token);
-                                localStorage.setItem('google_sync_token_expires', expiresAt);
-                                
-                                if (window.Capacitor.Plugins.Browser) {
-                                    window.Capacitor.Plugins.Browser.close().catch(() => {});
-                                }
-                                
-                                if (window.onOAuthSuccess) {
-                                    window.onOAuthSuccess(token);
+                            const code = params.get("code");
+                            if (code) {
+                                console.log("[PV-Sync] Received authorization code from deep link, exchanging for tokens...");
+                                try {
+                                    const exchangeRes = await fetch("https://prime-vocab-mobile.vercel.app/api/token", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({ code: code, redirect_uri: "https://prime-vocab-mobile.vercel.app/oauth_callback.html" })
+                                    });
+                                    if (!exchangeRes.ok) {
+                                        const errData = await exchangeRes.json().catch(() => ({}));
+                                        throw new Error(errData.error || "Failed to exchange authorization code");
+                                    }
+                                    const dataToken = await exchangeRes.json();
+                                    if (dataToken.access_token) {
+                                        const expiresAt = Date.now() + (parseInt(dataToken.expires_in || "3600") * 1000);
+                                        localStorage.setItem('google_sync_token', dataToken.access_token);
+                                        localStorage.setItem('google_sync_token_expires', expiresAt);
+                                        if (dataToken.refresh_token) {
+                                            localStorage.setItem('google_sync_refresh_token', dataToken.refresh_token);
+                                        }
+                                        
+                                        if (window.Capacitor.Plugins.Browser) {
+                                            window.Capacitor.Plugins.Browser.close().catch(() => {});
+                                        }
+                                        
+                                        if (window.onOAuthSuccess) {
+                                            window.onOAuthSuccess(dataToken.access_token);
+                                        }
+                                    } else {
+                                        throw new Error("No access token returned from exchange endpoint");
+                                    }
+                                } catch (err) {
+                                    console.error("[PV-Sync] Code exchange failed:", err);
+                                    if (window.onOAuthError) {
+                                        window.onOAuthError(err);
+                                    }
                                 }
                             }
                         }
                     }
+                }).then(listener => {
+                    window.pvDeepLinkListener = listener;
                 });
             }
             
@@ -105,20 +153,102 @@ function getGoogleAuthToken(interactive = false) {
     }
     
     // Web / PWA Flow using GIS Client
-    initGoogleAuthClient();
     return new Promise((resolve, reject) => {
+        if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+            return reject(new Error("Google Identity Services SDK not loaded yet."));
+        }
+        
         window.onOAuthSuccess = (token) => {
             resolve(token);
         };
         window.onOAuthError = (err) => {
             reject(err);
         };
-        if (oauthTokenClient) {
-            oauthTokenClient.requestAccessToken({ prompt: '' });
-        } else {
-            reject(new Error("Google Identity Services client is not initialized. Please verify GOOGLE_CLIENT_ID in config.js"));
-        }
+        
+        const client = google.accounts.oauth2.initCodeClient({
+            client_id: window.CONFIG.GOOGLE_CLIENT_ID,
+            scope: window.CONFIG.GOOGLE_SCOPES,
+            ux_mode: 'popup',
+            select_account: true,
+            callback: async (response) => {
+                if (response && response.code) {
+                    try {
+                        const redirectUri = window.location.origin + "/oauth_callback.html";
+                        const exchangeRes = await fetch('/api/token', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ code: response.code, redirect_uri: redirectUri })
+                        });
+                        if (!exchangeRes.ok) {
+                            const errData = await exchangeRes.json().catch(() => ({}));
+                            throw new Error(errData.error || "Failed to exchange authorization code");
+                        }
+                        const dataToken = await exchangeRes.json();
+                        if (dataToken.access_token) {
+                            const expiresAt = Date.now() + (parseInt(dataToken.expires_in || "3600") * 1000);
+                            localStorage.setItem('google_sync_token', dataToken.access_token);
+                            localStorage.setItem('google_sync_token_expires', expiresAt);
+                            if (dataToken.refresh_token) {
+                                localStorage.setItem('google_sync_refresh_token', dataToken.refresh_token);
+                            }
+                            if (window.onOAuthSuccess) {
+                                window.onOAuthSuccess(dataToken.access_token);
+                            }
+                        } else {
+                            throw new Error("No access token in response");
+                        }
+                    } catch (err) {
+                        if (window.onOAuthError) {
+                            window.onOAuthError(err);
+                        }
+                    }
+                } else {
+                    if (window.onOAuthError) {
+                        window.onOAuthError(new Error("OAuth authorization code acquisition failed"));
+                    }
+                }
+            },
+        });
+        client.requestCode();
     });
+}
+
+/**
+ * Google Refresh Token kullanarak yeni Access Token alır.
+ */
+async function refreshAccessToken() {
+    const refreshToken = localStorage.getItem('google_sync_refresh_token');
+    if (!refreshToken) {
+        throw new Error("No refresh token available");
+    }
+    
+    const response = await fetch("/api/refresh", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ refresh_token: refreshToken })
+    });
+    
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to refresh token");
+    }
+    
+    const data = await response.json();
+    if (data.access_token) {
+        const expiresAt = Date.now() + (parseInt(data.expires_in || "3600") * 1000);
+        localStorage.setItem('google_sync_token', data.access_token);
+        localStorage.setItem('google_sync_token_expires', expiresAt);
+        if (data.refresh_token) {
+            localStorage.setItem('google_sync_refresh_token', data.refresh_token);
+        }
+        return data.access_token;
+    } else {
+        throw new Error("Invalid response from refresh endpoint");
+    }
 }
 
 async function connectGoogleAccount() {
@@ -158,6 +288,7 @@ function clearGoogleAuthToken() {
     const token = localStorage.getItem('google_sync_token');
     localStorage.removeItem('google_sync_token');
     localStorage.removeItem('google_sync_token_expires');
+    localStorage.removeItem('google_sync_refresh_token');
     
     if (token) {
         if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {

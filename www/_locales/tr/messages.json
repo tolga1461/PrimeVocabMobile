@@ -1624,5 +1624,8 @@
   },
   "sync_failed": {
     "message": "Senkronizasyon başarısız: $1"
+  },
+  "sync_session_expired_reconnecting": {
+    "message": "Oturum süresi doldu, tekrar bağlanılıyor..."
   }
 }

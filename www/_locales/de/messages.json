@@ -1618,5 +1618,8 @@
   },
   "sync_failed": {
     "message": "Synchronisierung fehlgeschlagen: $1"
+  },
+  "sync_session_expired_reconnecting": {
+    "message": "Sitzung abgelaufen, Verbindung wird wiederhergestellt..."
   }
 }

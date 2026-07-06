@@ -1207,11 +1207,26 @@ function initPullToRefresh() {
             }
             
             try {
-                console.log("[PV-core] Pull-to-refresh triggered sync...");
-                await performGoogleDriveSync(false);
-                console.log("[PV-core] Pull-to-refresh sync completed.");
-                showToast(getMessage('sync_success') || "Eşitleme tamamlandı!");
-                
+                const storage = await new Promise(resolve => {
+                    chrome.storage.local.get({ googleSyncEmail: "" }, resolve);
+                });
+
+                if (storage.googleSyncEmail) {
+                    console.log("[PV-core] Pull-to-refresh triggered sync...");
+                    try {
+                        await performGoogleDriveSync(false);
+                    } catch (syncErr) {
+                        if (syncErr.message && syncErr.message.includes("interactive login required")) {
+                            console.log("[PV-core] Silent sync failed, prompting interactive login...");
+                            showToast(getMessage('sync_session_expired_reconnecting') || "Oturum süresi doldu, tekrar bağlanılıyor...");
+                            await performGoogleDriveSync(true);
+                        } else {
+                            throw syncErr;
+                        }
+                    }
+                    showToast(getMessage('sync_success') || "Eşitleme tamamlandı!");
+                }
+
                 // Reload list
                 if (typeof loadArchive === 'function') {
                     loadArchive();

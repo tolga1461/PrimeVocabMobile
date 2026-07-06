@@ -1618,5 +1618,8 @@
   },
   "sync_failed": {
     "message": "Échec de la synchronisation: $1"
+  },
+  "sync_session_expired_reconnecting": {
+    "message": "Session expirée, reconnexion..."
   }
 }
