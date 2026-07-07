@@ -1430,6 +1430,12 @@
   "settings_sounds_desc": {
     "message": "Jouer des sons pendant l'étude et les jeux"
   },
+  "settings_autoplay_sound_title": {
+    "message": "Sons d'entraînement"
+  },
+  "settings_autoplay_sound_desc": {
+    "message": "Lecture automatique du son des mots en mode entraînement"
+  },
   "settings_anki_title": {
     "message": "Exporter vers Anki"
   },

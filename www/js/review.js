@@ -69,6 +69,11 @@ function fcShowCard() {
     fcBack.style.display = 'none';
     fcDone.style.display = 'none';
     fcCard.style.display = 'flex';
+    chrome.storage.sync.get({ settings: { autoplaySound: false } }, ({ settings }) => {
+        if (settings && settings.autoplaySound) {
+            speakWord(item.word, item.lang);
+        }
+    });
 }
 function fcShowDone() {
     fcCard.style.display = 'none';
@@ -874,6 +879,11 @@ function srsShowCard() {
     });
     document.getElementById('srs-card-front').style.display = 'flex';
     document.getElementById('srs-card-back').style.display = 'none';
+    chrome.storage.sync.get({ settings: { autoplaySound: false } }, ({ settings }) => {
+        if (settings && settings.autoplaySound) {
+            speakWord(item.word, item.lang);
+        }
+    });
 }
 document.getElementById('srs-reveal-btn').addEventListener('click', () => {
     document.getElementById('srs-card-front').style.display = 'none';

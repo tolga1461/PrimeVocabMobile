@@ -1430,6 +1430,12 @@
   "settings_sounds_desc": {
     "message": "Töne beim Lernen und Spielen abspielen"
   },
+  "settings_autoplay_sound_title": {
+    "message": "Übungs-Töne"
+  },
+  "settings_autoplay_sound_desc": {
+    "message": "Wort-Audio im Trainingsmodus automatisch abspielen"
+  },
   "settings_anki_title": {
     "message": "Nach Anki exportieren"
   },

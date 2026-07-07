@@ -1478,6 +1478,12 @@
   "settings_sounds_desc": {
     "message": "Çalışırken ve oyunlarda ses oynatın"
   },
+  "settings_autoplay_sound_title": {
+    "message": "Antrenman Sesleri"
+  },
+  "settings_autoplay_sound_desc": {
+    "message": "Çalışırken antrenmanda otomatik sesleri çal"
+  },
   "settings_anki_title": {
     "message": "Anki'ye Aktar"
   },

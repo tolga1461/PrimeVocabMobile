@@ -1478,6 +1478,12 @@
   "settings_sounds_desc": {
     "message": "Play sounds during study and games"
   },
+  "settings_autoplay_sound_title": {
+    "message": "Training Sounds"
+  },
+  "settings_autoplay_sound_desc": {
+    "message": "Autoplay word audio in training mode"
+  },
   "settings_anki_title": {
     "message": "Export to Anki"
   },

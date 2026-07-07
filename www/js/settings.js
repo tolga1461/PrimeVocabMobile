@@ -296,7 +296,7 @@ function loadSettings() {
             }
         });
 
-        chrome.storage.sync.get({ settings: { appLanguage: 'auto', appFontSize: 'normal', gamesSound: true, deleteConfirm: true, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
+        chrome.storage.sync.get({ settings: { appLanguage: 'auto', appFontSize: 'normal', gamesSound: true, deleteConfirm: true, autoplaySound: false, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
         if (!settings)
             settings = {};
         const ensureInit = (key) => {
@@ -316,6 +316,9 @@ function loadSettings() {
         const gamesSoundToggle = document.getElementById('games-sound-toggle');
         if (gamesSoundToggle)
             gamesSoundToggle.checked = settings.gamesSound !== false;
+        const autoplaySoundToggle = document.getElementById('autoplay-sound-toggle');
+        if (autoplaySoundToggle)
+            autoplaySoundToggle.checked = settings.autoplaySound === true;
         const deleteConfirmToggle = document.getElementById('delete-confirm-toggle');
         if (deleteConfirmToggle)
             deleteConfirmToggle.checked = settings.deleteConfirm !== false;
@@ -458,7 +461,7 @@ function saveSetting(key, value) {
         ensureInit('youtube');
         ensureInit('prime');
         ensureInit('netflix');
-        if (key === 'appLanguage' || key === 'appFontSize' || key === 'gamesSound' || key === 'deleteConfirm') {
+        if (key === 'appLanguage' || key === 'appFontSize' || key === 'gamesSound' || key === 'deleteConfirm' || key === 'autoplaySound') {
             settings[key] = value;
         }
         else {
@@ -654,6 +657,9 @@ if (ytAllowAsrToggleEl) {
 const gamesSoundToggleEl = document.getElementById('games-sound-toggle');
 if (gamesSoundToggleEl)
     gamesSoundToggleEl.addEventListener('change', (e) => saveSetting('gamesSound', e.target.checked));
+const autoplaySoundToggleEl = document.getElementById('autoplay-sound-toggle');
+if (autoplaySoundToggleEl)
+    autoplaySoundToggleEl.addEventListener('change', (e) => saveSetting('autoplaySound', e.target.checked));
 const deleteConfirmToggleEl = document.getElementById('delete-confirm-toggle');
 if (deleteConfirmToggleEl)
     deleteConfirmToggleEl.addEventListener('change', (e) => saveSetting('deleteConfirm', e.target.checked));
