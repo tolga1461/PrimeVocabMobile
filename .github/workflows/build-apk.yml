@@ -9,7 +9,7 @@ jobs:
   build:
     name: Build Android Debug APK
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[build]') }}
+    if: github.event_name == 'workflow_dispatch' || (github.event.head_commit != null && contains(github.event.head_commit.message, '[build]'))
 
     steps:
       - name: Checkout Source Code
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: '22'
 
       - name: Install Web Dependencies
         run: npm install
