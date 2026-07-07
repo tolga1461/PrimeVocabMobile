@@ -56,10 +56,15 @@ async function getGoogleAuthToken(interactive = false) {
             console.log("[PV-Sync] Silent token refresh successful.");
             return newToken;
         } catch (refreshErr) {
-            console.warn("[PV-Sync] Silent token refresh failed, clearing credentials:", refreshErr);
-            localStorage.removeItem('google_sync_token');
-            localStorage.removeItem('google_sync_token_expires');
-            localStorage.removeItem('google_sync_refresh_token');
+            if (refreshErr.status === 400 || refreshErr.status === 401 || refreshErr.status === 403) {
+                console.warn("[PV-Sync] Silent token refresh failed with auth error, clearing credentials:", refreshErr);
+                localStorage.removeItem('google_sync_token');
+                localStorage.removeItem('google_sync_token_expires');
+                localStorage.removeItem('google_sync_refresh_token');
+            } else {
+                console.warn("[PV-Sync] Silent token refresh failed due to network or server issue, retaining credentials:", refreshErr);
+                throw refreshErr;
+            }
         }
     }
     
@@ -187,7 +192,7 @@ async function getGoogleAuthToken(interactive = false) {
                 if (response && response.code) {
                     try {
                         const redirectUri = window.location.origin + "/oauth_callback.html";
-                        const exchangeRes = await fetch('/api/token', {
+                        const exchangeRes = await fetch('https://prime-vocab-mobile.vercel.app/api/token.js', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -237,7 +242,7 @@ async function refreshAccessToken() {
         throw new Error("No refresh token available");
     }
     
-    const response = await fetch("/api/refresh.js", {
+    const response = await fetch("https://prime-vocab-mobile.vercel.app/api/refresh.js", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -247,7 +252,9 @@ async function refreshAccessToken() {
     
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to refresh token");
+        const error = new Error(errorData.error || "Failed to refresh token");
+        error.status = response.status;
+        throw error;
     }
     
     const data = await response.json();
