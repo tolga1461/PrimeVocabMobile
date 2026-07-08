@@ -150,30 +150,36 @@ function srsInitItem(item) {
 function srsCalcNext(item, rating) {
     let { interval, easeFactor, streak } = srsInitItem(item);
     if (rating === 0) {
+        // Bilmedim: 10 dakika sonra tekrar sor
         streak = 0;
         interval = SRS_AGAIN_INTERVAL;
         easeFactor = Math.max(MIN_EASE, easeFactor - 0.2);
     }
     else if (rating === 1) {
+        // Zor: 1 gün sonra tekrar sor
         streak = 1;
         interval = 1;
         easeFactor = Math.max(MIN_EASE, easeFactor - 0.15);
     }
     else if (rating === 2) {
+        // İyi: 3gün → 8gün → serbest SRS
         streak = (streak ?? 0) + 1;
         if (streak === 1)
-            interval = 1;
+            interval = 3;
         else if (streak === 2)
-            interval = 6;
+            interval = 8;
         else
             interval = Math.round(interval * easeFactor);
     }
     else {
+        // Kolay: her zaman İyi'den daha yüksek interval (7gün → daima > İyi)
         streak = (streak ?? 0) + 1;
-        if (streak === 1)
-            interval = 4;
-        else
-            interval = Math.round(interval * easeFactor * 1.3);
+        if (streak === 1) {
+            interval = 7;  // İyi streak=1 (3gün)'den yüksek
+        } else {
+            const goodInterval = streak === 2 ? 8 : Math.round(interval * easeFactor);
+            interval = Math.max(goodInterval + 2, Math.round(interval * easeFactor * 1.3));
+        }
         easeFactor = Math.min(3.0, easeFactor + 0.15);
     }
     return {
@@ -226,11 +232,11 @@ function srsIntervalLabel(d) {
 function srsDueItems(savedWords) {
     const now = Date.now();
     return savedWords.filter(item => {
-        if (item.learned)
-            return false;
-        if (item.nextReview)
-            return item.nextReview <= now;
-        return true;
+        if (item.learned) return false;
+        // Yeni kartlar (reviewCount=0) reviewDue'ya değil newAvailable havuzuna aittir;
+        // bunları "vadesi geçti" saymak badge sayacını haksız yere şişirir.
+        if ((item.reviewCount ?? 0) === 0) return false;
+        return (item.nextReview ?? 0) <= now;
     });
 }
 let srsQueue = [];
@@ -246,7 +252,15 @@ function srsLoadHome() {
     }, ({ savedWords, srsSettings, srsStreakStats }) => {
         const now = Date.now();
         const today = new Date().toDateString();
-        const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
+        // "Again" oyu alan ve bugün cevaplanan kartlar (interval < 1 gün = intraday öğrenme)
+        // ana sayfa sayacını şişirmemek için reviewDue dışında tutulur;
+        // bir sonraki oturumda otomatik olarak tekrar kuyruğa girer.
+        const reviewDue = savedWords.filter(w =>
+            !w.learned &&
+            (w.reviewCount ?? 0) > 0 &&
+            (w.nextReview ?? 0) <= now &&
+            !(w.lastReviewDate === today && (w.interval ?? 0) < 1)
+        );
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
         const introducedToday = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && w.firstReviewDate === today).length;
         const newLimit = srsSettings.newLimit ?? 10;
@@ -466,7 +480,14 @@ document.getElementById('srs-start-btn').addEventListener('click', () => {
         
 
 
-        const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
+        // Oturum başlatılırken: bugün öğrenme aşamasındaki (Again alan, interval<1) kartlar
+        // tekrar kuyruğa girmesin — ana sayfa sayacının mantkıyla tutarlı olsun.
+        const reviewDue = savedWords.filter(w =>
+            !w.learned &&
+            (w.reviewCount ?? 0) > 0 &&
+            (w.nextReview ?? 0) <= now &&
+            !(w.lastReviewDate === today && (w.interval ?? 0) < 1)
+        );
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
         const introducedToday = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && w.firstReviewDate === today).length;
         const newLimit = srsSettings.newLimit ?? 10;
@@ -904,7 +925,8 @@ document.getElementById('srs-reveal-btn').addEventListener('click', () => {
                 if (rating === 0)
                     againCount++;
                 const hard = againCount >= 3;
-                savedWords[idx] = { ...savedWords[idx], ...next, firstReviewDate, againCount, hard };
+                const lastReviewDate = new Date().toDateString();
+                savedWords[idx] = { ...savedWords[idx], ...next, firstReviewDate, againCount, hard, lastReviewDate };
                 chrome.storage.local.set({ savedWords }, () => { updateStudyStreak(); });
             }
         });
@@ -922,6 +944,7 @@ if (srsRateLearned) {
             const idx = savedWords.findIndex(w => w.word.toLowerCase() === item.word.toLowerCase());
             if (idx !== -1) {
                 savedWords[idx].learned = true;
+                savedWords[idx].lastReviewDate = new Date().toDateString();
                 chrome.storage.local.set({ savedWords }, () => { updateStudyStreak(); });
             }
         });
@@ -955,7 +978,12 @@ function srsShowResult() {
 function updateReviewBadge() {
     chrome.storage.local.get({ savedWords: [], srsSettings: { newLimit: 10 } }, ({ savedWords, srsSettings }) => {
         const now = Date.now(), today = new Date().toDateString();
-        const reviewDue = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && (w.nextReview ?? 0) <= now);
+        const reviewDue = savedWords.filter(w =>
+            !w.learned &&
+            (w.reviewCount ?? 0) > 0 &&
+            (w.nextReview ?? 0) <= now &&
+            !(w.lastReviewDate === today && (w.interval ?? 0) < 1)
+        );
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
         const introducedToday = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && w.firstReviewDate === today).length;
         const newLimit = srsSettings.newLimit ?? 10;
