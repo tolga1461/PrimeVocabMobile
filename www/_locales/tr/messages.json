@@ -198,10 +198,10 @@
     "message": "Sözlüğünüzde çok kelime olsa bile günde en fazla bu kadar yeni kart çıkar. Vadesi gelen eski kartlar bu limite dahil değildir."
   },
   "srs_settings_session_limit": {
-    "message": "Oturum Süresi"
+    "message": "Oturum Kart Limiti"
   },
   "srs_settings_session_limit_help": {
-    "message": "Oturum başına maksimum kart sayısı. Limit dolunca oturum biter, kalan kartlar yarına taşınmaz."
+    "message": "Oturum başına çalışılacak maksimum kart sayısı. Limit dolduğunda oturum tamamlanır."
   },
   "srs_unlimited": {
     "message": "Sınırsız"

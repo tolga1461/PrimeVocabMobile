@@ -247,9 +247,15 @@ function updateProfileUI() {
     });
 }
 
-// ── Tab Switching Logic ──
-function switchMainTab(tabName) {
+let tabHistory = ['archive'];
+
+function switchMainTab(tabName, isBack = false) {
     console.log(`[PV-core] Switching to main tab: ${tabName}`);
+    
+    if (!isBack) {
+        tabHistory = tabHistory.filter(t => t !== tabName);
+        tabHistory.push(tabName);
+    }
     
     // Auto-hide study list overlay on tab switch since it is fixed at the root level
     const srsWordsOverlay = document.getElementById('srs-words-overlay');
@@ -1291,6 +1297,77 @@ if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App
             console.log("[PV-core] App state active, triggering sync...");
             triggerSilentSync(true);
         }
+    });
+
+    window.Capacitor.Plugins.App.addListener('backButton', () => {
+        console.log("[PV-core] Hardware backButton pressed");
+
+        // 1. Custom Confirm Overlay
+        const confirmOverlay = document.getElementById('custom-confirm-overlay');
+        if (confirmOverlay && confirmOverlay.style.display !== 'none' && confirmOverlay.style.display !== '') {
+            const cancelBtn = document.getElementById('custom-confirm-cancel');
+            if (cancelBtn) cancelBtn.click();
+            return;
+        }
+
+        // 2. Flashcard Overlay
+        const fcOverlay = document.getElementById('fc-overlay');
+        if (fcOverlay && fcOverlay.style.display !== 'none' && fcOverlay.style.display !== '') {
+            const fcClose = document.getElementById('fc-close');
+            if (fcClose) fcClose.click();
+            return;
+        }
+
+        // 3. Study List Overlay (Çalışma Listesi)
+        const srsWordsOverlay = document.getElementById('srs-words-overlay');
+        if (srsWordsOverlay && srsWordsOverlay.style.display !== 'none' && srsWordsOverlay.style.display !== '') {
+            const srsWordsCloseBtn = document.getElementById('srs-words-close-btn');
+            if (srsWordsCloseBtn) srsWordsCloseBtn.click();
+            return;
+        }
+
+        // 4. Game Active Play Area
+        const gamePlayArea = document.getElementById('game-play-area');
+        if (gamePlayArea && gamePlayArea.style.display !== 'none' && gamePlayArea.style.display !== '') {
+            const gameExitBtn = document.getElementById('game-exit-btn');
+            if (gameExitBtn) gameExitBtn.click();
+            return;
+        }
+
+        // 5. Resume Game Container
+        const resumeGameContainer = document.getElementById('resume-game-container');
+        if (resumeGameContainer && resumeGameContainer.style.display !== 'none' && resumeGameContainer.style.display !== '') {
+            const discardGameBtn = document.getElementById('discard-game-btn');
+            if (discardGameBtn) discardGameBtn.click();
+            return;
+        }
+
+        // 6. Active SRS Session / Result
+        const srsSession = document.getElementById('srs-session');
+        const srsResult = document.getElementById('srs-result');
+        if ((srsSession && srsSession.style.display !== 'none' && srsSession.style.display !== '') ||
+            (srsResult && srsResult.style.display !== 'none' && srsResult.style.display !== '')) {
+            const quitBtn = document.getElementById('srs-quit-btn') || document.getElementById('srs-back-btn');
+            if (quitBtn) {
+                quitBtn.click();
+            } else if (typeof srsLoadHome === 'function') {
+                srsLoadHome();
+            }
+            return;
+        }
+
+        // 7. Tab history navigation (e.g. Settings -> Study -> Dictionary)
+        if (tabHistory.length > 1) {
+            tabHistory.pop(); // Remove current tab
+            const prevTab = tabHistory[tabHistory.length - 1];
+            if (typeof switchMainTab === 'function') {
+                switchMainTab(prevTab, true);
+            }
+            return;
+        }
+
+        // 8. Otherwise exit app
+        window.Capacitor.Plugins.App.exitApp();
     });
 }
 

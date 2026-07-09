@@ -162,24 +162,14 @@ function srsCalcNext(item, rating) {
         easeFactor = Math.max(MIN_EASE, easeFactor - 0.15);
     }
     else if (rating === 2) {
-        // İyi: 3gün → 8gün → serbest SRS
+        // İyi: 3 gün sonra tekrar sor
         streak = (streak ?? 0) + 1;
-        if (streak === 1)
-            interval = 3;
-        else if (streak === 2)
-            interval = 8;
-        else
-            interval = Math.round(interval * easeFactor);
+        interval = 3;
     }
     else {
-        // Kolay: her zaman İyi'den daha yüksek interval (7gün → daima > İyi)
+        // Kolay: 7 gün sonra tekrar sor
         streak = (streak ?? 0) + 1;
-        if (streak === 1) {
-            interval = 7;  // İyi streak=1 (3gün)'den yüksek
-        } else {
-            const goodInterval = streak === 2 ? 8 : Math.round(interval * easeFactor);
-            interval = Math.max(goodInterval + 2, Math.round(interval * easeFactor * 1.3));
-        }
+        interval = 7;
         easeFactor = Math.min(3.0, easeFactor + 0.15);
     }
     return {
@@ -258,8 +248,7 @@ function srsLoadHome() {
         const reviewDue = savedWords.filter(w =>
             !w.learned &&
             (w.reviewCount ?? 0) > 0 &&
-            (w.nextReview ?? 0) <= now &&
-            !(w.lastReviewDate === today && (w.interval ?? 0) < 1)
+            (w.nextReview ?? 0) <= now
         );
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
         const introducedToday = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && w.firstReviewDate === today).length;
@@ -375,15 +364,22 @@ function srsRenderHeatmap(savedWords) {
     const todayMs = today.getTime();
     const activityMap = {};
     reviewed.forEach(w => {
-        const reviewedAt = (w.nextReview ?? 0) - (w.interval ?? 1) * msDay;
-        const dayStart = reviewedAt - (reviewedAt % msDay);
+        let dayStart;
+        if (w.lastReviewDate) {
+            dayStart = new Date(w.lastReviewDate).getTime();
+        } else {
+            const reviewedAt = (w.nextReview ?? 0) - (w.interval ?? 1) * msDay;
+            const d = new Date(reviewedAt);
+            d.setHours(0, 0, 0, 0);
+            dayStart = d.getTime();
+        }
         activityMap[dayStart] = (activityMap[dayStart] || 0) + 1;
     });
     const maxCount = Math.max(1, ...Object.values(activityMap));
     grid.innerHTML = '';
     const startOffset = (today.getDay() + 6) % 7;
-    const startDay = todayMs - (DAYS - 1 + startOffset) * msDay;
-    for (let d = 0; d < DAYS + startOffset; d++) {
+    const startDay = todayMs - (DAYS + startOffset) * msDay;
+    for (let d = 0; d < DAYS + startOffset + 1; d++) {
         const dayMs = startDay + d * msDay;
         const count = activityMap[dayMs] || 0;
         const isFuture = dayMs > todayMs;
@@ -485,8 +481,7 @@ document.getElementById('srs-start-btn').addEventListener('click', () => {
         const reviewDue = savedWords.filter(w =>
             !w.learned &&
             (w.reviewCount ?? 0) > 0 &&
-            (w.nextReview ?? 0) <= now &&
-            !(w.lastReviewDate === today && (w.interval ?? 0) < 1)
+            (w.nextReview ?? 0) <= now
         );
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
         const introducedToday = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && w.firstReviewDate === today).length;
@@ -711,9 +706,8 @@ function srsLoadWords() {
                     else {
                         const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
                         let label = days === 1 ? (getMessage("srs_status_tomorrow") || 'Tomorrow')
-                            : days < 7 ? (getMessage("srs_status_days_later") || '{days}d later').replace('{days}', days)
-                                : days < 30 ? (getMessage("srs_status_weeks_later") || '{weeks}w later').replace('{weeks}', Math.round(days / 7))
-                                    : (getMessage("srs_status_months_later") || '{months}m later').replace('{months}', Math.round(days / 30));
+                            : days <= 30 ? (getMessage("srs_status_days_later") || '{days}d later').replace('{days}', days)
+                                : (getMessage("srs_status_months_later") || '{months}m later').replace('{months}', Math.round(days / 30));
                         reviewBadgeHtml = `<span class="srs-word-status-badge" style="color:#94a3b8;background:rgba(148,163,184,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(148,163,184,0.2);">📅 ${label}</span>`;
                     }
                 }
@@ -926,7 +920,7 @@ document.getElementById('srs-reveal-btn').addEventListener('click', () => {
                     againCount++;
                 const hard = againCount >= 3;
                 const lastReviewDate = new Date().toDateString();
-                savedWords[idx] = { ...savedWords[idx], ...next, firstReviewDate, againCount, hard, lastReviewDate };
+                savedWords[idx] = { ...savedWords[idx], ...next, firstReviewDate, againCount, hard, lastReviewDate, timestamp: Date.now() };
                 chrome.storage.local.set({ savedWords }, () => { updateStudyStreak(); });
             }
         });
@@ -945,6 +939,7 @@ if (srsRateLearned) {
             if (idx !== -1) {
                 savedWords[idx].learned = true;
                 savedWords[idx].lastReviewDate = new Date().toDateString();
+                savedWords[idx].timestamp = Date.now();
                 chrome.storage.local.set({ savedWords }, () => { updateStudyStreak(); });
             }
         });
@@ -981,8 +976,7 @@ function updateReviewBadge() {
         const reviewDue = savedWords.filter(w =>
             !w.learned &&
             (w.reviewCount ?? 0) > 0 &&
-            (w.nextReview ?? 0) <= now &&
-            !(w.lastReviewDate === today && (w.interval ?? 0) < 1)
+            (w.nextReview ?? 0) <= now
         );
         const newCards = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) === 0);
         const introducedToday = savedWords.filter(w => !w.learned && (w.reviewCount ?? 0) > 0 && w.firstReviewDate === today).length;

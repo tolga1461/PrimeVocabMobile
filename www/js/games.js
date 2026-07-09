@@ -558,7 +558,7 @@ function handleGameAnswer(isCorrect, targetWordItem) {
         if (idx !== -1) {
             let againCount = savedWords[idx].againCount ?? 0;
             againCount++;
-            savedWords[idx] = { ...savedWords[idx], againCount, hard: againCount >= 3 };
+            savedWords[idx] = { ...savedWords[idx], againCount, hard: againCount >= 3, timestamp: Date.now() };
             chrome.storage.local.set({ savedWords }, () => { updateReviewBadge(); });
         }
     });
