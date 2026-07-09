@@ -1524,7 +1524,7 @@
     "message": "Niveau $1 ($2 / 1000 XP)"
   },
   "profile_words_saved_today": {
-    "message": "$1 mots enregistrés"
+    "message": "$1 mots étudiés"
   },
   "profile_premium_badge": {
     "message": "PREMIUM 👑"

@@ -1524,7 +1524,7 @@
     "message": "Nivel $1 ($2 / 1000 XP)"
   },
   "profile_words_saved_today": {
-    "message": "$1 palabras guardadas"
+    "message": "$1 palabras estudiadas"
   },
   "profile_premium_badge": {
     "message": "PREMIUM 👑"

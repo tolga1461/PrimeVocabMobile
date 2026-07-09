@@ -1524,7 +1524,7 @@
     "message": "Stufe $1 ($2 / 1000 XP)"
   },
   "profile_words_saved_today": {
-    "message": "$1 Wörter gespeichert"
+    "message": "$1 Wörter gelernt"
   },
   "profile_premium_badge": {
     "message": "PREMIUM 👑"

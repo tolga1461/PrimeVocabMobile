@@ -361,15 +361,15 @@ function loadProfileData() {
         }
         if (levelBarEl) levelBarEl.style.width = `${nextLevelProgress}%`;
 
-        // Calculate today activity
+        // Calculate today activity (words studied/reviewed today)
         const todayStr = new Date().toDateString();
-        const wordsSavedToday = (data.savedWords || []).filter(w => {
-            if (!w || !w.timestamp) return false;
-            return new Date(w.timestamp).toDateString() === todayStr;
+        const wordsStudiedToday = (data.savedWords || []).filter(w => {
+            if (!w || !w.lastReviewDate) return false;
+            return w.lastReviewDate === todayStr;
         }).length;
         const todayActivityEl = document.getElementById('profile-today-activity');
         if (todayActivityEl) {
-            todayActivityEl.textContent = getMessage('profile_words_saved_today', String(wordsSavedToday));
+            todayActivityEl.textContent = getMessage('profile_words_saved_today', String(wordsStudiedToday));
         }
 
         // Render achievements ratio
