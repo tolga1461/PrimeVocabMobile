@@ -326,7 +326,7 @@ function renderFillBlankQuestion() {
         }
         const fbDiv = document.createElement('div');
         fbDiv.className = 'blank-stage';
-        fbDiv.innerHTML = `<div class="blank-sentence">"${sentence}"</div><div class="blank-hint">Türkçe Çeviri: <strong>"${target.translation}"</strong></div><div class="mc-choices" style="margin-top:6px;">${options.map((opt, i) => `<button class="mc-btn" data-opt="${opt}"><span class="mc-btn-badge">${i + 1}</span>${opt}</button>`).join('')}</div>`;
+        fbDiv.innerHTML = `<div class="blank-sentence">"${sentence}"</div><div class="blank-hint">${getMessage("translation_label") || "Çeviri"}: <strong>"${target.translation}"</strong></div><div class="mc-choices" style="margin-top:6px;">${options.map((opt, i) => `<button class="mc-btn" data-opt="${opt}"><span class="mc-btn-badge">${i + 1}</span>${opt}</button>`).join('')}</div>`;
         stage.appendChild(fbDiv);
         fbDiv.querySelectorAll('.mc-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -375,7 +375,7 @@ function renderScrambleQuestion() {
     scrDiv.className = 'scramble-stage';
     scrDiv.innerHTML = `
     ${hintSentence ? `<div class="blank-sentence" style="min-height:unset;">"${hintSentence}"</div>` : ''}
-    <div class="blank-hint" style="margin-bottom:4px;">Türkçe Çeviri: <strong>"${target.translation}"</strong></div>
+    <div class="blank-hint" style="margin-bottom:4px;">${getMessage("translation_label") || "Çeviri"}: <strong>"${target.translation}"</strong></div>
     <div class="scramble-input-box" id="scramble-input-box"></div>
     <div class="scramble-tiles" id="scramble-tiles">${scrambled.map((char, index) => `<button class="scramble-tile" data-index="${index}" data-char="${char}">${char}</button>`).join('')}</div>
     <div class="scramble-actions">
@@ -566,7 +566,8 @@ function handleGameAnswer(isCorrect, targetWordItem) {
 function showGameResult(totalQuestions) {
     const stage = document.getElementById('game-stage');
     stage.innerHTML = '';
-    const maxPossibleScore = activeGame.type === 'match' ? activeGame.words.length : totalQuestions;
+    const gameType = activeGame.type;
+    const maxPossibleScore = gameType === 'match' ? activeGame.words.length : totalQuestions;
     const isPerfect = activeGame.score === maxPossibleScore && maxPossibleScore > 0;
     chrome.storage.local.get({ gameStats: {} }, ({ gameStats }) => {
         gameStats.totalGamesPlayed = (gameStats.totalGamesPlayed || 0) + 1;
@@ -574,7 +575,7 @@ function showGameResult(totalQuestions) {
         if (isPerfect)
             gameStats.perfectGames = (gameStats.perfectGames || 0) + 1;
         gameStats.bestScore = Math.max(gameStats.bestScore || 0, activeGame.score);
-        const prefix = `game_${activeGame.type}`;
+        const prefix = `game_${gameType}`;
         gameStats[`${prefix}_played`] = (gameStats[`${prefix}_played`] || 0) + 1;
         gameStats[`${prefix}_correct`] = (gameStats[`${prefix}_correct`] || 0) + activeGame.score;
         gameStats[`${prefix}_questions`] = (gameStats[`${prefix}_questions`] || 0) + maxPossibleScore;
@@ -607,7 +608,8 @@ function showGameResult(totalQuestions) {
     <button class="srs-start-btn" id="game-result-back-btn" style="width:100%;margin-top:15px;">${getMessage("game_result_btn_back") || "Oyun Seçimine Dön"}</button>
   `;
     stage.appendChild(resDiv);
-    resDiv.querySelector('#game-result-back-btn').addEventListener('click', () => { activeGame.type = null; loadGamesHub(); });
+    resDiv.querySelector('#game-result-back-btn').addEventListener('click', () => { loadGamesHub(); });
+    activeGame.type = null;
 }
 // ── Dikte Oyunu ───────────────────────────────────────────────────────────────
 function renderDictationQuestion() {
@@ -714,7 +716,7 @@ function renderContextChoiceQuestion() {
         }
         const ctxDiv = document.createElement('div');
         ctxDiv.className = 'blank-stage';
-        ctxDiv.innerHTML = `<div class="blank-sentence">"${sentence}"</div><div class="blank-hint">Türkçe Çeviri: <strong>"${target.translation}"</strong></div><div class="mc-choices" style="margin-top:6px;">${options.map((opt, i) => `<button class="mc-btn" data-opt="${opt}"><span class="mc-btn-badge">${i + 1}</span>${opt}</button>`).join('')}</div>`;
+        ctxDiv.innerHTML = `<div class="blank-sentence">"${sentence}"</div><div class="blank-hint">${getMessage("translation_label") || "Çeviri"}: <strong>"${target.translation}"</strong></div><div class="mc-choices" style="margin-top:6px;">${options.map((opt, i) => `<button class="mc-btn" data-opt="${opt}"><span class="mc-btn-badge">${i + 1}</span>${opt}</button>`).join('')}</div>`;
         stage.appendChild(ctxDiv);
         ctxDiv.querySelectorAll('.mc-btn').forEach(btn => {
             btn.addEventListener('click', () => {

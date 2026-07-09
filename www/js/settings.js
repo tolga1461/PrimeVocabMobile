@@ -1113,6 +1113,12 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
     if (areaName === 'sync' && changes.settings) {
         // Debounce: prevent UI state reversion from stale sync get if change triggered locally
         if (Date.now() - lastLocalWriteTime > 1000) {
+            const newLang = changes.settings.newValue?.appLanguage || 'auto';
+            const currentVal = document.getElementById('app-lang-select')?.value;
+            if (currentVal && newLang !== currentVal) {
+                setTimeout(() => window.location.reload(), 150);
+                return;
+            }
             loadSettings();
         }
     }

@@ -853,7 +853,13 @@ async function start() {
     // On that reload, googleSyncEmail may not be saved yet. Fix it here.
     const cachedToken = localStorage.getItem('google_sync_token');
     const cachedExpires = localStorage.getItem('google_sync_token_expires');
-    const tokenValid = cachedToken && cachedExpires && parseInt(cachedExpires) > Date.now();
+    
+    const isNearExpiry = (expiresAt) => {
+        if (!expiresAt) return true;
+        return Date.now() + 300000 > parseInt(expiresAt);
+    };
+    
+    const tokenValid = cachedToken && cachedExpires && !isNearExpiry(cachedExpires);
     if (tokenValid) {
         const savedEmail = localStorage.getItem('local_googleSyncEmail');
         if (!savedEmail) {

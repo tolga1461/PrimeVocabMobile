@@ -444,7 +444,7 @@
     "message": "🔄 Restablecer SRS"
   },
   "settings_reset_srs_confirm": {
-    "message": "Se restablecerá su progreso de SRS. Las palabras no se eliminarán. ¿Continuar?"
+    "message": "Se restablecerá tu progreso de SRS. Las palabras no se borrarán. ¿Continuar?"
   },
   "settings_reset_srs_done": {
     "message": "Se ha restablecido tu progreso de SRS."
@@ -459,7 +459,7 @@
     "message": "🔥 Restablecer racha"
   },
   "settings_reset_streak_confirm": {
-    "message": "Su racha diaria y datos de récord se restablecerán por completo. ¿Desea continuar?"
+    "message": "Su racha de días y su récord se restablecerán por completo. ¿Desea continuar?"
   },
   "settings_reset_streak_done": {
     "message": "Su racha de días y su récord han sido restablecidos."
@@ -525,7 +525,7 @@
     "message": "Idioma de la extensión"
   },
   "settings_lang_auto": {
-    "message": "Automático (Idioma del sistema)"
+    "message": "Automático (por defecto)"
   },
   "settings_color_title": {
     "message": "Color de traducción:"
@@ -657,7 +657,7 @@
     "message": "s"
   },
   "settings_backup_title": {
-    "message": "Copia de seguridad"
+    "message": "Copia de seguridad (JSON)"
   },
   "settings_restore_title": {
     "message": "Restaurar copia de seguridad"
@@ -1065,7 +1065,7 @@
     "message": "🏆 Reiniciar Progreso"
   },
   "settings_reset_games_confirm": {
-    "message": "Se restablecerán sus estadísticas de juego, puntuación total (EXP) y todos los logros. ¿Desea continuar?"
+    "message": "Se restablecerán tus estadísticas de juego, puntos totales (EXP) y todos los logros. ¿Deseas continuar?"
   },
   "settings_reset_games_done": {
     "message": "Se ha restablecido el progreso de los juegos y logros."
@@ -1320,7 +1320,7 @@
     "message": "Actividad de hoy:"
   },
   "profile_today_activity_saved": {
-    "message": "{count} palabras guardadas"
+    "message": "{count} palabras estudiadas"
   },
   "profile_achievements_label": {
     "message": "Logros:"
@@ -1353,7 +1353,7 @@
     "message": "☁️ Sincronización ilimitada en la nube: Sincroniza tus palabras automáticamente en todos tus dispositivos a través de Google Drive."
   },
   "premium_feat_limit": {
-    "message": "🚀 Guardado ilimitado de palabras: Se ha eliminado el límite de 20 palabras de la versión gratuita. Guarda tantas palabras como quieras."
+    "message": "🚀 Guardado ilimitado de palabras: Se ha eliminado el límite de 50 palabras de la versión gratuita. Guarda tantas palabras como quieras."
   },
   "premium_feat_practice": {
     "message": "🃏 Práctica avanzada: Utiliza tarjetas y realiza sesiones de estudio sin límites diarios."
@@ -1371,7 +1371,7 @@
     "message": "Conexión activa (Sincronización desactivada)"
   },
   "archive_inactive_badge_title": {
-    "message": "No se escanea en los subtítulos porque está fuera del límite de la versión gratuita (últimas 20 palabras)."
+    "message": "No se escanea en los subtítulos porque está fuera del límite de la versión gratuita (últimas 50 palabras)."
   },
   "archive_inactive_badge_label": {
     "message": "⚠️ Inactivo en subtítulos"
@@ -1627,5 +1627,11 @@
   },
   "sync_session_expired_reconnecting": {
     "message": "La sesión ha expirado, reconectando..."
+  },
+  "translation_label": {
+    "message": "Traducción"
+  },
+  "heatmap_tooltip": {
+    "message": "{date}: {count} cartas"
   }
 }

@@ -201,7 +201,7 @@
     "message": "Oturum Kart Limiti"
   },
   "srs_settings_session_limit_help": {
-    "message": "Oturum başına çalışılacak maksimum kart sayısı. Limit dolduğunda oturum tamamlanır."
+    "message": "Oturum başına maksimum kart sayısı. Limit dolunca oturum biter, kalan kartlar yarına taşınmaz."
   },
   "srs_unlimited": {
     "message": "Sınırsız"
@@ -537,7 +537,7 @@
     "message": "Eklenti Dili"
   },
   "settings_lang_auto": {
-    "message": "Otomatik (Cihaz Dili)"
+    "message": "Otomatik (Tarayıcı Dili)"
   },
   "settings_color_title": {
     "message": "Çeviri rengi:"
@@ -669,7 +669,7 @@
     "message": "h"
   },
   "settings_backup_title": {
-    "message": "Verileri Yedekle (Yedek Al)"
+    "message": "Veriyi Yedekle (JSON)"
   },
   "settings_restore_title": {
     "message": "Yedeği Geri Yükle"
@@ -1332,7 +1332,7 @@
     "message": "Bugünkü Aktivite:"
   },
   "profile_today_activity_saved": {
-    "message": "{count} kelime kaydedildi"
+    "message": "{count} kelime çalışıldı"
   },
   "profile_achievements_label": {
     "message": "Başarımlar:"
@@ -1365,7 +1365,7 @@
     "message": "☁️ Sınırsız Bulut Eşitleme: Tüm cihazlarınızdaki kelimeleri Google Drive ile otomatik senkronize edin."
   },
   "premium_feat_limit": {
-    "message": "🚀 Sınırsız Kelime Ekleme: Ücretsiz sürümdeki 20 kelime limiti kalktı, dilediğiniz kadar kelime kaydedin."
+    "message": "🚀 Sınırsız Kelime Ekleme: Ücretsiz sürümdeki 50 kelime limiti kalktı, dilediğiniz kadar kelime kaydedin."
   },
   "premium_feat_practice": {
     "message": "🃏 Gelişmiş Alıştırmalar: Günlük pratik sınırları olmadan dilediğiniz kadar kelime kartı ve oyun oynayın."
@@ -1383,10 +1383,10 @@
     "message": "Bağlantı Aktif (Senkronizasyon Devre Dışı)"
   },
   "archive_inactive_badge_title": {
-    "message": "Ücretsiz sürüm limiti (Son 20 kelime) dışında kaldığı için altyazılarda taranmaz."
+    "message": "Ücretsiz sürüm limiti (Son 50 kelime) dışında kaldığı için altyazılarda taranmaz."
   },
   "archive_inactive_badge_label": {
-    "message": "⚠️"
+    "message": "⚠️ Altyazıda Pasif"
   },
   "premium_smart_locked_desc": {
     "message": "Akıllı Özellikleri (Shadowing, Otomatik Geri Sarma, Yavaşlatma vb.) kullanabilmek için Premium üyeliğe yükseltmeniz gerekmektedir."
@@ -1633,5 +1633,11 @@
   },
   "sync_session_expired_reconnecting": {
     "message": "Oturum süresi doldu, tekrar bağlanılıyor..."
+  },
+  "translation_label": {
+    "message": "Çeviri"
+  },
+  "heatmap_tooltip": {
+    "message": "{date}: {count} kart"
   }
 }

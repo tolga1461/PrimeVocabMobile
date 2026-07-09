@@ -41,7 +41,14 @@ function initGoogleAuthClient() {
 async function getGoogleAuthToken(interactive = false) {
     const cachedToken = localStorage.getItem('google_sync_token');
     const cachedExpires = localStorage.getItem('google_sync_token_expires');
-    const isTokenValid = cachedToken && cachedExpires && parseInt(cachedExpires) > Date.now();
+    
+    const isNearExpiry = (expiresAt) => {
+        if (!expiresAt) return true;
+        // 5 minutes (300000 ms) buffer
+        return Date.now() + 300000 > parseInt(expiresAt);
+    };
+    
+    const isTokenValid = cachedToken && cachedExpires && !isNearExpiry(cachedExpires);
     
     if (isTokenValid) {
         return cachedToken;
@@ -188,6 +195,7 @@ async function getGoogleAuthToken(interactive = false) {
             scope: window.CONFIG.GOOGLE_SCOPES,
             ux_mode: 'popup',
             select_account: true,
+            access_type: 'offline',
             callback: async (response) => {
                 if (response && response.code) {
                     try {
@@ -610,6 +618,7 @@ function mergeSyncData(local, cloud, localSettings = {}) {
             netflix: { ...(lSettings.netflix || {}), ...(cSettings.netflix || {}) },
             appLanguage: cSettings.appLanguage || lSettings.appLanguage || 'auto',
             gamesSound: cSettings.gamesSound !== undefined ? cSettings.gamesSound : (lSettings.gamesSound !== undefined ? lSettings.gamesSound : true),
+            autoplaySound: cSettings.autoplaySound !== undefined ? cSettings.autoplaySound : (lSettings.autoplaySound !== undefined ? lSettings.autoplaySound : false),
             enabledPlatforms: { ...(lSettings.enabledPlatforms || {}), ...(cSettings.enabledPlatforms || {}) },
             timestamp: cSettings.timestamp || lSettings.timestamp || Date.now()
         };
@@ -622,6 +631,7 @@ function mergeSyncData(local, cloud, localSettings = {}) {
             netflix: { ...(cSettings.netflix || {}), ...(lSettings.netflix || {}) },
             appLanguage: lSettings.appLanguage || cSettings.appLanguage || 'auto',
             gamesSound: lSettings.gamesSound !== undefined ? lSettings.gamesSound : (cSettings.gamesSound !== undefined ? cSettings.gamesSound : true),
+            autoplaySound: lSettings.autoplaySound !== undefined ? lSettings.autoplaySound : (cSettings.autoplaySound !== undefined ? cSettings.autoplaySound : false),
             enabledPlatforms: { ...(lSettings.enabledPlatforms || {}), ...(cSettings.enabledPlatforms || {}) },
             timestamp: lSettings.timestamp || cSettings.timestamp || Date.now()
         };
@@ -789,3 +799,4 @@ async function performGoogleDriveSync(interactive = false) {
         window.isSyncInProgress = false;
     }
 }
+

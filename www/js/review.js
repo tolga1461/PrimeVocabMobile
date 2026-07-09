@@ -58,7 +58,7 @@ function fcShowCard() {
         const btn = document.createElement('button');
         btn.className = 'card-speak-btn';
         btn.textContent = '🔊';
-        btn.title = 'Telaffuz';
+        btn.title = getMessage("tooltip_pronounce") || "Telaffuz";
         btn.addEventListener('click', (e) => { e.stopPropagation(); speakWord(item.word, item.lang); });
         el.appendChild(btn);
     });
@@ -394,7 +394,7 @@ function srsRenderHeatmap(savedWords) {
             cell.style.background = `var(--hm-${intensity})`;
             if (count > 0) {
                 const date = new Date(dayMs);
-                cell.title = `${date.toLocaleDateString('tr-TR')}: ${count} kart`;
+                cell.title = (getMessage("heatmap_tooltip") || "{date}: {count} kart").replace("{date}", date.toLocaleDateString()).replace("{count}", count);
             }
         }
         grid.appendChild(cell);
@@ -873,7 +873,7 @@ function srsShowCard() {
         const btn = document.createElement('button');
         btn.className = 'card-speak-btn';
         btn.textContent = '🔊';
-        btn.title = 'Telaffuz';
+        btn.title = getMessage("tooltip_pronounce") || "Telaffuz";
         btn.addEventListener('click', (e) => { e.stopPropagation(); speakWord(item.word, item.lang); });
         el.appendChild(btn);
     });
@@ -962,12 +962,12 @@ function srsShowResult() {
     const s = srsSessionStats;
     const total = s.again + s.hard + s.good + s.easy + (s.learned || 0);
     document.getElementById('srs-result-stats').innerHTML = `
-    <div class="srs-result-row"><span class="srs-result-label">Toplam kart</span><span class="srs-result-val">${total}</span></div>
-    <div class="srs-result-row srs-col-easy"><span class="srs-result-label">Öğrenildi 📖</span><span class="srs-result-val">${s.learned || 0}</span></div>
-    <div class="srs-result-row srs-col-easy"><span class="srs-result-label">Kolay ✔</span><span class="srs-result-val">${s.easy}</span></div>
-    <div class="srs-result-row srs-col-good"><span class="srs-result-label">İyi ✔</span><span class="srs-result-val">${s.good}</span></div>
-    <div class="srs-result-row srs-col-hard"><span class="srs-result-label">Zor</span><span class="srs-result-val">${s.hard}</span></div>
-    <div class="srs-result-row srs-col-again"><span class="srs-result-label">Bilmedi</span><span class="srs-result-val">${s.again}</span></div>
+    <div class="srs-result-row"><span class="srs-result-label">${getMessage("srs_result_total") || "Toplam kart"}</span><span class="srs-result-val">${total}</span></div>
+    <div class="srs-result-row srs-col-easy"><span class="srs-result-label">${getMessage("srs_rate_learned") || "Öğrenildi"} 📖</span><span class="srs-result-val">${s.learned || 0}</span></div>
+    <div class="srs-result-row srs-col-easy"><span class="srs-result-label">${getMessage("srs_rate_easy") || "Kolay"} ✔</span><span class="srs-result-val">${s.easy}</span></div>
+    <div class="srs-result-row srs-col-good"><span class="srs-result-label">${getMessage("srs_rate_good") || "İyi"} ✔</span><span class="srs-result-val">${s.good}</span></div>
+    <div class="srs-result-row srs-col-hard"><span class="srs-result-label">${getMessage("srs_rate_hard") || "Zor"}</span><span class="srs-result-val">${s.hard}</span></div>
+    <div class="srs-result-row srs-col-again"><span class="srs-result-label">${getMessage("srs_rate_again") || "Bilmedi"}</span><span class="srs-result-val">${s.again}</span></div>
   `;
 }
 function updateReviewBadge() {

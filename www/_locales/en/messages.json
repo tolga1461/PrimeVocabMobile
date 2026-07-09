@@ -81,7 +81,7 @@
     "message": "Play / Pause"
   },
   "shortcuts_pv_fullscreen": {
-    "message": "Tam Ekran"
+    "message": "Full Screen"
   },
   "shortcuts_pv_fwd": {
     "message": "10s Forward"
@@ -471,7 +471,7 @@
     "message": "🔥 Reset Streak"
   },
   "settings_reset_streak_confirm": {
-    "message": "Your daily streak and record data will be completely reset. Do you want to continue?"
+    "message": "Your day streak and best streak record will be completely reset. Do you want to continue?"
   },
   "settings_reset_streak_done": {
     "message": "Your study day streak and record have been reset."
@@ -537,7 +537,7 @@
     "message": "Extension Language"
   },
   "settings_lang_auto": {
-    "message": "Automatic (System Language)"
+    "message": "Automatic (Browser Default)"
   },
   "settings_color_title": {
     "message": "Translation color:"
@@ -669,7 +669,7 @@
     "message": "w"
   },
   "settings_backup_title": {
-    "message": "Backup Data"
+    "message": "Backup Data (JSON)"
   },
   "settings_restore_title": {
     "message": "Restore Backup"
@@ -1077,7 +1077,7 @@
     "message": "🏆 Reset Progress"
   },
   "settings_reset_games_confirm": {
-    "message": "Your game stats, total score (EXP), and all achievements will be reset. Do you want to continue?"
+    "message": "Your game statistics, total points (EXP), and all achievements will be reset. Do you want to continue?"
   },
   "settings_reset_games_done": {
     "message": "Game and achievements progress has been reset."
@@ -1281,7 +1281,7 @@
     "message": "Developer:"
   },
   "info_contact": {
-    "message": "Contact:"
+    "message": "Contact :"
   },
   "info_legal": {
     "message": "Privacy & Terms:"
@@ -1332,7 +1332,7 @@
     "message": "Today's Activity:"
   },
   "profile_today_activity_saved": {
-    "message": "{count} words saved"
+    "message": "{count} words studied"
   },
   "profile_achievements_label": {
     "message": "Achievements:"
@@ -1365,7 +1365,7 @@
     "message": "☁️ Unlimited Cloud Sync: Automatically sync all your words across devices using Google Drive."
   },
   "premium_feat_limit": {
-    "message": "🚀 Unlimited Word Saves: The 20-word limit has been lifted; save as many words as you want."
+    "message": "🚀 Unlimited Word Saves: The 50-word limit has been lifted; save as many words as you want."
   },
   "premium_feat_practice": {
     "message": "🃏 Advanced Training: Play as many flashcards and study sessions as you like without daily limits."
@@ -1383,10 +1383,10 @@
     "message": "Connection Active (Sync Disabled)"
   },
   "archive_inactive_badge_title": {
-    "message": "Not scanned in subtitles because it is outside the free version limit (Last 20 words)."
+    "message": "Not scanned in subtitles because it is outside the free version limit (Last 50 words)."
   },
   "archive_inactive_badge_label": {
-    "message": "⚠️"
+    "message": "⚠️ Inactive in Subtitles"
   },
   "premium_smart_locked_desc": {
     "message": "You need to upgrade to Premium to use Smart Features (Shadowing, Auto Rewind, Slow Motion, etc.)."
@@ -1633,5 +1633,11 @@
   },
   "sync_session_expired_reconnecting": {
     "message": "Session expired, reconnecting..."
+  },
+  "translation_label": {
+    "message": "Translation"
+  },
+  "heatmap_tooltip": {
+    "message": "{date}: {count} cards"
   }
 }

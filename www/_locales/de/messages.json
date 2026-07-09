@@ -459,7 +459,7 @@
     "message": "🔥 Serie zurücksetzen"
   },
   "settings_reset_streak_confirm": {
-    "message": "Ihre tägliche Strähne und Rekorddaten werden vollständig zurückgesetzt. Möchten Sie fortfahren?"
+    "message": "Ihre Tages-Serie und Ihr Rekord werden vollständig zurückgesetzt. Möchten Sie fortfahren?"
   },
   "settings_reset_streak_done": {
     "message": "Ihre Tages-Serie und Ihr Rekord wurden zurückgesetzt."
@@ -525,7 +525,7 @@
     "message": "Eklentenisprache"
   },
   "settings_lang_auto": {
-    "message": "Automatisch (Systemsprache)"
+    "message": "Automatisch"
   },
   "settings_color_title": {
     "message": "Übersetzungsfarbe:"
@@ -657,10 +657,10 @@
     "message": "W"
   },
   "settings_backup_title": {
-    "message": "Daten sichern"
+    "message": "Daten sichern (JSON)"
   },
   "settings_restore_title": {
-    "message": "Backup wiederherstellen"
+    "message": "Sicherung wiederherstellen"
   },
   "settings_backup_help": {
     "message": "Exportieren Sie alle gespeicherten Wörter und den Lernfortschritt als JSON-Datei."
@@ -1065,7 +1065,7 @@
     "message": "🏆 Fortschritt zurücksetzen"
   },
   "settings_reset_games_confirm": {
-    "message": "Ihre Spielstatistiken, die Gesamtpunktzahl (EXP) und alle Erfolge werden zurückgesetzt. Möchten Sie fortfahren?"
+    "message": "Deine Spielstatistiken, Gesamt-EXP und alle Erfolge werden zurückgesetzt. Möchtest du fortfahren?"
   },
   "settings_reset_games_done": {
     "message": "Fortschritt der Spiele und Erfolge wurde zurückgesetzt."
@@ -1320,7 +1320,7 @@
     "message": "Heutige Aktivität:"
   },
   "profile_today_activity_saved": {
-    "message": "{count} Wörter gespeichert"
+    "message": "{count} Wörter gelernt"
   },
   "profile_achievements_label": {
     "message": "Erfolge:"
@@ -1353,7 +1353,7 @@
     "message": "☁️ Unbegrenzte Cloud-Synchronisierung: Synchronisieren Sie Ihre Wörter automatisch über Google Drive auf allen Geräten."
   },
   "premium_feat_limit": {
-    "message": "🚀 Unbegrenztes Speichern von Wörtern: Das Limit von 20 Wörtern der kostenlosen Version wurde aufgehoben. Speichern Sie so viele Wörter, wie Sie möchten."
+    "message": "🚀 Unbegrenztes Speichern von Wörtern: Das Limit von 50 Wörtern der kostenlosen Version wurde aufgehoben. Speichern Sie so viele Wörter, wie Sie möchten."
   },
   "premium_feat_practice": {
     "message": "🃏 Fortgeschrittenes Training: Nutzen Sie Karteikarten und Übungen ohne tägliche Limits."
@@ -1371,7 +1371,7 @@
     "message": "Verbindung aktiv (Synchronisierung deaktiviert)"
   },
   "archive_inactive_badge_title": {
-    "message": "Wird in Untertiteln nicht gescannt, da außerhalb des Limits der kostenlosen Version (letzte 20 Wörter)."
+    "message": "Wird in Untertiteln nicht gescannt, da außerhalb des Limits der kostenlosen Version (letzte 50 Wörter)."
   },
   "archive_inactive_badge_label": {
     "message": "⚠️ Inaktiv in Untertiteln"
@@ -1627,5 +1627,11 @@
   },
   "sync_session_expired_reconnecting": {
     "message": "Sitzung abgelaufen, Verbindung wird wiederhergestellt..."
+  },
+  "translation_label": {
+    "message": "Übersetzung"
+  },
+  "heatmap_tooltip": {
+    "message": "{date}: {count} Karten"
   }
 }
