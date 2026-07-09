@@ -660,6 +660,23 @@ async function performGoogleDriveSync(interactive = false) {
         const email = userInfo.email;
         const picture = userInfo.picture;
 
+        // Account Switch Detection: Clear local data silently if switching users
+        const lastEmail = localStorage.getItem('last_logged_sync_email') || '';
+        if (lastEmail && lastEmail.toLowerCase() !== email.toLowerCase()) {
+            console.log(`[PV-Sync] performGoogleDriveSync user switch detected: ${lastEmail} -> ${email}. Clearing local data.`);
+            await new Promise(resolve => {
+                chrome.storage.local.remove([
+                    'savedWords',
+                    'deletedWords',
+                    'gameStats',
+                    'achievements',
+                    'srsStreakStats',
+                    'lastGoogleSyncTime'
+                ], resolve);
+            });
+            localStorage.setItem('last_logged_sync_email', email);
+        }
+
         // Check license using local polyfilled message or directly
         const licenseRes = await new Promise(resolve => {
             chrome.runtime.sendMessage({ action: "api_check_license", email: email }, resolve);

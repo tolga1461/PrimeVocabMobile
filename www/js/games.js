@@ -579,6 +579,7 @@ function showGameResult(totalQuestions) {
         gameStats[`${prefix}_correct`] = (gameStats[`${prefix}_correct`] || 0) + activeGame.score;
         gameStats[`${prefix}_questions`] = (gameStats[`${prefix}_questions`] || 0) + maxPossibleScore;
         gameStats[`${prefix}_highScore`] = Math.max(gameStats[`${prefix}_highScore`] || 0, activeGame.score);
+        gameStats.timestamp = Date.now();
         chrome.storage.local.set({ gameStats }, () => {
             addExp(isPerfect ? 50 : 20, null, 'user_exp_game_completed');
             setTimeout(() => checkAndAwardAchievements({ type: 'game_end' }), 500);
@@ -831,6 +832,7 @@ document.addEventListener('keydown', (e) => {
 function updateGameStat(key, delta) {
     chrome.storage.local.get({ gameStats: {} }, ({ gameStats }) => {
         gameStats[key] = (gameStats[key] || 0) + delta;
+        gameStats.timestamp = Date.now();
         chrome.storage.local.set({ gameStats });
     });
 }
@@ -840,6 +842,7 @@ function addExp(amount, sourceElement = null, reasonKey = '') {
     chrome.storage.local.get({ gameStats: {} }, ({ gameStats }) => {
         const oldExp = gameStats.totalExp || 0;
         gameStats.totalExp = oldExp + amount;
+        gameStats.timestamp = Date.now();
         chrome.storage.local.set({ gameStats }, () => {
             const expDisplay = document.getElementById('user-exp-display');
             if (expDisplay)
@@ -953,6 +956,7 @@ function checkAndAwardAchievements(ctx) {
             toAward.push(ach);
         } });
         if (toAward.length > 0) {
+            achievements.timestamp = Date.now();
             chrome.storage.local.set({ achievements }, () => {
                 addExp(toAward.length * 100, null, 'user_exp_achievement');
                 toAward.forEach((ach, idx) => setTimeout(() => showAchievementToast(ach), idx * 3500));
