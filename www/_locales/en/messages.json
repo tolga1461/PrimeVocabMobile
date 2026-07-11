@@ -857,17 +857,26 @@
   "game_dictation_correct": {
     "message": "✨ Great, correct spelling!"
   },
+  "game_dictation_almost": {
+    "message": "⚠️ Almost correct! The correct spelling is: {word}"
+  },
   "game_dictation_wrong": {
-    "message": "❌ Incorrect! The correct word is:"
+    "message": "❌ Incorrect! The correct word is: {word}"
   },
   "game_context_title": {
-    "message": "Scene Match"
+    "message": "Memory Cards"
   },
   "game_context_desc": {
-    "message": "Guess the missing word from context."
+    "message": "Match words with their translations by flipping cards."
   },
   "game_context_no_words": {
-    "message": "This game needs at least 4 words with sentence context."
+    "message": "At least 4 words are required for this game."
+  },
+  "game_score_lbl": {
+    "message": "Score: {score}"
+  },
+  "game_errors_lbl": {
+    "message": "Errors"
   },
   "subtab_achievements": {
     "message": "🏆 Achievements"

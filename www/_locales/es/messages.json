@@ -845,17 +845,26 @@
   "game_dictation_correct": {
     "message": "✨ ¡Excelente, ortografía correcta!"
   },
+  "game_dictation_almost": {
+    "message": "⚠️ ¡Casi correcto! La ortografía correcta es: {word}"
+  },
   "game_dictation_wrong": {
-    "message": "❌ ¡Incorrecto! La palabra correcta es:"
+    "message": "❌ ¡Incorrecto! La palabra correcta es: {word}"
   },
   "game_context_title": {
-    "message": "Contexto"
+    "message": "Cartas de Memoria"
   },
   "game_context_desc": {
-    "message": "Adivina la palabra que falta según el contexto."
+    "message": "Une las palabras con sus traducciones volteando las cartas."
   },
   "game_context_no_words": {
-    "message": "Este juego necesita al menos 4 palabras con contexto de oración."
+    "message": "Se requieren al menos 4 palabras para este juego."
+  },
+  "game_score_lbl": {
+    "message": "Puntuación: {score}"
+  },
+  "game_errors_lbl": {
+    "message": "Errores"
   },
   "subtab_achievements": {
     "message": "🏆 Logros"

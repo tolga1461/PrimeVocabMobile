@@ -130,6 +130,25 @@ function playSoundEffect(type) {
                     osc.stop(now + offsets[idx] + 0.22);
                 });
             }
+            else if (type === 'typo') {
+                // Soft notification chime (G#5, E5) - Louder gain (0.25)
+                const freqs = [830.61, 659.25];
+                const offsets = [0, 0.08];
+                freqs.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + offsets[idx]);
+                    gain.gain.setValueAtTime(0, now);
+                    gain.gain.setValueAtTime(0, now + offsets[idx]);
+                    gain.gain.linearRampToValueAtTime(0.25, now + offsets[idx] + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + offsets[idx] + 0.25);
+                    osc.start(now + offsets[idx]);
+                    osc.stop(now + offsets[idx] + 0.25);
+                });
+            }
             else if (type === 'complete') {
                 // Sparkling rising bell arpeggio (C5 -> E5 -> G5 -> A5 -> C6 -> E6) - Louder gain (0.18)
                 const freqs = [523.25, 659.25, 783.99, 880.00, 1046.50, 1318.51];

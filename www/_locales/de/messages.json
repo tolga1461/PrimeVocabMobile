@@ -845,17 +845,26 @@
   "game_dictation_correct": {
     "message": "✨ Super, richtige Schreibweise!"
   },
+  "game_dictation_almost": {
+    "message": "⚠️ Fast richtig! Die richtige Schreibweise ist: {word}"
+  },
   "game_dictation_wrong": {
-    "message": "❌ Falsch! Das richtige Wort ist:"
+    "message": "❌ Falsch! Das richtige Wort ist: {word}"
   },
   "game_context_title": {
-    "message": "Szenen-Match"
+    "message": "Gedächtniskarten"
   },
   "game_context_desc": {
-    "message": "Erraten Sie das fehlende Wort aus dem Kontext."
+    "message": "Ordnen Sie Wörter ihren Übersetzungen zu, indem Sie Karten umdrehen."
   },
   "game_context_no_words": {
-    "message": "Dieses Spiel benötigt mindestens 4 Wörter mit Satzkontext."
+    "message": "Für dieses Spiel sind mindestens 4 Wörter erforderlich."
+  },
+  "game_score_lbl": {
+    "message": "Punkte: {score}"
+  },
+  "game_errors_lbl": {
+    "message": "Fehler"
   },
   "subtab_achievements": {
     "message": "🏆 Erfolge"

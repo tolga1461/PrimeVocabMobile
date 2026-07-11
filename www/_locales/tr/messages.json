@@ -857,17 +857,26 @@
   "game_dictation_correct": {
     "message": "✨ Harika, doğru heceleme!"
   },
+  "game_dictation_almost": {
+    "message": "⚠️ Neredeyse doğru! Doğru yazılışı: {word}"
+  },
   "game_dictation_wrong": {
-    "message": "❌ Yanlış! Doğrusu:"
+    "message": "❌ Yanlış! Doğrusu: {word}"
   },
   "game_context_title": {
-    "message": "Sahne Eşleştirme"
+    "message": "Hafıza Kartları"
   },
   "game_context_desc": {
-    "message": "Cümledeki boşluğu bağlamdan tahmin edin."
+    "message": "Kelimeleri karşılıkları ile eşleştirerek kartları açın."
   },
   "game_context_no_words": {
-    "message": "Bu oyun için cümlesi olan en az 4 kelime gerekli."
+    "message": "Bu oyun için en az 4 kelime gerekli."
+  },
+  "game_score_lbl": {
+    "message": "Skor: {score}"
+  },
+  "game_errors_lbl": {
+    "message": "Hata"
   },
   "subtab_achievements": {
     "message": "🏆 Başarımlar"

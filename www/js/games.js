@@ -217,6 +217,11 @@ function startMiniGame(gameType, savedWords) {
     activeGame.wrongWords = [];
     activeGame.scrambleInput = [];
     activeGame.skippedWords = [];
+    activeGame.mismatchMap = {};
+    activeGame.errors = 0;
+    activeGame.completedCount = 0;
+    activeGame.cardDeck = null;
+    activeGame.matchedWordIds = [];
     let deck = gameType === 'context_choice' ? [...eligibleWords] : [...savedWords];
     if (gameType === 'fill_blank') {
         const withCtx = deck.filter(w => w.context && w.context.trim() && w.context.toLowerCase().includes(w.word.toLowerCase()));
@@ -227,7 +232,7 @@ function startMiniGame(gameType, savedWords) {
         const j = Math.floor(Math.random() * (i + 1));
         [deck[i], deck[j]] = [deck[j], deck[i]];
     }
-    activeGame.words = deck.slice(0, Math.min(10, deck.length));
+    activeGame.words = deck.slice(0, Math.min(gameType === 'context_choice' ? 6 : 10, deck.length));
     document.getElementById('games-hub').style.display = 'none';
     document.getElementById('game-play-area').style.display = 'flex';
     const statsContainer = document.getElementById('games-stats-container');
@@ -242,13 +247,20 @@ function startMiniGame(gameType, savedWords) {
 function renderGameQuestion() {
     const stage = document.getElementById('game-stage');
     stage.innerHTML = '';
-    const totalQuestions = activeGame.type === 'match' ? Math.ceil(activeGame.words.length / 5) : activeGame.words.length;
+    const totalQuestions = activeGame.type === 'match' ? Math.ceil(activeGame.words.length / 5) : (activeGame.type === 'context_choice' ? Math.ceil(activeGame.words.length / 6) : activeGame.words.length);
     const progressPercent = activeGame.type === 'match'
         ? (activeGame.words.length > 0 ? (activeGame.score / activeGame.words.length) * 100 : 0)
-        : (activeGame.currentIndex / totalQuestions) * 100;
+        : (activeGame.type === 'context_choice'
+            ? (activeGame.words.length > 0 ? (activeGame.completedCount / activeGame.words.length) * 100 : 0)
+            : (activeGame.currentIndex / totalQuestions) * 100);
     document.getElementById('game-progress-bar').style.width = `${progressPercent}%`;
     const scoreText = getMessage("game_score_lbl") || "Skor: {score}";
-    document.getElementById('game-play-score').textContent = scoreText.replace('{score}', activeGame.score);
+    if (activeGame.type === 'context_choice') {
+        const errorsText = getMessage("game_errors_lbl") || "Hata";
+        document.getElementById('game-play-score').innerHTML = `${scoreText.replace('{score}', activeGame.score)} &nbsp;|&nbsp; ${errorsText}: ${activeGame.errors || 0}`;
+    } else {
+        document.getElementById('game-play-score').textContent = scoreText.replace('{score}', activeGame.score);
+    }
     const typeToKey = { multiple_choice: 'game_mc_title', fill_blank: 'game_blank_title', scramble: 'game_scramble_title', match: 'game_match_title', dictation: 'game_dictation_title', context_choice: 'game_context_title' };
     document.getElementById('game-play-title').textContent = getMessage(typeToKey[activeGame.type] || '') || activeGame.type;
     if (activeGame.currentIndex >= totalQuestions) {
@@ -282,7 +294,7 @@ function renderMultipleChoiceQuestion() {
         }
         const mcDiv = document.createElement('div');
         mcDiv.className = 'mc-stage';
-        mcDiv.innerHTML = `<div class="mc-word">${target.word}</div><div class="mc-choices">${options.map((opt, i) => `<button class="mc-btn" data-opt="${opt}"><span class="mc-btn-badge">${i + 1}</span>${opt}</button>`).join('')}</div>`;
+        mcDiv.innerHTML = `<div class="mc-word" lang="en">${target.word}</div><div class="mc-choices">${options.map((opt, i) => `<button class="mc-btn" data-opt="${opt}"><span class="mc-btn-badge">${i + 1}</span>${opt}</button>`).join('')}</div>`;
         stage.appendChild(mcDiv);
         mcDiv.querySelectorAll('.mc-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -377,9 +389,9 @@ function renderScrambleQuestion() {
     scrDiv.innerHTML = `
     ${hintSentence ? `<div class="blank-sentence" style="min-height:unset;">"${hintSentence}"</div>` : ''}
     <div class="blank-hint" style="margin-bottom:4px;">${getMessage("translation_label") || "Çeviri"}: <strong>"${target.translation}"</strong></div>
-    <div class="scramble-input-box" id="scramble-input-box"></div>
+    <div class="scramble-input-box" id="scramble-input-box" lang="en"></div>
     <input type="text" id="scramble-hidden-input" style="position: absolute; top: -100px; left: -100px; width: 1px; height: 1px; opacity: 0; pointer-events: none;" autocomplete="off" autocapitalize="off" spellcheck="false">
-    <div class="scramble-tiles" id="scramble-tiles">${scrambled.map((char, index) => `<button class="scramble-tile" data-index="${index}" data-char="${char}">${char}</button>`).join('')}</div>
+    <div class="scramble-tiles" id="scramble-tiles" lang="en">${scrambled.map((char, index) => `<button class="scramble-tile" data-index="${index}" data-char="${char}" lang="en">${char.toUpperCase()}</button>`).join('')}</div>
     <div class="scramble-actions">
       <button class="scramble-btn clear-btn" id="scramble-clear-btn">${getMessage("game_btn_clear") || "Temizle"}</button>
       <button class="scramble-btn check-btn" id="scramble-check-btn" disabled>${getMessage("game_btn_check") || "Kontrol Et"}</button>
@@ -442,8 +454,9 @@ function renderScrambleQuestion() {
         for (let i = 0; i < cleanWord.length; i++) {
             const spot = document.createElement('div');
             spot.className = 'scramble-input-letter';
+            spot.setAttribute('lang', 'en');
             if (i < activeGame.scrambleInput.length) {
-                spot.textContent = activeGame.scrambleInput[i].char;
+                spot.textContent = activeGame.scrambleInput[i].char.toUpperCase();
             }
             else {
                 spot.style.opacity = '0.35';
@@ -509,6 +522,8 @@ function renderScrambleQuestion() {
             continueBtn.id = 'scramble-continue-btn';
             continueBtn.className = 'scramble-btn check-btn';
             continueBtn.style.marginTop = '8px';
+            continueBtn.style.marginLeft = 'auto';
+            continueBtn.style.display = 'block';
             continueBtn.textContent = getMessage('game_btn_continue') || 'Devam Et';
             continueBtn.addEventListener('click', () => { activeGame.currentIndex++; renderGameQuestion(); });
             resultMsg.appendChild(continueBtn);
@@ -644,7 +659,7 @@ function showGameResult(totalQuestions) {
     const stage = document.getElementById('game-stage');
     stage.innerHTML = '';
     const gameType = activeGame.type;
-    const maxPossibleScore = gameType === 'match' ? activeGame.words.length : totalQuestions;
+    const maxPossibleScore = (gameType === 'match' || gameType === 'context_choice') ? activeGame.words.length : totalQuestions;
     const isPerfect = activeGame.score === maxPossibleScore && maxPossibleScore > 0;
     chrome.storage.local.get({ gameStats: {} }, ({ gameStats }) => {
         gameStats.totalGamesPlayed = (gameStats.totalGamesPlayed || 0) + 1;
@@ -687,6 +702,27 @@ function showGameResult(totalQuestions) {
     stage.appendChild(resDiv);
     resDiv.querySelector('#game-result-back-btn').addEventListener('click', () => { loadGamesHub(); });
     activeGame.type = null;
+}
+function getEditDistance(a, b) {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+    const matrix = [];
+    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j] + 1
+                );
+            }
+        }
+    }
+    return matrix[b.length][a.length];
 }
 // ── Dikte Oyunu ───────────────────────────────────────────────────────────────
 function renderDictationQuestion() {
@@ -739,32 +775,66 @@ function renderDictationQuestion() {
         renderGameQuestion();
     });
     checkBtn.addEventListener('click', () => {
-        const correct = input.value.trim().toLowerCase() === target.word.toLowerCase();
+        const userInput = input.value.trim().toLowerCase();
+        const correctWord = target.word.toLowerCase();
+        const distance = getEditDistance(userInput, correctWord);
+        const threshold = target.word.length <= 5 ? 1 : 2;
+
         checkBtn.disabled = true;
         skipBtn.disabled = true;
         input.disabled = true;
         input.blur();
-        if (correct) {
+
+        if (distance === 0) {
             input.classList.add('correct-border');
-            resultMsg.className = 'dictation-result-msg correct';
-            resultMsg.textContent = getMessage('game_dictation_correct') || '✨ Harika, doğru heceleme!';
+            resultMsg.innerHTML = '';
+            const msgBox = document.createElement('div');
+            msgBox.style.cssText = 'background:rgba(16,185,129,0.15); color:var(--green); border:1px solid var(--green); padding:10px; border-radius:8px; margin-top:8px; font-weight:600; text-align:center; font-size:14px;';
+            msgBox.textContent = getMessage('game_dictation_correct') || '✨ Harika, doğru heceleme!';
+            resultMsg.appendChild(msgBox);
             activeGame.score++;
             playSoundEffect('correct');
             handleGameAnswer(true, target);
             updateGameStat('dictationCorrect', 1);
             setTimeout(() => { activeGame.currentIndex++; renderGameQuestion(); }, 1500);
         }
+        else if (distance <= threshold) {
+            input.classList.add('correct-border');
+            input.style.borderColor = '#f59e0b';
+            resultMsg.innerHTML = '';
+            const msgBox = document.createElement('div');
+            msgBox.style.cssText = 'background:rgba(245,158,11,0.15); color:#d97706; border:1px solid #f59e0b; padding:10px; border-radius:8px; margin-top:8px; font-weight:600; text-align:center; font-size:14px;';
+            const msg = (getMessage('game_dictation_almost') || '⚠️ Neredeyse doğru! Doğru yazılışı: {word}').replace('{word}', `<strong>${target.word}</strong>`);
+            msgBox.innerHTML = msg;
+            resultMsg.appendChild(msgBox);
+            activeGame.score++;
+            playSoundEffect('typo');
+            handleGameAnswer(true, target);
+            updateGameStat('dictationCorrect', 1);
+            const continueBtn = document.createElement('button');
+            continueBtn.id = 'dictation-continue-btn';
+            continueBtn.className = 'dictation-check-btn';
+            continueBtn.style.marginTop = '12px';
+            continueBtn.style.width = '100%';
+            continueBtn.textContent = getMessage('game_btn_continue') || 'Devam Et';
+            continueBtn.addEventListener('click', () => { activeGame.currentIndex++; renderGameQuestion(); });
+            resultMsg.appendChild(continueBtn);
+        }
         else {
             input.classList.add('wrong-border');
-            resultMsg.className = 'dictation-result-msg wrong';
-            const msg = (getMessage('game_dictation_wrong') || '✗ Yanlış! Doğrusu: {word}').replace('{word}', target.word);
-            resultMsg.textContent = msg;
+            resultMsg.innerHTML = '';
+            const msgBox = document.createElement('div');
+            msgBox.style.cssText = 'background:rgba(239,68,68,0.15); color:var(--red); border:1px solid var(--red); padding:10px; border-radius:8px; margin-top:8px; font-weight:600; text-align:center; font-size:14px;';
+            const msg = (getMessage('game_dictation_wrong') || '✗ Yanlış! Doğrusu: {word}').replace('{word}', `<strong>${target.word}</strong>`);
+            msgBox.innerHTML = msg;
+            resultMsg.appendChild(msgBox);
             playSoundEffect('wrong');
             handleGameAnswer(false, target);
             const continueBtn = document.createElement('button');
             continueBtn.id = 'dictation-continue-btn';
             continueBtn.className = 'dictation-check-btn';
-            continueBtn.style.marginTop = '8px';
+            continueBtn.style.marginTop = '12px';
+            continueBtn.style.width = '100%';
             continueBtn.textContent = getMessage('game_btn_continue') || 'Devam Et';
             continueBtn.addEventListener('click', () => { activeGame.currentIndex++; renderGameQuestion(); });
             resultMsg.appendChild(continueBtn);
@@ -774,47 +844,127 @@ function renderDictationQuestion() {
 // ── Sahne Eşleştirme Oyunu ────────────────────────────────────────────────────
 function renderContextChoiceQuestion() {
     const stage = document.getElementById('game-stage');
-    const target = activeGame.words[activeGame.currentIndex];
-    let sentence = target.context || '';
-    if (sentence.toLowerCase().includes(target.word.toLowerCase())) {
-        sentence = sentence.replace(new RegExp(target.word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'gi'), '_____');
+    const startIdx = activeGame.currentIndex * 6;
+    const roundWords = activeGame.words.slice(startIdx, startIdx + 6);
+    if (roundWords.length === 0) {
+        activeGame.currentIndex++;
+        renderGameQuestion();
+        return;
     }
-    else {
-        sentence = `Translate: _____`;
-    }
-    chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
-        const distractors = [...new Set(savedWords.filter(w => w.word.toLowerCase() !== target.word.toLowerCase()).map(w => w.word))].slice(0, 3);
-        while (distractors.length < 3)
-            distractors.push("—");
-        const options = [target.word, ...distractors];
-        for (let i = options.length - 1; i > 0; i--) {
+    // Resume: use saved card order if resuming, otherwise shuffle fresh
+    if (!activeGame.cardDeck) {
+        let cards = [];
+        roundWords.forEach((w, index) => {
+            cards.push({ id: index * 2, wordId: w.word, type: 'en', text: w.word });
+            cards.push({ id: index * 2 + 1, wordId: w.word, type: 'tr', text: w.translation });
+        });
+        for (let i = cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [options[i], options[j]] = [options[j], options[i]];
+            [cards[i], cards[j]] = [cards[j], cards[i]];
         }
-        const ctxDiv = document.createElement('div');
-        ctxDiv.className = 'blank-stage';
-        ctxDiv.innerHTML = `<div class="blank-sentence">"${sentence}"</div><div class="blank-hint">${getMessage("translation_label") || "Çeviri"}: <strong>"${target.translation}"</strong></div><div class="mc-choices" style="margin-top:6px;">${options.map((opt, i) => `<button class="mc-btn" data-opt="${opt}"><span class="mc-btn-badge">${i + 1}</span>${opt}</button>`).join('')}</div>`;
-        stage.appendChild(ctxDiv);
-        ctxDiv.querySelectorAll('.mc-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const correct = btn.dataset.opt.toLowerCase() === target.word.toLowerCase();
-                ctxDiv.querySelectorAll('.mc-btn').forEach(b => b.disabled = true);
-                if (correct) {
-                    btn.classList.add('correct');
-                    activeGame.score++;
-                    playSoundEffect('correct');
-                    handleGameAnswer(true, target);
-                    updateGameStat('contextCorrect', 1);
+        activeGame.cardDeck = cards;
+    }
+    if (!activeGame.matchedWordIds) activeGame.matchedWordIds = [];
+    const cards = activeGame.cardDeck;
+    const alreadyMatchedIds = activeGame.matchedWordIds;
+    const memDiv = document.createElement('div');
+    memDiv.className = 'memory-stage';
+    memDiv.innerHTML = `
+    <div class="memory-grid">
+      ${cards.map(card => {
+          const isMatched = alreadyMatchedIds.includes(card.wordId.toLowerCase());
+          return `
+        <div class="memory-card${isMatched ? ' matched' : ''}" data-id="${card.id}" data-word-id="${card.wordId}" data-type="${card.type}">
+          <div class="memory-card-inner">
+            <div class="memory-card-front">❓</div>
+            <div class="memory-card-back" lang="${card.type === 'en' ? 'en' : 'tr'}">${card.text}</div>
+          </div>
+        </div>
+      `}).join('')}
+    </div>
+    `;
+    stage.appendChild(memDiv);
+    let flippedCards = [];
+    let matchedPairs = alreadyMatchedIds.length;
+    memDiv.querySelectorAll('.memory-card').forEach(card => {
+        card.addEventListener('click', () => {
+            if (card.classList.contains('flipped') && flippedCards.length === 1 && flippedCards[0] === card) {
+                card.classList.remove('flipped');
+                flippedCards = [];
+                return;
+            }
+            if (card.classList.contains('flipped') || card.classList.contains('matched') || flippedCards.length >= 2) {
+                return;
+            }
+            card.classList.add('flipped');
+            flippedCards.push(card);
+            if (flippedCards.length === 2) {
+                const c1 = flippedCards[0];
+                const c2 = flippedCards[1];
+                const id1 = c1.dataset.wordId.toLowerCase();
+                const id2 = c2.dataset.wordId.toLowerCase();
+                const type1 = c1.dataset.type;
+                const type2 = c2.dataset.type;
+                if (id1 === id2 && type1 !== type2) {
+                    setTimeout(() => {
+                        c1.classList.add('matched');
+                        c2.classList.add('matched');
+                        c1.classList.remove('flipped');
+                        c2.classList.remove('flipped');
+                        playSoundEffect('correct');
+                        if (!activeGame.matchedWordIds.includes(id1)) {
+                            activeGame.matchedWordIds.push(id1);
+                        }
+
+                        const targetWordItem = roundWords.find(w => w.word.toLowerCase() === id1);
+                        const mismatches = activeGame.mismatchMap[id1] || 0;
+                        
+                        if (mismatches <= 1) {
+                            activeGame.score++;
+                            if (targetWordItem) {
+                                handleGameAnswer(true, targetWordItem);
+                            }
+                        } else {
+                            if (targetWordItem) {
+                                handleGameAnswer(false, targetWordItem);
+                            }
+                        }
+                        
+                        activeGame.completedCount++;
+                        
+                        const scoreText = getMessage("game_score_lbl") || "Skor: {score}";
+                        const errorsText = getMessage("game_errors_lbl") || "Hata";
+                        document.getElementById('game-play-score').innerHTML = `${scoreText.replace('{score}', activeGame.score)} &nbsp;|&nbsp; ${errorsText}: ${activeGame.errors || 0}`;
+                        document.getElementById('game-progress-bar').style.width = `${activeGame.words.length > 0 ? (activeGame.completedCount / activeGame.words.length) * 100 : 0}%`;
+                        
+                        matchedPairs++;
+                        flippedCards = [];
+                        if (matchedPairs === roundWords.length) {
+                            updateGameStat('contextCorrect', roundWords.length);
+                            setTimeout(() => {
+                                activeGame.currentIndex++;
+                                renderGameQuestion();
+                            }, 1000);
+                        }
+                    }, 400);
                 }
                 else {
-                    btn.classList.add('wrong');
-                    playSoundEffect('wrong');
-                    ctxDiv.querySelectorAll('.mc-btn').forEach(b => { if (b.dataset.opt.toLowerCase() === target.word.toLowerCase())
-                        b.classList.add('correct'); });
-                    handleGameAnswer(false, target);
+                    setTimeout(() => {
+                        playSoundEffect('wrong');
+                        activeGame.mismatchMap[id1] = (activeGame.mismatchMap[id1] || 0) + 1;
+                        activeGame.mismatchMap[id2] = (activeGame.mismatchMap[id2] || 0) + 1;
+                        activeGame.errors++;
+                        
+                        const scoreText = getMessage("game_score_lbl") || "Skor: {score}";
+                        const errorsText = getMessage("game_errors_lbl") || "Hata";
+                        document.getElementById('game-play-score').innerHTML = `${scoreText.replace('{score}', activeGame.score)} &nbsp;|&nbsp; ${errorsText}: ${activeGame.errors || 0}`;
+                        
+                        c1.classList.remove('flipped');
+                        c2.classList.remove('flipped');
+                        flippedCards = [];
+                    }, 1000);
                 }
-                setTimeout(() => { activeGame.currentIndex++; renderGameQuestion(); }, 1300);
-            });
+            }
         });
     });
 }
@@ -1085,8 +1235,18 @@ function renderStatsTab() {
     chrome.storage.local.get({ savedWords: [], gameStats: {} }, ({ savedWords, gameStats }) => {
         renderGameStatsCards(gameStats);
         renderGameBreakdownTable(gameStats);
-        renderCefrRingChart(savedWords);
         renderVocabGrowthChart(savedWords);
+        // CEFR seviyeleri storage'da tutulmaz, anlık sorgu gerekiyor
+        const uniqueWords = [...new Set(savedWords.map(w => w.word.toLowerCase()))];
+        if (uniqueWords.length === 0) {
+            renderCefrRingChart([]);
+            return;
+        }
+        chrome.runtime.sendMessage({ action: 'batch_lookup_cefr', words: uniqueWords }, (res) => {
+            const cefrMap = res?.cefrMap || {};
+            const annotated = savedWords.map(w => ({ ...w, cefrLevel: cefrMap[w.word.toLowerCase()] || '??' }));
+            renderCefrRingChart(annotated);
+        });
     });
 }
 function renderGameStatsCards(gameStats) {
