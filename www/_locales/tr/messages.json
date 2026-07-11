@@ -5,6 +5,12 @@
   "btn_ok": {
     "message": "Tamam"
   },
+  "game_correct": {
+    "message": "✨ Doğru!"
+  },
+  "game_wrong_template": {
+    "message": "✗ Yanlış! Doğrusu: {word}"
+  },
   "ext_desc": {
     "message": "Amazon Prime Video üzerinde çift altyazı desteği, akıllı duraklatma ve aralıklı tekrar (SRS) kelime öğrenme aracı ekler."
   },

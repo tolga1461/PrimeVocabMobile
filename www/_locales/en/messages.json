@@ -5,6 +5,12 @@
   "btn_ok": {
     "message": "OK"
   },
+  "game_correct": {
+    "message": "✨ Correct!"
+  },
+  "game_wrong_template": {
+    "message": "✗ Wrong! Correct: {word}"
+  },
   "ext_desc": {
     "message": "Adds dual subtitles, smart pausing, and a spaced repetition study system to Amazon Prime Video to help you learn vocabulary."
   },

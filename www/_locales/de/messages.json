@@ -5,6 +5,12 @@
   "btn_ok": {
     "message": "OK"
   },
+  "game_correct": {
+    "message": "✨ Richtig!"
+  },
+  "game_wrong_template": {
+    "message": "✗ Falsch! Richtig: {word}"
+  },
   "ext_desc": {
     "message": "Fügt Amazon Prime Video zweifache Untertitel, intelligentes Pausieren und ein Spaced-Repetition-Lernsystem hinzu, um Vokabeln zu lernen."
   },

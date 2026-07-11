@@ -493,13 +493,16 @@ function renderScrambleQuestion() {
         clearBtn.disabled = true;
         if (correct) {
             activeGame.score++;
-            resultMsg.innerHTML = `<div class="scramble-correct-answer" style="background:rgba(16,185,129,0.15);color:var(--green);border-color:var(--green);">✨ Doğru! (Correct!)</div>`;
+            const correctText = getMessage("game_correct") || "✨ Doğru!";
+            resultMsg.innerHTML = `<div class="scramble-correct-answer" style="background:rgba(16,185,129,0.15);color:var(--green);border-color:var(--green);">${correctText}</div>`;
             playSoundEffect('correct');
             handleGameAnswer(true, target);
             setTimeout(() => { activeGame.currentIndex++; renderGameQuestion(); }, 1500);
         }
         else {
-            resultMsg.innerHTML = `<div class="scramble-correct-answer" style="background:rgba(239,68,68,0.15);color:var(--red);border-color:var(--red);">✗ Yanlış! Doğrusu: <strong>${cleanWord}</strong></div>`;
+            const wrongTextTemplate = getMessage("game_wrong_template") || "✗ Yanlış! Doğrusu: {word}";
+            const wrongText = wrongTextTemplate.replace('{word}', `<strong>${cleanWord}</strong>`);
+            resultMsg.innerHTML = `<div class="scramble-correct-answer" style="background:rgba(239,68,68,0.15);color:var(--red);border-color:var(--red);">${wrongText}</div>`;
             playSoundEffect('wrong');
             handleGameAnswer(false, target);
             const continueBtn = document.createElement('button');
