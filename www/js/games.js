@@ -1,5 +1,6 @@
 // ── Review Alt Sekmeleri ──────────────────────────────────────────────────────
 let activeConfirmCallback = null;
+let activeCancelCallback = null;
 function initReviewSubtabs() {
     const subtabSrs = document.getElementById('subtab-srs');
     const subtabGames = document.getElementById('subtab-games');
@@ -28,6 +29,10 @@ function initReviewSubtabs() {
             if (confirmOverlay)
                 confirmOverlay.style.display = 'none';
             activeConfirmCallback = null;
+            if (activeCancelCallback) {
+                activeCancelCallback();
+                activeCancelCallback = null;
+            }
         });
     }
     const exitBtn = document.getElementById('game-exit-btn');
@@ -89,16 +94,20 @@ function switchReviewSubtab(tab) {
         renderAchievementsTab();
     }
 }
-function showCustomConfirm(messageKey, onConfirm, okTextKey = "game_btn_quit", cancelTextKey = "game_btn_cancel") {
+function showCustomConfirm(messageKey, onConfirm, okTextKey = "game_btn_quit", cancelTextKey = "game_btn_cancel", onCancel = null) {
     const overlay = document.getElementById('custom-confirm-overlay');
     const msgEl = document.getElementById('custom-confirm-message');
     const okBtn = document.getElementById('custom-confirm-ok');
     const cancelBtn = document.getElementById('custom-confirm-cancel');
     activeConfirmCallback = onConfirm;
+    activeCancelCallback = onCancel;
     if (!overlay || !msgEl || !okBtn || !cancelBtn) {
         if (confirm(getMessage(messageKey) || messageKey)) {
             if (onConfirm)
                 onConfirm();
+        } else {
+            if (onCancel)
+                onCancel();
         }
         return;
     }

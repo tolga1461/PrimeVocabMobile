@@ -919,8 +919,21 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
             if (collapse) collapse.style.transform = `translateX(-100%)`;
             if (tags) tags.style.transform = `translateX(-100%)`;
             
+            // Snap-back function to restore card if deletion is cancelled
+            const snapBack = () => {
+                const h = div.querySelector('.word-item-header');
+                const c = div.querySelector('.word-item-collapse-content');
+                const t = div.querySelector('.word-item-tags');
+                const bg = div.querySelector('.swipe-delete-bg');
+                const easing = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                if (h) { h.style.transition = easing; h.style.transform = ''; }
+                if (c) { c.style.transition = easing; c.style.transform = ''; }
+                if (t) { t.style.transition = easing; t.style.transform = ''; }
+                if (bg) { bg.style.transition = 'opacity 0.3s'; bg.style.opacity = '0'; }
+            };
+
             setTimeout(() => {
-                deleteWord(item.originalIndex);
+                deleteWord(item.originalIndex, snapBack);
             }, 200);
         } else {
             // Cancel swipe -> Snap back
@@ -1126,7 +1139,7 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
     }
 
 }
-function deleteWord(index) {
+function deleteWord(index, onCancel = null) {
     chrome.storage.sync.get({ settings: { deleteConfirm: true } }, ({ settings }) => {
         const needsConfirm = settings ? settings.deleteConfirm !== false : true;
         const proceedWithDelete = () => {
@@ -1153,10 +1166,12 @@ function deleteWord(index) {
 
         if (needsConfirm) {
             if (typeof showCustomConfirm === 'function') {
-                showCustomConfirm("archive_delete_word_confirm", proceedWithDelete, "btn_delete_confirm_ok", "game_btn_cancel");
+                showCustomConfirm("archive_delete_word_confirm", proceedWithDelete, "btn_delete_confirm_ok", "game_btn_cancel", onCancel);
             } else {
                 if (confirm(getMessage("archive_delete_word_confirm") || "Bu kelimeyi silmek istediğinize emin misiniz?")) {
                     proceedWithDelete();
+                } else if (onCancel) {
+                    onCancel();
                 }
             }
         } else {
