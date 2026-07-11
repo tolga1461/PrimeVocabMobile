@@ -3129,6 +3129,13 @@ input:checked+.slider:before {
   justify-content: center;
   gap: 6px;
   flex-wrap: wrap;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.scramble-input-box:focus-within {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.25);
 }
 
 .scramble-input-letter {
@@ -3327,6 +3334,14 @@ input:checked+.slider:before {
   border-color: var(--red) !important;
   color: var(--red) !important;
   animation: primevocab-shake 0.4s ease-in-out;
+}
+
+.match-tile.wrong {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: rgba(239, 68, 68, 0.6) !important;
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 @keyframes primevocab-shake {

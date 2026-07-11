@@ -110,7 +110,7 @@ function showCustomConfirm(messageKey, onConfirm, okTextKey = "game_btn_quit", c
 // ── Oyun State & Hub ──────────────────────────────────────────────────────────
 let activeGame = {
     type: null, words: [], currentIndex: 0, score: 0,
-    selectedTile: null, matchedWords: [], scrambleInput: [], skippedWords: []
+    selectedTile: null, matchedWords: [], wrongWords: [], scrambleInput: [], skippedWords: []
 };
 function loadGamesHub() {
     const gamesHub = document.getElementById('games-hub');
@@ -214,6 +214,7 @@ function startMiniGame(gameType, savedWords) {
     activeGame.score = 0;
     activeGame.selectedTile = null;
     activeGame.matchedWords = [];
+    activeGame.wrongWords = [];
     activeGame.scrambleInput = [];
     activeGame.skippedWords = [];
     let deck = gameType === 'context_choice' ? [...eligibleWords] : [...savedWords];
@@ -377,6 +378,7 @@ function renderScrambleQuestion() {
     ${hintSentence ? `<div class="blank-sentence" style="min-height:unset;">"${hintSentence}"</div>` : ''}
     <div class="blank-hint" style="margin-bottom:4px;">${getMessage("translation_label") || "Çeviri"}: <strong>"${target.translation}"</strong></div>
     <div class="scramble-input-box" id="scramble-input-box"></div>
+    <input type="text" id="scramble-hidden-input" style="position: absolute; top: -100px; left: -100px; width: 1px; height: 1px; opacity: 0; pointer-events: none;" autocomplete="off" autocapitalize="off" spellcheck="false">
     <div class="scramble-tiles" id="scramble-tiles">${scrambled.map((char, index) => `<button class="scramble-tile" data-index="${index}" data-char="${char}">${char}</button>`).join('')}</div>
     <div class="scramble-actions">
       <button class="scramble-btn clear-btn" id="scramble-clear-btn">${getMessage("game_btn_clear") || "Temizle"}</button>
@@ -391,6 +393,44 @@ function renderScrambleQuestion() {
     const clearBtn = scrDiv.querySelector('#scramble-clear-btn');
     const skipBtn = scrDiv.querySelector('#scramble-skip-btn');
     const resultMsg = scrDiv.querySelector('#scramble-result-msg');
+    
+    const hiddenInput = scrDiv.querySelector('#scramble-hidden-input');
+    if (hiddenInput) {
+        hiddenInput.value = ' ';
+        hiddenInput.addEventListener('input', (e) => {
+            const val = hiddenInput.value;
+            if (val.length > 1) {
+                const char = val.charAt(val.length - 1).toLowerCase();
+                const tile = scrDiv.querySelector(`.scramble-tile[data-char="${char}"]:not(.used)`);
+                if (tile && !tile.disabled) {
+                    tile.click();
+                }
+                hiddenInput.value = ' ';
+            } else if (val.length === 0) {
+                if (typeof activeGame.undoScramble === 'function') {
+                    activeGame.undoScramble();
+                }
+                hiddenInput.value = ' ';
+            }
+        });
+        hiddenInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const continueBtn = scrDiv.querySelector('#scramble-continue-btn');
+                if (continueBtn && !continueBtn.disabled) {
+                    continueBtn.click();
+                } else if (checkBtn && !checkBtn.disabled) {
+                    checkBtn.click();
+                }
+            }
+        });
+        scrDiv.addEventListener('click', (e) => {
+            if (!e.target.closest('.scramble-tile') && !e.target.closest('.scramble-btn')) {
+                hiddenInput.focus();
+            }
+        });
+        setTimeout(() => { hiddenInput.focus(); }, 150);
+    }
     function updateScrambleUI() {
         inputBox.innerHTML = '';
         for (let i = 0; i < cleanWord.length; i++) {
@@ -489,14 +529,24 @@ function renderMatchQuestion() {
     matchDiv.className = 'match-stage';
     matchDiv.innerHTML = `
     <div class="match-columns">
-      <div class="match-col" id="match-english-col">${englishItems.map((item, idx) => `<div class="match-tile${activeGame.matchedWords?.includes(item.id) ? ' matched' : ''}" data-side="en" data-id="${item.id}"><span class="match-key-badge">${idx + 1}</span> ${item.text}</div>`).join('')}</div>
-      <div class="match-col" id="match-turkish-col">${turkishItems.map((item, idx) => `<div class="match-tile${activeGame.matchedWords?.includes(item.id) ? ' matched' : ''}" data-side="tr" data-id="${item.id}"><span class="match-key-badge">${idx === 4 ? 0 : idx + 6}</span> ${item.text}</div>`).join('')}</div>
+      <div class="match-col" id="match-english-col">${englishItems.map((item, idx) => {
+          let extraClass = '';
+          if (activeGame.matchedWords?.includes(item.id)) extraClass = ' matched';
+          else if (activeGame.wrongWords?.includes(item.id)) extraClass = ' wrong';
+          return `<div class="match-tile${extraClass}" data-side="en" data-id="${item.id}"><span class="match-key-badge">${idx + 1}</span> ${item.text}</div>`;
+      }).join('')}</div>
+      <div class="match-col" id="match-turkish-col">${turkishItems.map((item, idx) => {
+          let extraClass = '';
+          if (activeGame.matchedWords?.includes(item.id)) extraClass = ' matched';
+          else if (activeGame.wrongWords?.includes(item.id)) extraClass = ' wrong';
+          return `<div class="match-tile${extraClass}" data-side="tr" data-id="${item.id}"><span class="match-key-badge">${idx === 4 ? 0 : idx + 6}</span> ${item.text}</div>`;
+      }).join('')}</div>
     </div>`;
     stage.appendChild(matchDiv);
     let selectedTile = null;
     matchDiv.querySelectorAll('.match-tile').forEach(tile => {
         tile.addEventListener('click', () => {
-            if (tile.classList.contains('matched') || tile.classList.contains('error'))
+            if (tile.classList.contains('matched') || tile.classList.contains('error') || tile.classList.contains('wrong'))
                 return;
             if (selectedTile) {
                 if (selectedTile === tile) {
@@ -525,20 +575,38 @@ function renderMatchQuestion() {
                     const scoreText = getMessage("game_score_lbl") || "Skor: {score}";
                     document.getElementById('game-play-score').textContent = scoreText.replace('{score}', activeGame.score);
                     document.getElementById('game-progress-bar').style.width = `${activeGame.words.length > 0 ? (activeGame.score / activeGame.words.length) * 100 : 0}%`;
-                    if (matchDiv.querySelectorAll('.match-tile.matched').length === roundWords.length * 2) {
+                    const finishedCount = matchDiv.querySelectorAll('.match-tile.matched, .match-tile.wrong').length;
+                    if (finishedCount === roundWords.length * 2) {
                         setTimeout(() => { activeGame.currentIndex++; renderGameQuestion(); }, 1000);
                     }
                 }
                 else {
                     const t1 = selectedTile, t2 = tile;
                     t1.classList.remove('selected');
-                    t1.classList.add('error');
+                    
+                    const siblingTile = matchDiv.querySelector(`.match-tile[data-id="${t1.dataset.id}"]:not([data-side="${t1.dataset.side}"])`);
+                    
+                    t1.classList.add('wrong');
+                    if (siblingTile) {
+                        siblingTile.classList.add('wrong');
+                    }
                     t2.classList.add('error');
+                    
+                    if (!activeGame.wrongWords)
+                        activeGame.wrongWords = [];
+                    activeGame.wrongWords.push(t1.dataset.id);
+                    
                     selectedTile = null;
                     playSoundEffect('wrong');
                     if (currentWordItem)
                         handleGameAnswer(false, currentWordItem);
-                    setTimeout(() => { t1.classList.remove('error'); t2.classList.remove('error'); }, 600);
+                    
+                    setTimeout(() => { t2.classList.remove('error'); }, 600);
+                    
+                    const finishedCount = matchDiv.querySelectorAll('.match-tile.matched, .match-tile.wrong').length;
+                    if (finishedCount === roundWords.length * 2) {
+                        setTimeout(() => { activeGame.currentIndex++; renderGameQuestion(); }, 1000);
+                    }
                 }
             }
             else {
