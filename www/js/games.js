@@ -414,7 +414,13 @@ function renderScrambleQuestion() {
             }
         });
         hiddenInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Backspace' || e.keyCode === 8) {
+                e.preventDefault();
+                if (typeof activeGame.undoScramble === 'function') {
+                    activeGame.undoScramble();
+                }
+                hiddenInput.value = ' ';
+            } else if (e.key === 'Enter') {
                 e.preventDefault();
                 const continueBtn = scrDiv.querySelector('#scramble-continue-btn');
                 if (continueBtn && !continueBtn.disabled) {
