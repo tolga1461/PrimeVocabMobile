@@ -2,6 +2,9 @@
   "ext_name": {
     "message": "PrimeVocab - Zweifacher Untertitel & Spaced Repetition Vokabeltrainer"
   },
+  "btn_ok": {
+    "message": "OK"
+  },
   "ext_desc": {
     "message": "Fügt Amazon Prime Video zweifache Untertitel, intelligentes Pausieren und ein Spaced-Repetition-Lernsystem hinzu, um Vokabeln zu lernen."
   },

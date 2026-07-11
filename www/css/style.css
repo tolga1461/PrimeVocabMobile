@@ -3473,6 +3473,16 @@ input:checked+.slider:before {
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
+.custom-confirm-btn.accent {
+  background: var(--accent);
+  color: #fff;
+}
+
+.custom-confirm-btn.accent:hover {
+  background: var(--accent-glow);
+  box-shadow: 0 4px 12px var(--accent-dim);
+}
+
 @keyframes primevocab-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }

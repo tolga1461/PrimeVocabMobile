@@ -1240,7 +1240,7 @@ if (exportBtnEl) {
     exportBtnEl.addEventListener('click', () => {
         chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
             if (savedWords.length === 0) {
-                alert(getMessage("archive_export_confirm"));
+                showCustomAlert("archive_export_confirm");
                 return;
             }
             showCustomConfirm("archive_csv_backup_warning", () => {

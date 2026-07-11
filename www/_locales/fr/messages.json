@@ -2,6 +2,9 @@
   "ext_name": {
     "message": "PrimeVocab - Double sous-titre & vocabulaire de répétition espacée"
   },
+  "btn_ok": {
+    "message": "OK"
+  },
   "ext_desc": {
     "message": "Ajoute des doubles sous-titres, une pause intelligente et un système d'apprentissage par répétition espacée à Amazon Prime Video pour vous aider à apprendre le vocabulaire."
   },

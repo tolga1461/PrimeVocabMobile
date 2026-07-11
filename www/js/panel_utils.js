@@ -34,6 +34,50 @@ function showToast(msg, duration = 2800) {
         toast.classList.add('toast-hide');
     }, duration);
 }
+function showCustomAlert(messageKey, onOk = null) {
+    let overlay = document.getElementById('custom-alert-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'custom-alert-overlay';
+        overlay.className = 'custom-confirm-overlay';
+        overlay.style.display = 'none';
+
+        const modal = document.createElement('div');
+        modal.className = 'custom-confirm-modal';
+
+        const msgEl = document.createElement('div');
+        msgEl.id = 'custom-alert-message';
+        msgEl.className = 'custom-confirm-body';
+
+        const actions = document.createElement('div');
+        actions.className = 'custom-confirm-actions';
+
+        const okBtn = document.createElement('button');
+        okBtn.id = 'custom-alert-ok';
+        okBtn.className = 'custom-confirm-btn accent';
+
+        actions.appendChild(okBtn);
+        modal.appendChild(msgEl);
+        modal.appendChild(actions);
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+
+        okBtn.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            if (overlay._callback) {
+                overlay._callback();
+            }
+        });
+    }
+
+    const msgEl = document.getElementById('custom-alert-message');
+    const okBtn = document.getElementById('custom-alert-ok');
+
+    msgEl.textContent = getMessage(messageKey) || messageKey;
+    okBtn.textContent = getMessage('btn_ok') || 'OK';
+    overlay._callback = onOk;
+    overlay.style.display = 'flex';
+}
 // Sound Effects Synthesizer (Premium Chimes - Web Audio API)
 function playSoundEffect(type) {
     chrome.storage.sync.get({ settings: { gamesSound: true } }, ({ settings }) => {

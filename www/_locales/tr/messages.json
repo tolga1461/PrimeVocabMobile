@@ -2,6 +2,9 @@
   "ext_name": {
     "message": "PrimeVocab - Çift Altyazılı Kelime Öğrenme Eklentisi"
   },
+  "btn_ok": {
+    "message": "Tamam"
+  },
   "ext_desc": {
     "message": "Amazon Prime Video üzerinde çift altyazı desteği, akıllı duraklatma ve aralıklı tekrar (SRS) kelime öğrenme aracı ekler."
   },
