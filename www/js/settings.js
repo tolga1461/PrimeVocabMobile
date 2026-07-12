@@ -972,7 +972,8 @@ const ankiExportBtn = document.getElementById('anki-export-btn');
 if (ankiExportBtn) {
     ankiExportBtn.addEventListener('click', () => {
         chrome.storage.local.get({ licenseType: 'FREE', isPremium: false, savedWords: [], googleSyncEmail: '' }, ({ licenseType, isPremium, savedWords, googleSyncEmail }) => {
-            const hasPremium = !!googleSyncEmail && (isPremium === true || licenseType !== 'FREE');
+            // Bypass premium checks on native/mobile environment
+            const hasPremium = true;
             if (!hasPremium) {
                 showPremiumModal(
                     getMessage("premium_modal_title") || "Premium Özellik",
