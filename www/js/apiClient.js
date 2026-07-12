@@ -137,7 +137,7 @@ globalThis.PV_ApiClient = (function () {
    */
   async function registerUser(email = "") {
     const userId = await getOrCreateUserId();
-    const platform = (window.Capacitor && window.Capacitor.isNativePlatform()) ? 'mobile' : 'web_pwa';
+    const platform = 'mobile';
     const response = await makeRequest('register', { userId, email, platform });
     if (response.success && response.data) {
       await saveLicenseState(response.data);
@@ -168,7 +168,7 @@ globalThis.PV_ApiClient = (function () {
       const syncData = await new Promise((r) => chrome.storage.local.get({ googleSyncEmail: "" }, r));
       email = syncData.googleSyncEmail || "";
     }
-    const platform = (window.Capacitor && window.Capacitor.isNativePlatform()) ? 'mobile' : 'web_pwa';
+    const platform = 'mobile';
     const response = await makeRequest('check-license', { userId, email, platform });
     if (response.success && response.data) {
       await saveLicenseState(response.data);
@@ -181,7 +181,7 @@ globalThis.PV_ApiClient = (function () {
    */
   async function syncUsage(count) {
     const userId = await getOrCreateUserId();
-    const platform = (window.Capacitor && window.Capacitor.isNativePlatform()) ? 'mobile' : 'web_pwa';
+    const platform = 'mobile';
     const response = await makeRequest('sync-usage', { userId, count, platform });
     if (response.success && response.data) {
       await saveLicenseState(response.data);
