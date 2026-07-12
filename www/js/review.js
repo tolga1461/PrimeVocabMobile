@@ -908,8 +908,13 @@ document.getElementById('srs-reveal-btn').addEventListener('click', () => {
             if (idx !== -1) {
                 const firstReviewDate = savedWords[idx].firstReviewDate || new Date().toDateString();
                 let againCount = (savedWords[idx].againCount ?? 0);
-                if (rating === 0)
+                if (rating === 0) {
                     againCount++;
+                } else if (rating === 2) {
+                    if (againCount > 0) againCount--;
+                } else if (rating === 3) {
+                    againCount = 0;
+                }
                 const hard = againCount >= 3;
                 const lastReviewDate = new Date().toDateString();
                 savedWords[idx] = { ...savedWords[idx], ...next, firstReviewDate, againCount, hard, lastReviewDate, timestamp: Date.now() };

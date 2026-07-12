@@ -652,6 +652,18 @@ function renderMatchQuestion() {
 function handleGameAnswer(isCorrect, targetWordItem) {
     if (isCorrect) {
         addExp(5, null, '');
+        chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
+            const idx = savedWords.findIndex(w => w.word.toLowerCase() === targetWordItem.word.toLowerCase());
+            if (idx !== -1) {
+                let againCount = savedWords[idx].againCount ?? 0;
+                if (againCount > 0) {
+                    againCount--;
+                }
+                const hard = againCount >= 3;
+                savedWords[idx] = { ...savedWords[idx], againCount, hard, timestamp: Date.now() };
+                chrome.storage.local.set({ savedWords }, () => { updateReviewBadge(); });
+            }
+        });
         return;
     }
     chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
