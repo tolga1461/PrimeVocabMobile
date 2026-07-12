@@ -761,7 +761,13 @@ if (targetSelectEl)
     targetSelectEl.addEventListener('change', (e) => saveSetting('targetLang', e.target.value));
 const appLangSelectEl = document.getElementById('app-lang-select');
 if (appLangSelectEl) {
-    appLangSelectEl.addEventListener('change', (e) => { saveSetting('appLanguage', e.target.value); setTimeout(() => window.location.reload(), 150); });
+    appLangSelectEl.addEventListener('change', (e) => { 
+        saveSetting('appLanguage', e.target.value); 
+        initI18n().then(() => {
+            localizeHtml();
+            loadSettings();
+        });
+    });
 }
 const appFontSizeSelectEl = document.getElementById('app-fontsize-select');
 if (appFontSizeSelectEl) {
@@ -941,7 +947,16 @@ if (restoreBtn && restoreInput) {
                         if (backup.settings) {
                             backup.settings.timestamp = Date.now();
                         }
-                        chrome.storage.sync.set({ settings: backup.settings || {} }, () => { showToast(getMessage("settings_restore_success") || "Yedek başarıyla geri yüklendi!", 3000); setTimeout(() => window.location.reload(), 1500); });
+                        chrome.storage.sync.set({ settings: backup.settings || {} }, () => {
+                            showToast(getMessage("settings_restore_success") || "Yedek başarıyla geri yüklendi!", 3000);
+                            setTimeout(() => {
+                                if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+                                    window.location.replace("index.html");
+                                } else {
+                                    window.location.reload();
+                                }
+                            }, 1500);
+                        });
                     });
                 }, "settings_restore_title", "game_btn_cancel");
             }
@@ -1107,7 +1122,10 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
             const newLang = changes.settings.newValue?.appLanguage || 'auto';
             const currentVal = document.getElementById('app-lang-select')?.value;
             if (currentVal && newLang !== currentVal) {
-                setTimeout(() => window.location.reload(), 150);
+                initI18n().then(() => {
+                    localizeHtml();
+                    loadSettings();
+                });
                 return;
             }
             loadSettings();
@@ -1164,7 +1182,13 @@ if (resetDataBtn) {
         showCustomConfirm("settings_reset_all_confirm", () => {
             chrome.storage.local.clear(() => {
                 showToast(getMessage("settings_reset_all_done") || "Tüm veriler başarıyla sıfırlandı!");
-                setTimeout(() => window.location.reload(), 1000);
+                setTimeout(() => {
+                    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
+                        window.location.replace("index.html");
+                    } else {
+                        window.location.reload();
+                    }
+                }, 1000);
             });
         }, "btn_confirm_reset", "game_btn_cancel");
     });
