@@ -702,7 +702,8 @@ async function forceLogoutWithoutConfirm() {
             'isPremium',
             'licenseType',
             'licenseStatus',
-            'licenseExpiration'
+            'licenseExpiration',
+            'licenseSignature'
         ], resolve);
     });
     updateProfileUI();
@@ -739,7 +740,12 @@ async function handleLogout() {
                     'googleSyncEmail', 
                     'googleSyncPicture', 
                     'googleSyncEnabled', 
-                    'lastGoogleSyncTime'
+                    'lastGoogleSyncTime',
+                    'isPremium',
+                    'licenseType',
+                    'licenseStatus',
+                    'licenseExpiration',
+                    'licenseSignature'
                 ], resolve);
             });
             updateProfileUI();

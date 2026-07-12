@@ -48,23 +48,37 @@ globalThis.PV_ApiClient = (function () {
     const keyData = encoder.encode(secret);
     const messageData = encoder.encode(message);
     
-    const cryptoKey = await crypto.subtle.importKey(
-      'raw',
-      keyData,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      try {
+        const cryptoKey = await crypto.subtle.importKey(
+          'raw',
+          keyData,
+          { name: 'HMAC', hash: 'SHA-256' },
+          false,
+          ['sign']
+        );
+        
+        const signatureBuffer = await crypto.subtle.sign(
+          'HMAC',
+          cryptoKey,
+          messageData
+        );
+        
+        return Array.from(new Uint8Array(signatureBuffer))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+      } catch (e) {
+        console.warn("[PV-Security] WebCrypto HMAC failed, falling back to JS implementation:", e);
+      }
+    }
     
-    const signatureBuffer = await crypto.subtle.sign(
-      'HMAC',
-      cryptoKey,
-      messageData
-    );
-    
-    return Array.from(new Uint8Array(signatureBuffer))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+    // Fallback: Pure JS simple hash (DJB2 + salt custom hash) to prevent app hangs in insecure contexts
+    let hash = 5381;
+    const combined = secret + "|" + message;
+    for (let i = 0; i < combined.length; i++) {
+      hash = (hash * 33) ^ combined.charCodeAt(i);
+    }
+    return "fallback_" + Math.abs(hash).toString(16);
   }
 
   /**
@@ -193,36 +207,41 @@ globalThis.PV_ApiClient = (function () {
    * Lisans durumunu yerel storage'a kaydeder.
    */
   async function saveLicenseState(licenseData) {
-    const userId = await getOrCreateUserId();
-    // Sunucudan isPremium flag'i gelmezse licenseType + status'tan hesapla (geriye dönük uyumluluk)
-    const isPremiumFromServer = typeof licenseData.isPremium !== 'undefined'
-      ? licenseData.isPremium
-      : (licenseData.licenseType !== 'FREE' && licenseData.status === 'ACTIVE');
+    try {
+      const userId = await getOrCreateUserId();
+      // Sunucudan isPremium flag'i gelmezse licenseType + status'tan hesapla (geriye dönük uyumluluk)
+      const isPremiumFromServer = typeof licenseData.isPremium !== 'undefined'
+        ? licenseData.isPremium
+        : (licenseData.licenseType !== 'FREE' && licenseData.status === 'ACTIVE');
 
-    const updateData = {
-      licenseType:       licenseData.licenseType || 'FREE',
-      licenseStatus:     licenseData.status || 'FREE_USER',
-      licenseExpiration: licenseData.expirationDate || '',
-      dailyUsage:        typeof licenseData.dailyUsage !== 'undefined' ? licenseData.dailyUsage : 0,
-      lastLicenseCheck:  Date.now(),
-      isPremium:         isPremiumFromServer
-    };
+      const updateData = {
+        licenseType:       licenseData.licenseType || 'FREE',
+        licenseStatus:     licenseData.status || 'FREE_USER',
+        licenseExpiration: licenseData.expirationDate || '',
+        dailyUsage:        typeof licenseData.dailyUsage !== 'undefined' ? licenseData.dailyUsage : 0,
+        lastLicenseCheck:  Date.now(),
+        isPremium:         isPremiumFromServer
+      };
 
-    // Güvenli yerel bütünlük imzası oluştur
-    const salt = "PV_LOCAL_INTEGRITY_SALT_2026";
-    const message = [updateData.isPremium, updateData.licenseType, updateData.licenseStatus, updateData.licenseExpiration, userId].join('|');
-    updateData.licenseSignature = await computeHMAC(message, salt);
+      // Güvenli yerel bütünlük imzası oluştur
+      const salt = "PV_LOCAL_INTEGRITY_SALT_2026";
+      const message = [updateData.isPremium, updateData.licenseType, updateData.licenseStatus, updateData.licenseExpiration, userId].join('|');
+      updateData.licenseSignature = await computeHMAC(message, salt);
 
-    return new Promise((resolve) => {
-      chrome.storage.local.get({ googleSyncEmail: '', googleSyncEnabled: false }, (currentData) => {
-        // Eğer kullanıcı Premium olduysa ve e-postası zaten bağlıysa senkronizasyonu otomatik AKTİF yap
-        if (isPremiumFromServer && currentData.googleSyncEmail) {
-          updateData.googleSyncEnabled = true;
-        }
+      return new Promise((resolve) => {
+        chrome.storage.local.get({ googleSyncEmail: '', googleSyncEnabled: false }, (currentData) => {
+          // Eğer kullanıcı Premium olduysa ve e-postası zaten bağlıysa senkronizasyonu otomatik AKTİF yap
+          if (isPremiumFromServer && currentData.googleSyncEmail) {
+            updateData.googleSyncEnabled = true;
+          }
 
-        chrome.storage.local.set(updateData, resolve);
+          chrome.storage.local.set(updateData, resolve);
+        });
       });
-    });
+    } catch (err) {
+      console.error("[PV-Security] Error during saveLicenseState execution:", err);
+      return false; // Fallback to false rather than throwing/hanging
+    }
   }
 
   /**
