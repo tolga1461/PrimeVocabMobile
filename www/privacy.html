@@ -191,6 +191,7 @@
         </ul>
     </div>
 
+    <script src="capacitor.js"></script>
     <script>
         function goBack() {
             // Safely navigate back in history if possible, otherwise fallback to main page
@@ -205,6 +206,16 @@
                 window.location.href = 'index.html';
             }
         }
+
+        // Register Capacitor Hardware Back Button Listener
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+                window.Capacitor.Plugins.App.addListener('backButton', () => {
+                    console.log("[PV-Privacy] Hardware backButton pressed, navigating back");
+                    goBack();
+                });
+            }
+        });
     </script>
 </body>
 </html>
