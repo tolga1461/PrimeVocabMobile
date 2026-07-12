@@ -6,7 +6,7 @@
 // Varsayılan Yapılandırma (Build veya Ayarlar panelinden ezilebilir)
 var PV_CONFIG = {
   // Canlı GAS Web App URL'nizi buraya yerleştirin
-  apiUrl: "https://script.google.com/macros/s/AKfycbzxSVXDJn4ChrzC1X94viOAUGpuvR5ov4R7ODJZpy12zzqNrH_G8QON2qWWd7Bj4XHP_w/exec"
+  apiUrl: "https://script.google.com/macros/s/AKfycbwtAxNVTUAZf3DJLDLgV2tZvkC2sUjHUBYeAjAea0obp3UuhU8RtKu1N4ERgfAlXxzJcg/exec"
 };
 
 // Global nesneye tanımla (importScripts için erişilebilir kılmak üzere)
