@@ -1,13 +1,3 @@
 {
-  "outputDirectory": ".",
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1.js"
-    },
-    {
-      "src": "/((?!api/|api$).*)",
-      "dest": "/www/$1"
-    }
-  ]
+  "outputDirectory": "www"
 }
