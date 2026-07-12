@@ -10,3 +10,5 @@ Thumbs.db
 # Local server testing folders
 node_modules/
 package-lock.json
+
+.vercel
