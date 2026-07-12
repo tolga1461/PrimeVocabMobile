@@ -179,10 +179,39 @@ function playSoundEffect(type) {
 }
 
 function showPremiumModal(title, message) {
-    // Mobil için native/alert sistemi ile bilgilendir
-    // Direkt satın alma linki göstermiyoruz (App Store / Play Store politikaları gereği)
-    const alertMessage = `${title}\n\n${message}\n\n(Premium üyelik işlemlerini bilgisayarınızdaki Chrome Eklentisi üzerinden profil sekmesini açarak gerçekleştirebilirsiniz.)`;
-    alert(alertMessage);
+    let modal = document.getElementById('custom-premium-alert-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'custom-premium-alert-modal';
+        modal.style.cssText = "display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.9); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); z-index:99999; justify-content:center; align-items:center; padding:20px; box-sizing:border-box;";
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="background:linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%); border:1px solid #eab308; border-radius:16px; padding:28px 24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 25px -5px rgba(0,0,0,0.5), 0 0 20px rgba(234, 179, 8, 0.15); box-sizing:border-box; animation: confirmModalEnter 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);">
+            <div style="font-size:52px; margin-bottom:16px;">👑</div>
+            <h3 style="color:#fef08a; font-family:'Outfit', sans-serif; font-size:20px; font-weight:700; margin:0 0 10px 0;">${title}</h3>
+            <p style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:13px; line-height:1.7; margin:0 0 16px 0;">
+                ${message}
+            </p>
+            <div style="background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.2); border-radius:10px; padding:14px; margin:16px 0; text-align:left;">
+                <p style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:12px; line-height:1.6; margin:0;">
+                    Premium üyelik işlemlerini bilgisayarınızdaki <strong>Chrome Eklentisi</strong> üzerinden profil sekmesini açarak gerçekleştirebilirsiniz.
+                </p>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <button id="custom-premium-alert-close-btn" style="background:linear-gradient(135deg, #334155 0%, #1e293b 100%); border:1px solid #475569; color:#cbd5e1; padding:12px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; cursor:pointer; font-weight:700; text-align:center; width:100%;">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    `;
+
+    modal.querySelector('#custom-premium-alert-close-btn').addEventListener('click', () => {
+        modal.style.display = 'none';
+    });
+
+    modal.style.display = 'flex';
 }
 
 /**

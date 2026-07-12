@@ -216,7 +216,11 @@ async function shareExportFile(fileName, fileContent, mimeType) {
             if (errStr.includes("cancel") || errStr.includes("dismiss") || errStr.includes("user rejected")) {
                 return;
             }
-            alert("Paylaşım hatası: " + (e.message || e));
+            if (typeof showToast === 'function') {
+                showToast("Paylaşım hatası: " + (e.message || e));
+            } else {
+                alert("Paylaşım hatası: " + (e.message || e));
+            }
         }
     } else {
         // Fallback for Web/PWA
