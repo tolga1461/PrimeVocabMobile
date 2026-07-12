@@ -229,33 +229,43 @@ globalThis.PV_ApiClient = (function () {
    * Yerelde saklanan lisansın imza bütünlüğünü doğrular.
    */
   async function verifyLicenseState() {
-    const userId = await getOrCreateUserId();
-    return new Promise((resolve) => {
-      chrome.storage.local.get(['isPremium', 'licenseType', 'licenseStatus', 'licenseExpiration', 'licenseSignature'], async (data) => {
-        const isPremium = data.isPremium === true;
-        const licenseType = data.licenseType || 'FREE';
-        const licenseStatus = data.licenseStatus || 'FREE_USER';
-        const licenseExpiration = data.licenseExpiration || '';
-        const signature = data.licenseSignature || '';
+    try {
+      const userId = await getOrCreateUserId();
+      return new Promise((resolve) => {
+        chrome.storage.local.get(['isPremium', 'licenseType', 'licenseStatus', 'licenseExpiration', 'licenseSignature'], async (data) => {
+          try {
+            const isPremium = data.isPremium === true;
+            const licenseType = data.licenseType || 'FREE';
+            const licenseStatus = data.licenseStatus || 'FREE_USER';
+            const licenseExpiration = data.licenseExpiration || '';
+            const signature = data.licenseSignature || '';
 
-        // Eğer imza yoksa ama premium özellikleri aktifse bütünlük bozulmuştur (Bypass girişimi).
-        if (!signature) {
-          if (isPremium || licenseType !== 'FREE') {
-            resolve(false);
-          } else {
-            resolve(true); // Eşleşen bir premium yoksa ve imza boşsa FREE kullanıcı için normaldir.
+            // Eğer imza yoksa ama premium özellikleri aktifse bütünlük bozulmuştur (Bypass girişimi).
+            if (!signature) {
+              if (isPremium || licenseType !== 'FREE') {
+                resolve(false);
+              } else {
+                resolve(true); // Eşleşen bir premium yoksa ve imza boşsa FREE kullanıcı için normaldir.
+              }
+              return;
+            }
+
+            // Bütünlüğü doğrulamak için imzayı yeniden hesapla
+            const salt = "PV_LOCAL_INTEGRITY_SALT_2026";
+            const message = [isPremium, licenseType, licenseStatus, licenseExpiration, userId].join('|');
+            const computed = await computeHMAC(message, salt);
+
+            resolve(computed === signature);
+          } catch (innerErr) {
+            console.error("[PV-Security] error during verifyLicenseState callback:", innerErr);
+            resolve(false); // Fallback to false rather than hanging
           }
-          return;
-        }
-
-        // Bütünlüğü doğrulamak için imzayı yeniden hesapla
-        const salt = "PV_LOCAL_INTEGRITY_SALT_2026";
-        const message = [isPremium, licenseType, licenseStatus, licenseExpiration, userId].join('|');
-        const computed = await computeHMAC(message, salt);
-
-        resolve(computed === signature);
+        });
       });
-    });
+    } catch (outerErr) {
+      console.error("[PV-Security] error during verifyLicenseState outer execution:", outerErr);
+      return false; // Fallback to false rather than throwing/hanging
+    }
   }
 
   /**

@@ -825,13 +825,17 @@ function migrateLegacyStreakIfNeeded() {
 async function start() {
     console.log("[PV-core] start() PWA initiated");
     
-    // Bütünlük kontrolünü yap
-    if (window.PV_ApiClient && typeof window.PV_ApiClient.enforceLicenseIntegrity === 'function') {
-        const isSecure = await window.PV_ApiClient.enforceLicenseIntegrity();
-        if (!isSecure) {
-            console.warn("[PV-core] Startup license integrity verification failed.");
-            return;
+    // Bütünlük kontrolünü yap (Defensive wrap to prevent blocking on startup errors)
+    try {
+        if (window.PV_ApiClient && typeof window.PV_ApiClient.enforceLicenseIntegrity === 'function') {
+            const isSecure = await window.PV_ApiClient.enforceLicenseIntegrity();
+            if (!isSecure) {
+                console.warn("[PV-core] Startup license integrity verification failed.");
+                return;
+            }
         }
+    } catch (err) {
+        console.error("[PV-core] Startup integrity check failed silently:", err);
     }
 
     migrateLegacyStreakIfNeeded();
@@ -919,11 +923,15 @@ document.addEventListener('DOMContentLoaded', () => {
 // Reactivity mapping for storage changes in standalone context
 chrome.storage.onChanged.addListener(async (changes, area) => {
     if (area === 'local') {
-        if (changes.licenseType || changes.isPremium) {
-            if (window.PV_ApiClient && typeof window.PV_ApiClient.enforceLicenseIntegrity === 'function') {
-                const isValid = await window.PV_ApiClient.enforceLicenseIntegrity();
-                if (!isValid) return; // Bütünlük bozulduysa güncellemeyi iptal et
+        try {
+            if (changes.licenseType || changes.isPremium) {
+                if (window.PV_ApiClient && typeof window.PV_ApiClient.enforceLicenseIntegrity === 'function') {
+                    const isValid = await window.PV_ApiClient.enforceLicenseIntegrity();
+                    if (!isValid) return; // Bütünlük bozulduysa güncellemeyi iptal et
+                }
             }
+        } catch (err) {
+            console.error("[PV-core] License integrity check in onChanged failed:", err);
         }
         if (changes.licenseType || changes.googleSyncEmail || changes.googleSyncPicture || changes.isPremium) {
             loadProfileData(); // Ensure stats and badges reload
