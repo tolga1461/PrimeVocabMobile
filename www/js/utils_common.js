@@ -211,7 +211,11 @@ async function shareExportFile(fileName, fileContent, mimeType) {
             });
         } catch (e) {
             console.error("Capacitor share export failed:", e);
-            // If writing or sharing fails, fall back to native browser alert
+            const errStr = String(e.message || e).toLowerCase();
+            // Suppress warning if user simply cancelled or dismissed the share sheet
+            if (errStr.includes("cancel") || errStr.includes("dismiss") || errStr.includes("user rejected")) {
+                return;
+            }
             alert("Paylaşım hatası: " + (e.message || e));
         }
     } else {
