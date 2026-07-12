@@ -891,13 +891,9 @@ if (backupBtn) {
                 new Promise(r => chrome.storage.sync.get({ settings: {} }, r))
             ]).then(([localData, syncData]) => {
                 const backup = { type: 'primevocab_backup', version: 2, timestamp: Date.now(), savedWords: localData.savedWords, deletedWords: localData.deletedWords || [], settings: syncData.settings, gameStats: localData.gameStats, achievements: localData.achievements, srsStreakStats: localData.srsStreakStats, srsSettings: localData.srsSettings };
-                const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob), link = document.createElement('a');
-                link.href = url;
-                link.download = `primevocab_backup_${new Date().toISOString().slice(0, 10)}.json`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                const fileName = `primevocab_backup_${new Date().toISOString().slice(0, 10)}.json`;
+                const fileContent = JSON.stringify(backup, null, 2);
+                shareExportFile(fileName, fileContent, 'application/json;charset=utf-8;');
             });
         });
     });
