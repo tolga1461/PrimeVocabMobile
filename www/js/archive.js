@@ -467,6 +467,43 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     const countEl = document.getElementById('archive-count');
     if (!wordList || !emptyState)
         return;
+
+    // Render limit bar for free users
+    const limitContainer = document.getElementById('archive-limit-container');
+    if (limitContainer) {
+        if (licenseType === 'FREE') {
+            const count = savedWords.length;
+            const percentage = Math.min((count / 50) * 100, 100);
+            
+            let progressColor = 'linear-gradient(90deg, #818cf8, #6366f1)';
+            let textColor = 'var(--text-dim)';
+            let warningText = '';
+            
+            if (count >= 50) {
+                progressColor = 'linear-gradient(90deg, #ef4444, #dc2626)';
+                textColor = '#ef4444';
+                warningText = ' (Limit Doldu!)';
+            } else if (count >= 40) {
+                progressColor = 'linear-gradient(90deg, #f97316, #ea580c)';
+                textColor = '#f97316';
+            }
+
+            limitContainer.innerHTML = `
+                <div class="limit-bar-container" style="display:flex; flex-direction:column; gap:6px; width:100%; padding: 4px 4px 8px 4px; box-sizing: border-box;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:${textColor}; font-weight:600;">
+                        <span>Kapasite: ${count} / 50 Kelime${warningText}</span>
+                    </div>
+                    <div style="background:var(--surface2); border:1px solid var(--border); border-radius:4px; height:8px; width:100%; overflow:hidden;">
+                        <div style="background:${progressColor}; width:${percentage}%; height:100%; transition: width 0.3s ease-out; border-radius:3px;"></div>
+                    </div>
+                </div>
+            `;
+            limitContainer.style.display = 'block';
+        } else {
+            limitContainer.style.display = 'none';
+            limitContainer.innerHTML = '';
+        }
+    }
     
     virtualLicenseType = licenseType;
 
@@ -1289,14 +1326,7 @@ if (exportBtnEl) {
                     const timeOut = `"${timeStr}"`;
                     csv += `${w},${t},${c},${h},${a},${srcOut},${timeOut}\n`;
                 });
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'prime_vocab_words.csv';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                shareExportFile('prime_vocab_words.csv', csv, 'text/csv;charset=utf-8;');
             }, "game_btn_continue", "game_btn_cancel");
         });
     });

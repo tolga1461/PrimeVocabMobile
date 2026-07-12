@@ -123,10 +123,13 @@ function formatTime(seconds) {
 function esc(text) {
     if (!text)
         return '';
-    return text
+    return String(text)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;')
+        .replace(/\//g, '&#x2F;');
 }
 function cleanWordForLookup(word) {
     if (!word)
@@ -180,3 +183,48 @@ function cleanWordForLookup(word) {
     w = w.replace(/^[.,\/#!$%\^&\*;:{}=\-_`~()?]+|[.,\/#!$%\^&\*;:{}=\-_`~()?]+$/g, '');
     return w;
 }
+
+/**
+ * Shares a file using Capacitor Share sheet on mobile, or falls back to browser download on Web/PWA.
+ * @param {string} fileName Name of the file including extension (e.g. 'primevocab_anki_export.txt')
+ * @param {string} fileContent Raw content of the file
+ * @param {string} mimeType MIME type of the file (e.g. 'text/plain;charset=utf-8;')
+ */
+async function shareExportFile(fileName, fileContent, mimeType) {
+    if (window.Capacitor && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.Filesystem && window.Capacitor.Plugins.Share) {
+        try {
+            // Safe UTF-8 base64 encoding
+            const base64Data = btoa(unescape(encodeURIComponent(fileContent)));
+            
+            // Write file to Cache directory so the OS share sheet can access it
+            const writeResult = await window.Capacitor.Plugins.Filesystem.writeFile({
+                path: fileName,
+                data: base64Data,
+                directory: 'CACHE'
+            });
+            
+            // Trigger native share sheet
+            await window.Capacitor.Plugins.Share.share({
+                title: fileName,
+                url: writeResult.uri,
+                dialogTitle: getMessage("share_dialog_title") || 'Paylaş'
+            });
+        } catch (e) {
+            console.error("Capacitor share export failed:", e);
+            // If writing or sharing fails, fall back to native browser alert
+            alert("Paylaşım hatası: " + (e.message || e));
+        }
+    } else {
+        // Fallback for Web/PWA
+        const blob = new Blob([fileContent], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 100);
+    }
+}
+

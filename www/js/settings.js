@@ -998,14 +998,9 @@ if (ankiExportBtn) {
                     const clean = (s) => s.replace(/\r?\n|\r/g, " ").replace(/\t/g, " ");
                     txt += `${clean(word)}\t${clean(translation)}\t${clean(contextHtml)}\t${clean(extraInfo)}\n`;
                 });
-                const blob = new Blob([txt], { type: 'text/plain;charset=utf-8;' });
-                const url = URL.createObjectURL(blob), link = document.createElement('a');
-                link.href = url;
-                link.download = 'primevocab_anki_export.txt';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showToast(getMessage("anki_export_success") || "Anki dışa aktarma dosyası indirildi!");
+                shareExportFile('primevocab_anki_export.txt', txt, 'text/plain;charset=utf-8;').then(() => {
+                    showToast(getMessage("anki_export_success") || "Anki dışa aktarma dosyası hazırlandı!");
+                });
             });
         });
     });

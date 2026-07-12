@@ -179,36 +179,10 @@ function playSoundEffect(type) {
 }
 
 function showPremiumModal(title, message) {
-    const modal = document.getElementById('premium-modal');
-    if (!modal) return;
-    
-    const titleEl = document.getElementById('premium-modal-title');
-    const msgEl = document.getElementById('premium-modal-message');
-    
-    if (titleEl && title) titleEl.textContent = title;
-    if (msgEl && message) msgEl.textContent = message;
-    
-    modal.style.display = 'flex';
-    
-    const closeBtn = document.getElementById('premium-modal-close-btn');
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            modal.style.display = 'none';
-        };
-    }
-    
-    const buyBtn = document.getElementById('premium-modal-buy-btn');
-    if (buyBtn) {
-        buyBtn.onclick = () => {
-            modal.style.display = 'none';
-            // Lemon Squeezy checkout akışını tetikle
-            if (typeof handleBuyPremium === 'function' && typeof LS_URLS !== 'undefined') {
-                handleBuyPremium(LS_URLS.MONTHLY, 'MONTHLY');
-            } else {
-                window.open('https://primevocab.lemonsqueezy.com/checkout/buy/21098d81-25ed-4ded-a487-fb2c9e02d30f', '_blank');
-            }
-        };
-    }
+    // Mobil için native/alert sistemi ile bilgilendir
+    // Direkt satın alma linki göstermiyoruz (App Store / Play Store politikaları gereği)
+    const alertMessage = `${title}\n\n${message}\n\n(Premium üyelik işlemlerini bilgisayarınızdaki Chrome Eklentisi üzerinden profil sekmesini açarak gerçekleştirebilirsiniz.)`;
+    alert(alertMessage);
 }
 
 /**

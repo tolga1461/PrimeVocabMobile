@@ -6,9 +6,7 @@
 // Varsayılan Yapılandırma (Build veya Ayarlar panelinden ezilebilir)
 var PV_CONFIG = {
   // Canlı GAS Web App URL'nizi buraya yerleştirin
-  apiUrl: "https://script.google.com/macros/s/AKfycbzjNxs26alLBcwYDPKxvw8dKwRgfqh_OIerb2si7L-h54O0ogVJgROpdf4Weia_gHS3/exec", 
-  // Sunucu tarafındaki API_SECRET ile birebir eşleşmelidir
-  apiSecret: "PV_SECRET_SECURE_TOKEN_2026" 
+  apiUrl: "https://script.google.com/macros/s/AKfycbxXImUtomzigBiNjDQQYTJ31dKURCbL36msU6T55P6vFBip2dhIG-oeJVQXWQNMIkERmw/exec"
 };
 
 // Global nesneye tanımla (importScripts için erişilebilir kılmak üzere)
@@ -73,22 +71,31 @@ globalThis.PV_ApiClient = (function () {
    * GAS Web App API'sine imzalı istek gönderir.
    */
   async function makeRequest(action, data) {
-    // Güncel API URL ve Secret'ı yükle
+    // Güncel API URL'sini yükle
     const config = await getEffectiveConfig();
     if (!config.apiUrl) {
       return { success: false, message: "Google Apps Script API URL'si tanımlanmamış." };
     }
 
-    const timestamp = Date.now();
-    const dataStr = JSON.stringify(data);
-    const signature = await computeHMAC(timestamp + "." + dataStr, config.apiSecret);
+    // Google Auth Access Token'ı sessizce al
+    let accessToken = "";
+    const getAuthTokenFn = globalThis.getGoogleAuthToken || (typeof getGoogleAuthToken === 'function' ? getGoogleAuthToken : null);
+    if (getAuthTokenFn) {
+      try {
+        accessToken = await getAuthTokenFn(false);
+      } catch (err) {
+        console.warn("[PV-ApiClient] OAuth Access Token alınamadı (istek:", action, "):", err.message);
+      }
+    }
 
     const payload = {
-      timestamp: timestamp,
-      signature: signature,
       action: action,
       data: data
     };
+
+    if (accessToken) {
+      payload.accessToken = accessToken;
+    }
 
     try {
       const response = await fetch(config.apiUrl, {
@@ -186,22 +193,28 @@ globalThis.PV_ApiClient = (function () {
    * Lisans durumunu yerel storage'a kaydeder.
    */
   async function saveLicenseState(licenseData) {
+    const userId = await getOrCreateUserId();
+    // Sunucudan isPremium flag'i gelmezse licenseType + status'tan hesapla (geriye dönük uyumluluk)
+    const isPremiumFromServer = typeof licenseData.isPremium !== 'undefined'
+      ? licenseData.isPremium
+      : (licenseData.licenseType !== 'FREE' && licenseData.status === 'ACTIVE');
+
+    const updateData = {
+      licenseType:       licenseData.licenseType || 'FREE',
+      licenseStatus:     licenseData.status || 'FREE_USER',
+      licenseExpiration: licenseData.expirationDate || '',
+      dailyUsage:        typeof licenseData.dailyUsage !== 'undefined' ? licenseData.dailyUsage : 0,
+      lastLicenseCheck:  Date.now(),
+      isPremium:         isPremiumFromServer
+    };
+
+    // Güvenli yerel bütünlük imzası oluştur
+    const salt = "PV_LOCAL_INTEGRITY_SALT_2026";
+    const message = [updateData.isPremium, updateData.licenseType, updateData.licenseStatus, updateData.licenseExpiration, userId].join('|');
+    updateData.licenseSignature = await computeHMAC(message, salt);
+
     return new Promise((resolve) => {
-      // Sunucudan isPremium flag'i gelmezse licenseType + status'tan hesapla (geriye dönük uyumluluk)
-      const isPremiumFromServer = typeof licenseData.isPremium !== 'undefined'
-        ? licenseData.isPremium
-        : (licenseData.licenseType !== 'FREE' && licenseData.status === 'ACTIVE');
-
       chrome.storage.local.get({ googleSyncEmail: '', googleSyncEnabled: false }, (currentData) => {
-        const updateData = {
-          licenseType:       licenseData.licenseType || 'FREE',
-          licenseStatus:     licenseData.status || 'FREE_USER',
-          licenseExpiration: licenseData.expirationDate || '',
-          dailyUsage:        typeof licenseData.dailyUsage !== 'undefined' ? licenseData.dailyUsage : 0,
-          lastLicenseCheck:  Date.now(),
-          isPremium:         isPremiumFromServer
-        };
-
         // Eğer kullanıcı Premium olduysa ve e-postası zaten bağlıysa senkronizasyonu otomatik AKTİF yap
         if (isPremiumFromServer && currentData.googleSyncEmail) {
           updateData.googleSyncEnabled = true;
@@ -212,6 +225,66 @@ globalThis.PV_ApiClient = (function () {
     });
   }
 
+  /**
+   * Yerelde saklanan lisansın imza bütünlüğünü doğrular.
+   */
+  async function verifyLicenseState() {
+    const userId = await getOrCreateUserId();
+    return new Promise((resolve) => {
+      chrome.storage.local.get(['isPremium', 'licenseType', 'licenseStatus', 'licenseExpiration', 'licenseSignature'], async (data) => {
+        const isPremium = data.isPremium === true;
+        const licenseType = data.licenseType || 'FREE';
+        const licenseStatus = data.licenseStatus || 'FREE_USER';
+        const licenseExpiration = data.licenseExpiration || '';
+        const signature = data.licenseSignature || '';
+
+        // Eğer imza yoksa ama premium özellikleri aktifse bütünlük bozulmuştur (Bypass girişimi).
+        if (!signature) {
+          if (isPremium || licenseType !== 'FREE') {
+            resolve(false);
+          } else {
+            resolve(true); // Eşleşen bir premium yoksa ve imza boşsa FREE kullanıcı için normaldir.
+          }
+          return;
+        }
+
+        // Bütünlüğü doğrulamak için imzayı yeniden hesapla
+        const salt = "PV_LOCAL_INTEGRITY_SALT_2026";
+        const message = [isPremium, licenseType, licenseStatus, licenseExpiration, userId].join('|');
+        const computed = await computeHMAC(message, salt);
+
+        resolve(computed === signature);
+      });
+    });
+  }
+
+  /**
+   * Lisans bütünlüğü bozulduğunda durumu FREE olarak sıfırlar.
+   */
+  async function enforceLicenseIntegrity() {
+    const isValid = await verifyLicenseState();
+    if (!isValid) {
+      console.warn("[PV-Security] Yerel lisans bütünlüğü bozuldu! Lisans sıfırlanıyor...");
+      await new Promise((resolve) => {
+        chrome.storage.local.set({
+          isPremium: false,
+          licenseType: 'FREE',
+          licenseStatus: 'FREE_USER',
+          licenseExpiration: '',
+          licenseSignature: ''
+        }, resolve);
+      });
+      // Eğer forceLogoutWithoutConfirm tanımlıysa çağır
+      if (typeof globalThis.forceLogoutWithoutConfirm === 'function') {
+        await globalThis.forceLogoutWithoutConfirm();
+      } else if (typeof forceLogoutWithoutConfirm === 'function') {
+        await forceLogoutWithoutConfirm();
+      }
+      return false;
+    }
+    return true;
+  }
+
   // Dışa açılan metotlar
   return {
     getOrCreateUserId,
@@ -220,7 +293,9 @@ globalThis.PV_ApiClient = (function () {
     activateLicense,
     checkLicense,
     syncUsage,
-    getEffectiveConfig
+    getEffectiveConfig,
+    verifyLicenseState,
+    enforceLicenseIntegrity
   };
 
 })();
