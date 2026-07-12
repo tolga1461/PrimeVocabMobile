@@ -2253,9 +2253,65 @@
     body.font-size-large .profile-sync-subcard { font-size: 17px !important; }
     body.font-size-large #profile-membership-badge { font-size: 14px !important; }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const isNative = window.Capacitor && window.Capacitor.isNativePlatform();
+      const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (!isNative && !isDev) {
+        // Hide the app UI
+        const appEl = document.querySelector('.app');
+        if (appEl) appEl.style.display = 'none';
+        
+        // Hide PWA install banner
+        const bannerEl = document.getElementById('install-banner');
+        if (bannerEl) bannerEl.style.display = 'none';
+        
+        // Show landing overlay
+        const landingEl = document.getElementById('web-only-landing');
+        if (landingEl) landingEl.style.display = 'flex';
+      }
+    });
+  </script>
 </head>
 
 <body>
+  <!-- Web Only Landing Page Overlay -->
+  <div id="web-only-landing" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0d0e12; color: #ffffff; font-family: 'Outfit', sans-serif; justify-content: center; align-items: center; z-index: 10000; padding: 20px; box-sizing: border-box; text-align: center; flex-direction: column;">
+    <div style="background: #1a1c23; border: 1px solid #2d3139; border-radius: 16px; padding: 40px 30px; max-width: 420px; width: 100%; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column; align-items: center; gap: 20px;">
+      <!-- Logo -->
+      <div style="font-size: 28px; font-weight: 800; background: linear-gradient(90deg, #818cf8, #a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">PrimeVocab</div>
+      
+      <!-- Icon -->
+      <div style="font-size: 48px; margin: 10px 0;">📱</div>
+      
+      <!-- Title -->
+      <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: #f3f4f6;">Mobil Yardımcı Uygulama</h2>
+      
+      <!-- Description -->
+      <p style="margin: 0; font-size: 13px; color: #9ca3af; line-height: 1.6;">
+        Bu web sayfası PrimeVocab mobil uygulamasının ve tarayıcı eklentisinin senkronizasyon servisidir. 
+        Kelimelerinizi çalışmak, oyun oynamak ve tekrar etmek için lütfen uygulamayı cihazınıza kurun veya tarayıcınıza eklentiyi yükleyin.
+      </p>
+
+      <!-- Action Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 10px;">
+        <a href="https://chrome.google.com/webstore" target="_blank" style="background: linear-gradient(90deg, #6366f1, #4f46e5); color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 13px; transition: opacity 0.2s;">
+          Chrome Eklentisini İndir
+        </a>
+        <span style="font-size: 11px; color: #6b7280; font-style: italic;">Android uygulamamıza yakında Play Store'dan ulaşabilirsiniz.</span>
+      </div>
+
+      <hr style="border: 0; height: 1px; background: #2d3139; width: 100%; margin: 10px 0;">
+
+      <!-- Legal footer -->
+      <div style="font-size: 11px; display: flex; gap: 15px; justify-content: center;">
+        <a href="privacy.html" style="color: #818cf8; text-decoration: underline;" target="_blank">Gizlilik Politikası</a>
+        <span style="color: #4b5563;">|</span>
+        <a href="privacy.html" style="color: #818cf8; text-decoration: underline;" target="_blank">Kullanım Koşulları</a>
+      </div>
+    </div>
+  </div>
+
   <!-- PWA Install Banner -->
   <div id="install-banner" class="install-banner">
     <div>
