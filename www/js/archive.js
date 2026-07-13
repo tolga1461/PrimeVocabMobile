@@ -1191,6 +1191,10 @@ function toggleLearnWord(index) {
         const item = savedWords[index];
         if (item) {
             item.learned = !item.learned;
+            if (item.learned) {
+                item.hard = false;
+                item.againCount = 0;
+            }
             item.timestamp = Date.now();
             chrome.storage.local.set({ savedWords }, () => {
                 loadArchive();

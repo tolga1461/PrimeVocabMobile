@@ -743,6 +743,11 @@ function toggleLearnWordFromSrsList(index) {
         const item = savedWords[index];
         if (item) {
             item.learned = !item.learned;
+            if (item.learned) {
+                item.hard = false;
+                item.againCount = 0;
+            }
+            item.timestamp = Date.now();
             chrome.storage.local.set({ savedWords }, () => { srsLoadWords(); srsLoadHome(); updateReviewBadge(); });
         }
     });
@@ -935,6 +940,8 @@ if (srsRateLearned) {
             const idx = savedWords.findIndex(w => w.word.toLowerCase() === item.word.toLowerCase());
             if (idx !== -1) {
                 savedWords[idx].learned = true;
+                savedWords[idx].hard = false;
+                savedWords[idx].againCount = 0;
                 savedWords[idx].lastReviewDate = new Date().toDateString();
                 savedWords[idx].timestamp = Date.now();
                 chrome.storage.local.set({ savedWords }, () => { updateStudyStreak(); });
