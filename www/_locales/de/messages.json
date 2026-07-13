@@ -1651,5 +1651,14 @@
   },
   "heatmap_tooltip": {
     "message": "{date}: {count} Karten"
+  },
+  "settings_show_learned_games_title": {
+    "message": "Gelernte Wörter in Spielen anzeigen"
+  },
+  "settings_show_learned_games_desc": {
+    "message": "Als gelernt markierte Wörter weiterhin in Vokabelspielen anzeigen"
+  },
+  "game_insufficient_unlearned_words": {
+    "message": "Sie müssen mindestens 4 nicht gelernte Wörter haben, um dieses Spiel zu spielen."
   }
 }

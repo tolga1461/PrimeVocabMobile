@@ -1657,5 +1657,14 @@
   },
   "heatmap_tooltip": {
     "message": "{date}: {count} kart"
+  },
+  "settings_show_learned_games_title": {
+    "message": "Oyunlarda Öğrenilenleri Göster"
+  },
+  "settings_show_learned_games_desc": {
+    "message": "Öğrenildi olarak işaretlediğiniz kelimeleri oyunlarda göstermeye devam et"
+  },
+  "game_insufficient_unlearned_words": {
+    "message": "Bu oyunu oynamak için öğrenilmemiş en az 4 kelimeniz olmalıdır."
   }
 }

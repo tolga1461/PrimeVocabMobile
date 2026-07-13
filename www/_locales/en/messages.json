@@ -1657,5 +1657,14 @@
   },
   "heatmap_tooltip": {
     "message": "{date}: {count} cards"
+  },
+  "settings_show_learned_games_title": {
+    "message": "Show Learned Words in Games"
+  },
+  "settings_show_learned_games_desc": {
+    "message": "Keep showing words marked as learned in vocabulary games"
+  },
+  "game_insufficient_unlearned_words": {
+    "message": "You must have at least 4 unlearned words to play this game."
   }
 }

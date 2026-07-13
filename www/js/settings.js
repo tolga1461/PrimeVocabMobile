@@ -296,7 +296,7 @@ function loadSettings() {
             }
         });
 
-        chrome.storage.sync.get({ settings: { appLanguage: 'auto', appFontSize: 'normal', gamesSound: true, deleteConfirm: true, autoplaySound: false, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
+        chrome.storage.sync.get({ settings: { appLanguage: 'auto', appFontSize: 'normal', gamesSound: true, deleteConfirm: true, autoplaySound: false, showLearnedInGames: true, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
         if (!settings)
             settings = {};
         const ensureInit = (key) => {
@@ -322,6 +322,9 @@ function loadSettings() {
         const deleteConfirmToggle = document.getElementById('delete-confirm-toggle');
         if (deleteConfirmToggle)
             deleteConfirmToggle.checked = settings.deleteConfirm !== false;
+        const showLearnedInGamesToggle = document.getElementById('show-learned-in-games-toggle');
+        if (showLearnedInGamesToggle)
+            showLearnedInGamesToggle.checked = settings.showLearnedInGames !== false;
         const enabledPlats = settings.enabledPlatforms || { youtube: true, netflix: true, prime: true };
         const ytToggle = document.getElementById('platform-toggle-youtube');
         if (ytToggle)
@@ -461,7 +464,7 @@ function saveSetting(key, value) {
         ensureInit('youtube');
         ensureInit('prime');
         ensureInit('netflix');
-        if (key === 'appLanguage' || key === 'appFontSize' || key === 'gamesSound' || key === 'deleteConfirm' || key === 'autoplaySound') {
+        if (key === 'appLanguage' || key === 'appFontSize' || key === 'gamesSound' || key === 'deleteConfirm' || key === 'autoplaySound' || key === 'showLearnedInGames') {
             settings[key] = value;
         }
         else {
@@ -663,6 +666,9 @@ if (autoplaySoundToggleEl)
 const deleteConfirmToggleEl = document.getElementById('delete-confirm-toggle');
 if (deleteConfirmToggleEl)
     deleteConfirmToggleEl.addEventListener('change', (e) => saveSetting('deleteConfirm', e.target.checked));
+const showLearnedInGamesToggleEl = document.getElementById('show-learned-in-games-toggle');
+if (showLearnedInGamesToggleEl)
+    showLearnedInGamesToggleEl.addEventListener('change', (e) => saveSetting('showLearnedInGames', e.target.checked));
 ['youtube', 'netflix', 'prime'].forEach(plat => {
     const el = document.getElementById(`platform-toggle-${plat}`);
     if (el) {

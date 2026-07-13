@@ -1651,5 +1651,14 @@
   },
   "heatmap_tooltip": {
     "message": "{date}: {count} cartes"
+  },
+  "settings_show_learned_games_title": {
+    "message": "Afficher les mots appris dans les jeux"
+  },
+  "settings_show_learned_games_desc": {
+    "message": "Continuer à afficher les mots marqués comme appris dans les jeux"
+  },
+  "game_insufficient_unlearned_words": {
+    "message": "Vous devez avoir au moins 4 mots non appris pour jouer à ce jeu."
   }
 }

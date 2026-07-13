@@ -193,32 +193,38 @@ function loadGamesHub() {
                     }
                     return;
                 }
-                startMiniGame(gameType, savedWords);
+                chrome.storage.sync.get({ settings: {} }, ({ settings }) => {
+                    const showLearned = !settings || settings.showLearnedInGames !== false;
+                    startMiniGame(gameType, savedWords, showLearned);
+                });
             });
         });
     });
 }
-function startMiniGame(gameType, savedWords) {
-    let eligibleWords = savedWords;
+function startMiniGame(gameType, savedWords, showLearned = true) {
+    let eligibleWords = showLearned ? savedWords : savedWords.filter(w => !w.learned);
     if (gameType === 'context_choice') {
-        eligibleWords = savedWords.filter(w => w.context && w.context.trim() && w.context.toLowerCase().includes(w.word.toLowerCase()));
-        if (eligibleWords.length < 4) {
-            const msg = getMessage('game_context_no_words') || 'Bu oyun için cümlesi olan en az 4 kelime gerekli.';
-            const existing = document.querySelector('.context-no-words-msg');
-            if (existing)
-                existing.remove();
-            const msgEl = document.createElement('div');
-            msgEl.className = 'context-no-words-msg';
-            msgEl.style.cssText = 'padding:12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;color:#ef4444;font-size:13px;font-weight:600;text-align:center;margin-top:8px;';
-            msgEl.textContent = msg;
-            const hub = document.getElementById('games-hub');
-            if (hub)
-                hub.appendChild(msgEl);
-            setTimeout(() => msgEl.remove(), 3000);
-            return;
-        }
+        eligibleWords = eligibleWords.filter(w => w.context && w.context.trim() && w.context.toLowerCase().includes(w.word.toLowerCase()));
+    }
+    if (eligibleWords.length < 4) {
+        const msg = (eligibleWords.length === 0 || gameType !== 'context_choice')
+            ? (getMessage('game_insufficient_unlearned_words') || 'Bu oyunu oynamak için öğrenilmemiş en az 4 kelime gerekli.')
+            : (getMessage('game_context_no_words') || 'Bu oyun için cümlesi olan en az 4 kelime gerekli.');
+        const existing = document.querySelector('.context-no-words-msg');
+        if (existing)
+            existing.remove();
+        const msgEl = document.createElement('div');
+        msgEl.className = 'context-no-words-msg';
+        msgEl.style.cssText = 'padding:12px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;color:#ef4444;font-size:13px;font-weight:600;text-align:center;margin-top:8px;';
+        msgEl.textContent = msg;
+        const hub = document.getElementById('games-hub');
+        if (hub)
+            hub.appendChild(msgEl);
+        setTimeout(() => msgEl.remove(), 3000);
+        return;
     }
     activeGame.type = gameType;
+    activeGame.showLearned = showLearned;
     activeGame.currentIndex = 0;
     activeGame.score = 0;
     activeGame.selectedTile = null;
@@ -231,7 +237,7 @@ function startMiniGame(gameType, savedWords) {
     activeGame.completedCount = 0;
     activeGame.cardDeck = null;
     activeGame.matchedWordIds = [];
-    let deck = gameType === 'context_choice' ? [...eligibleWords] : [...savedWords];
+    let deck = [...eligibleWords];
     if (gameType === 'fill_blank') {
         const withCtx = deck.filter(w => w.context && w.context.trim() && w.context.toLowerCase().includes(w.word.toLowerCase()));
         const withoutCtx = deck.filter(w => !(w.context && w.context.trim() && w.context.toLowerCase().includes(w.word.toLowerCase())));
@@ -293,7 +299,8 @@ function renderMultipleChoiceQuestion() {
     const stage = document.getElementById('game-stage');
     const target = activeGame.words[activeGame.currentIndex];
     chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
-        const distractors = [...new Set(savedWords.filter(w => w.word.toLowerCase() !== target.word.toLowerCase()).map(w => w.translation))].slice(0, 3);
+        const pool = activeGame.showLearned ? savedWords : savedWords.filter(w => !w.learned);
+        const distractors = [...new Set(pool.filter(w => w.word.toLowerCase() !== target.word.toLowerCase()).map(w => w.translation))].slice(0, 3);
         while (distractors.length < 3)
             distractors.push("—");
         const options = [target.translation, ...distractors];

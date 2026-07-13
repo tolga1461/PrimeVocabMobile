@@ -1651,5 +1651,14 @@
   },
   "heatmap_tooltip": {
     "message": "{date}: {count} cartas"
+  },
+  "settings_show_learned_games_title": {
+    "message": "Mostrar palabras aprendidas en juegos"
+  },
+  "settings_show_learned_games_desc": {
+    "message": "Seguir mostrando palabras marcadas como aprendidas en los juegos"
+  },
+  "game_insufficient_unlearned_words": {
+    "message": "Debes tener al menos 4 palabras no aprendidas para jugar este juego."
   }
 }
