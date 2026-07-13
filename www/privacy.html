@@ -75,6 +75,19 @@
         li {
             margin-bottom: 10px;
         }
+        .limited-use-box {
+            background-color: rgba(161, 93, 242, 0.1);
+            border-left: 3px solid #a15df2;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .limited-use-box p {
+            color: #e5e7eb;
+            margin: 0;
+            font-size: 13px;
+            font-style: italic;
+        }
         a {
             color: #a15df2;
             text-decoration: none;
@@ -101,21 +114,30 @@
         </div>
 
         <h1>PrimeVocab - Legal Hub</h1>
+        <p style="font-size: 12px; color: #6b7280; margin-top: -10px;">Last updated: July 2026</p>
         
         <!-- ── ENGLISH (EN) ── -->
         <h2>1. English (EN)</h2>
         
         <h3>Privacy Policy</h3>
+        <p>This Privacy Policy explains how PrimeVocab ("we", "our", or "us") collects, uses, and shares your data when you use the PrimeVocab browser extension and mobile application.</p>
         <ul>
-            <li><strong>Data Collection:</strong> We collect your email and active license key during purchase via Lemon Squeezy to verify your Premium status. We generate an anonymous Device UUID to enforce our 3-device limit per license.</li>
-            <li><strong>Google Drive Access:</strong> If you enable synchronization, we access only the <code>appDataFolder</code> in your Google Drive to backup your vocabulary lists and settings. We do not access any other personal files.</li>
-            <li><strong>Storage:</strong> All personal vocabulary data is stored locally in your browser. License validation details are stored securely on our Google Apps Script servers.</li>
+            <li><strong>Data Collection & Verification:</strong> We collect your email and active license key during purchase via Lemon Squeezy to verify your Premium status. We generate an anonymous Device UUID to enforce our 3-device limit per license. We do not sell or share this data with third parties.</li>
+            <li><strong>Google Drive Access (Limited Scope):</strong> If you choose to enable the optional cloud synchronization feature, PrimeVocab requests access to your Google Drive. We only request and access the <code>appDataFolder</code> scope. This is a secure, isolated folder that belongs solely to PrimeVocab. We use this access exclusively to backup and synchronize your personal vocabulary lists and settings. We do not and cannot access any other personal files, photos, or documents in your Google Drive.</li>
+            <li><strong>Google API Limited Use Disclosure:</strong></li>
+        </ul>
+        <div class="limited-use-box">
+            <p>PrimeVocab’s use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: #c084fc; text-decoration: underline;">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+        </div>
+        <ul>
+            <li><strong>Data Storage:</strong> All personal vocabulary data and study history are stored locally on your device (browser local storage). License validation logs are stored securely on our Google Apps Script servers.</li>
+            <li><strong>Data Deletion:</strong> You can clear your local vocabulary data at any time via the Settings panel. To delete your sync data, simply unlink your Google account or delete the app data folder via your Google Drive settings.</li>
         </ul>
 
         <h3>Terms of Service</h3>
         <ul>
-            <li><strong>License Limits:</strong> Premium licenses are personal and can be active on up to three (3) devices simultaneously.</li>
-            <li><strong>Refunds & Support:</strong> Processed via Lemon Squeezy. We offer a 14-day refund window. Contact: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
+            <li><strong>License Terms:</strong> Premium licenses are personal, non-transferable, and can be active on up to three (3) devices simultaneously.</li>
+            <li><strong>Refund Policy:</strong> Payments are processed via Lemon Squeezy. We offer a 14-day refund window. Contact: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
         </ul>
 
         <hr>
@@ -124,16 +146,24 @@
         <h2>2. Türkçe (TR)</h2>
         
         <h3>Gizlilik Politikası (Privacy Policy)</h3>
+        <p>Bu Gizlilik Politikası, PrimeVocab tarayıcı eklentisini ve mobil uygulamasını kullandığınızda verilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklar.</p>
         <ul>
-            <li><strong>Veri Toplama:</strong> Premium durumunuzu doğrulamak amacıyla Lemon Squeezy aracılığıyla satın alma sırasında e-posta adresinizi ve aktif lisans anahtarınızı toplarız. Lisans başına 3 cihaz sınırımızı uygulamak için anonim bir Cihaz UUID'si oluştururuz.</li>
-            <li><strong>Google Drive Erişimi:</strong> Senkronizasyonu etkinleştirirseniz, kelime listelerinizi ve ayarlarınızı yedeklemek için Google Drive'ınızda yalnızca <code>appDataFolder</code> klasörüne erişiriz. Diğer kişisel dosyalarınızın hiçbirine erişmeyiz.</li>
-            <li><strong>Depolama:</strong> Tüm kişisel kelime verileri tarayıcınızda yerel olarak saklanır. Lisans doğrulama detayları, Google Apps Script sunucularımızda güvenli bir şekilde saklanır.</li>
+            <li><strong>Veri Toplama ve Doğrulama:</strong> Premium üyeliğinizi doğrulamak amacıyla Lemon Squeezy üzerinden satın alma sırasında e-posta adresinizi ve aktif lisans anahtarınızı toplarız. Lisans başına 3 cihaz limitini uygulamak için anonim bir Cihaz UUID'si oluştururuz. Verilerinizi üçüncü taraflarla paylaşmayız veya satmayız.</li>
+            <li><strong>Google Drive Erişimi:</strong> Bulut senkronizasyonunu etkinleştirdiğinizde, PrimeVocab Google Drive hesabınıza erişim ister. Yalnızca <code>appDataFolder</code> (Uygulama Verileri Klasörü) yetkisini talep ederiz. Bu klasör uygulamanıza özel, yalıtılmış bir alandır. Bu erişimi sadece kelime listelerinizi ve ayarlarınızı yedeklemek/senkronize etmek için kullanırız. Google Drive'ınızdaki diğer dosyalara, fotoğraflara veya belgelere erişemeyiz.</li>
+            <li><strong>Google API Sınırlı Kullanım Beyanı:</strong></li>
+        </ul>
+        <div class="limited-use-box">
+            <p>PrimeVocab'in Google API'lerinden alınan bilgileri kullanması ve başka bir uygulamaya aktarması, Sınırlı Kullanım gereksinimleri de dahil olmak üzere <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: #c084fc; text-decoration: underline;">Google API Hizmetleri Kullanıcı Verileri Politikası</a>'na uygun olacaktır.</p>
+        </div>
+        <ul>
+            <li><strong>Veri Depolama:</strong> Tüm kişisel kelime verileriniz ve çalışma geçmişiniz cihazınızda (tarayıcı yerel depolama alanında) saklanır. Lisans doğrulama detayları Google Apps Script sunucularımızda güvenli bir şekilde barındırılır.</li>
+            <li><strong>Veri Silme:</strong> Ayarlar panelinden dilediğiniz zaman yerel verilerinizi silebilir, Google hesabınızın bağlantısını keserek yedeklerinizi kaldırabilirsiniz.</li>
         </ul>
 
         <h3>Kullanım Koşulları (Terms of Service)</h3>
         <ul>
-            <li><strong>Lisans Sınırları:</strong> Premium lisanslar kişiseldir ve aynı anda en fazla üç (3) cihazda aktif olabilir.</li>
-            <li><strong>İadeler ve Destek:</strong> Lemon Squeezy aracılığıyla işlenir. 14 günlük bir iade süresi sunuyoruz. İletişim: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
+            <li><strong>Lisans Kuralları:</strong> Premium lisanslar kişiseldir, devredilemez ve aynı anda en fazla üç (3) cihazda aktif olabilir.</li>
+            <li><strong>İade Koşulları:</strong> Ödemeler Lemon Squeezy aracılığıyla işlenir. 14 günlük bir koşulsuz iade süresi sunuyoruz. İletişim: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
         </ul>
 
         <hr>
@@ -142,16 +172,23 @@
         <h2>3. Français (FR)</h2>
         
         <h3>Politique de Confidentialité</h3>
+        <p>Cette politique de confidentialité décrit comment PrimeVocab collecte, utilise et protège vos données lors de l'utilisation de l'extension et de l'application mobile.</p>
         <ul>
             <li><strong>Collecte de Données :</strong> Nous collectons votre e-mail et votre clé de licence active lors de l'achat via Lemon Squeezy afin de vérifier votre statut Premium. Nous générons un UUID de périphérique anonyme pour appliquer notre limite de 3 périphériques par licence.</li>
             <li><strong>Accès à Google Drive :</strong> Si vous activez la synchronisation, nous accédons uniquement au dossier <code>appDataFolder</code> de votre Google Drive pour sauvegarder vos listes de vocabulaire et vos paramètres. Nous n'accédons à aucun autre fichier personnel.</li>
+            <li><strong>Déclaration d'utilisation limitée de l'API Google :</strong></li>
+        </ul>
+        <div class="limited-use-box">
+            <p>L'utilisation et le transfert par PrimeVocab vers toute autre application d'informations reçues des API Google respecteront la politique relative aux données utilisateur des <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: #c084fc; text-decoration: underline;">services API Google</a>, y compris les exigences de limitation d'utilisation.</p>
+        </div>
+        <ul>
             <li><strong>Stockage :</strong> Toutes les données de vocabulaire personnelles sont stockées localement dans votre navigateur. Les détails de validation de licence sont stockés de manière sécurisée sur nos serveurs Google Apps Script.</li>
         </ul>
 
         <h3>Conditions d'Utilisation</h3>
         <ul>
             <li><strong>Limites de Licence :</strong> Les licences Premium sont personnelles et peuvent être actives sur un maximum de trois (3) périphériques simultanément.</li>
-            <li><strong>Remboursements et Assistance :</strong> Traités via Lemon Squeezy. Nous offrons un délai de remboursement de 14 jours. Contact : <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
+            <li><strong>Assistance :</strong> Traités via Lemon Squeezy. Nous offrons un délai de remboursement de 14 jours. Contact : <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
         </ul>
 
         <hr>
@@ -160,16 +197,23 @@
         <h2>4. Deutsch (DE)</h2>
         
         <h3>Datenschutzerklärung</h3>
+        <p>Diese Datenschutzerklärung beschreibt, wie PrimeVocab Ihre Daten erfasst, nutzt und schützt, wenn Sie die Browser-Erweiterung und die mobile App nutzen.</p>
         <ul>
             <li><strong>Datenerhebung:</strong> Wir erfassen Ihre E-Mail-Adresse und Ihren aktiven Lizenzschlüssel beim Kauf über Lemon Squeezy, um Ihren Premium-Status zu überprüfen. Wir erstellen eine anonyme Geräte-UUID, um unser Limit von 3 Geräten pro Lizenz durchzusetzen.</li>
             <li><strong>Zugriff auf Google Drive:</strong> Wenn Sie die Synchronisierung aktivieren, greifen wir nur auf den Ordner <code>appDataFolder</code> in Ihrem Google Drive zu, um Ihre Vokabellisten und Einstellungen zu sichern. Wir greifen auf keine anderen persönlichen Dateien zu.</li>
+            <li><strong>Offenlegung der eingeschränkten Nutzung der Google-API:</strong></li>
+        </ul>
+        <div class="limited-use-box">
+            <p>Die Nutzung und Weitergabe von Informationen, die über Google-APIs empfangen wurden, durch PrimeVocab an andere Apps erfolgt gemäß der <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: #c084fc; text-decoration: underline;">Google API-Dienste-Nutzerdatenrichtlinie</a>, einschließlich der Anforderungen für die eingeschränkte Nutzung.</p>
+        </div>
+        <ul>
             <li><strong>Speicherung:</strong> Alle persönlichen Vokabeldaten werden lokal in Ihrem Browser gespeichert. Lizenzvalidierungsdetails werden sicher auf unseren Google Apps Script-Servern gespeichert.</li>
         </ul>
 
         <h3>Nutzungsbedingungen</h3>
         <ul>
             <li><strong>Lizenzbeschränkungen:</strong> Premium-Lizenzen sind persönlich und können auf bis zu drei (3) Geräten gleichzeitig aktiv sein.</li>
-            <li><strong>Rückerstattung & Support:</strong> Abgewickelt über Lemon Squeezy. Wir bieten ein 14-tägiges Rückgaberecht. Kontakt: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
+            <li><strong>Support:</strong> Abgewickelt über Lemon Squeezy. Wir bieten ein 14-tägiges Rückgaberecht. Kontakt: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
         </ul>
 
         <hr>
@@ -178,16 +222,23 @@
         <h2>5. Español (ES)</h2>
         
         <h3>Política de Privacidad</h3>
+        <p>Esta Política de Privacidad explica cómo PrimeVocab recopila, utiliza y protege sus datos cuando utiliza la extensión del navegador y la aplicación móvil.</p>
         <ul>
             <li><strong>Recopilación de Datos:</strong> Recopilamos su correo electrónico y clave de licencia activa durante la compra a través de Lemon Squeezy para verificar su estado Premium. Generamos un UUID de dispositivo anónimo para hacer cumplir nuestro límite de 3 dispositivos por licencia.</li>
             <li><strong>Acceso a Google Drive:</strong> Si activa la sincronización, accedemos únicamente a la carpeta <code>appDataFolder</code> en su Google Drive para hacer una copia de seguridad de sus listas de vocabulario y configuraciones. No accedemos a ningún otro archivo personal.</li>
+            <li><strong>Divulgación de uso limitado de la API de Google:</strong></li>
+        </ul>
+        <div class="limited-use-box">
+            <p>El uso y la transferencia por parte de PrimeVocab a cualquier otra aplicación de la información recibida de las API de Google cumplirán con la <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" style="color: #c084fc; text-decoration: underline;">Política de datos de usuario de los servicios de API de Google</a>, incluidos los requisitos de uso limitado.</p>
+        </div>
+        <ul>
             <li><strong>Almacenamiento:</strong> Todos los datos personales de vocabulario se almacenan localmente en su navegador. Los detalles de validación de la licencia se almacenan de forma segura en nuestros servidores de Google Apps Script.</li>
         </ul>
 
         <h3>Términos de Servicio</h3>
         <ul>
             <li><strong>Límites de Licencia:</strong> Las licencias Premium son personales y pueden estar activas en hasta tres (3) dispositivos simultáneamente.</li>
-            <li><strong>Devoluciones y Soporte:</strong> Procesado a través de Lemon Squeezy. Ofrecemos un plazo de reembolso de 14 días. Contacto: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
+            <li><strong>Soporte:</strong> Procesado a través de Lemon Squeezy. Ofrecemos un plazo de reembolso de 14 días. Contacto: <a href="mailto:primevocabextension@gmail.com">primevocabextension@gmail.com</a></li>
         </ul>
     </div>
 
@@ -209,7 +260,7 @@
 
         // Register Capacitor Hardware Back Button Listener
         document.addEventListener('DOMContentLoaded', () => {
-            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+            if (window.Capacitor && window.Capacitor.isNativePlatform() && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
                 window.Capacitor.Plugins.App.addListener('backButton', () => {
                     console.log("[PV-Privacy] Hardware backButton pressed, navigating back");
                     goBack();
