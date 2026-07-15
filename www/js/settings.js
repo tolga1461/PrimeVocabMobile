@@ -32,7 +32,9 @@ const DEFAULT_YOUTUBE_SETTINGS = {
     autoSlowMoSpeed: 0.75,
     autoSlowMoLevels: { A1: false, A2: false, B1: false, B2: false, C1: false, C2: false, phrasal: false, other: false, hard: false },
     allowSmartOnAsr: false,
-    primeVideoDomain: 'default'
+    primeVideoDomain: 'default',
+    subtitleBgColor: '#0a0f1e',
+    subtitleBgOpacity: 0.85
 };
 
 const DEFAULT_PRIME_SETTINGS = {
@@ -56,7 +58,9 @@ const DEFAULT_PRIME_SETTINGS = {
     autoSlowMoSpeed: 0.75,
     autoSlowMoLevels: { A1: false, A2: false, B1: false, B2: false, C1: false, C2: false, phrasal: false, other: false, hard: false },
     allowSmartOnAsr: false,
-    primeVideoDomain: 'default'
+    primeVideoDomain: 'default',
+    subtitleBgColor: '#0a0f1e',
+    subtitleBgOpacity: 0.85
 };
 
 const DEFAULT_NETFLIX_SETTINGS = {
@@ -80,7 +84,9 @@ const DEFAULT_NETFLIX_SETTINGS = {
     autoSlowMoSpeed: 0.75,
     autoSlowMoLevels: { A1: false, A2: false, B1: false, B2: false, C1: false, C2: false, phrasal: false, other: false, hard: false },
     allowSmartOnAsr: false,
-    primeVideoDomain: 'default'
+    primeVideoDomain: 'default',
+    subtitleBgColor: '#0a0f1e',
+    subtitleBgOpacity: 0.85
 };
 
 const DEFAULT_PLATFORM_SETTINGS = DEFAULT_YOUTUBE_SETTINGS; // keep as fallback reference

@@ -1660,5 +1660,29 @@
   },
   "game_insufficient_unlearned_words": {
     "message": "Vous devez avoir au moins 4 mots non appris pour jouer à ce jeu."
+  },
+  "settings_sub_bg_color": {
+    "message": "Couleur d'arrière-plan"
+  },
+  "settings_sub_bg_opacity": {
+    "message": "Opacité de l'arrière-plan"
+  },
+  "opacity_0": {
+    "message": "0%"
+  },
+  "opacity_25": {
+    "message": "25%"
+  },
+  "opacity_50": {
+    "message": "50%"
+  },
+  "opacity_75": {
+    "message": "75%"
+  },
+  "opacity_85": {
+    "message": "85%"
+  },
+  "opacity_100": {
+    "message": "100%"
   }
 }
