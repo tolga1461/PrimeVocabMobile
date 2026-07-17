@@ -543,10 +543,10 @@
     "message": "{thisWeek} words added this week"
   },
   "settings_app_lang": {
-    "message": "Extension Language"
+    "message": "App Language"
   },
   "settings_lang_auto": {
-    "message": "Automatic (Browser Default)"
+    "message": "Automatic"
   },
   "settings_color_title": {
     "message": "Translation color:"

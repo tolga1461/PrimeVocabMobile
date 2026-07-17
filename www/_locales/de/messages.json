@@ -531,7 +531,7 @@
     "message": "{thisWeek} Wörter diese Woche hinzugefügt"
   },
   "settings_app_lang": {
-    "message": "Eklentenisprache"
+    "message": "App-Sprache"
   },
   "settings_lang_auto": {
     "message": "Automatisch"

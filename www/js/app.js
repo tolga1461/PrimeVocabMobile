@@ -1081,6 +1081,13 @@ function initBottomSheetController() {
         });
     }
 
+    const gamePoolTrigger = document.getElementById('game-pool-trigger');
+    if (gamePoolTrigger) {
+        gamePoolTrigger.addEventListener('click', () => {
+            openBottomSheet('game-pool-select', getMessage('game_pool_title') || 'Çalışma Havuzu');
+        });
+    }
+
     // Synchronize legacy selects state with our custom buttons
     function syncSelectsToTriggers() {
         const selects = [
@@ -1090,7 +1097,8 @@ function initBottomSheetController() {
             { id: 'app-lang-select', btnId: 'lang-trigger-row', labelId: 'app-lang-value' },
             { id: 'app-fontsize-select', btnId: 'fontsize-trigger-row', labelId: 'app-fontsize-value' },
             { id: 'srs-words-sort', btnId: 'srs-words-sort-trigger', labelId: 'srs-words-sort-label' },
-            { id: 'archive-filter-select', btnId: 'filter-trigger-btn', labelId: 'filter-trigger-label' }
+            { id: 'archive-filter-select', btnId: 'filter-trigger-btn', labelId: 'filter-trigger-label' },
+            { id: 'game-pool-select', btnId: 'game-pool-trigger', labelId: 'game-pool-label' }
         ];
 
         selects.forEach(item => {

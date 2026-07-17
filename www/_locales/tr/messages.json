@@ -543,10 +543,10 @@
     "message": "Bu hafta {thisWeek} kelime eklendi"
   },
   "settings_app_lang": {
-    "message": "Eklenti Dili"
+    "message": "Uygulama Dili"
   },
   "settings_lang_auto": {
-    "message": "Otomatik (Tarayıcı Dili)"
+    "message": "Otomatik"
   },
   "settings_color_title": {
     "message": "Çeviri rengi:"

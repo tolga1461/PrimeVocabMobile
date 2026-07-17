@@ -2017,6 +2017,7 @@
     body.font-size-medium .cefr-badge,
     body.font-size-medium .hard-badge,
     body.font-size-medium .inactive-sub-badge { font-size: 12.5px !important; }
+    body.font-size-medium .games-filter-label { font-size: 13.5px !important; }
     body.font-size-medium .toast,
     body.font-size-medium #toast { font-size: 15px !important; }
     body.font-size-medium #settings-login-btn,
@@ -2192,6 +2193,7 @@
     body.font-size-large .cefr-badge,
     body.font-size-large .hard-badge,
     body.font-size-large .inactive-sub-badge { font-size: 14px !important; }
+    body.font-size-large .games-filter-label { font-size: 15px !important; }
     body.font-size-large .toast,
     body.font-size-large #toast { font-size: 17px !important; }
     body.font-size-large #settings-login-btn,
@@ -2758,7 +2760,10 @@
         <div id="games-hub" style="display: flex; flex-direction: column; gap: 12px;">
           <div class="games-filter-row">
             <span class="games-filter-label" data-i18n="game_pool_title">Çalışma Havuzu</span>
-            <select id="game-pool-select" class="game-pool-select">
+            <button type="button" class="bottom-sheet-trigger" id="game-pool-trigger">
+              <span class="trigger-label" id="game-pool-label">Tümü</span>
+            </button>
+            <select id="game-pool-select" style="display:none !important;">
               <option value="all" data-i18n="game_pool_all">Tümü</option>
               <option value="words" data-i18n="game_pool_words">Sadece Kelimeler</option>
               <option value="phrasal" data-i18n="game_pool_phrasal">Sadece Phrasal Verb'ler</option>

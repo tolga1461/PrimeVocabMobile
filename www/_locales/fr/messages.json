@@ -531,10 +531,10 @@
     "message": "{thisWeek} mots ajoutés cette semaine"
   },
   "settings_app_lang": {
-    "message": "Langue de l'extension"
+    "message": "Langue de l'application"
   },
   "settings_lang_auto": {
-    "message": "Automatique (par défaut)"
+    "message": "Automatique"
   },
   "settings_color_title": {
     "message": "Couleur de traduction :"
