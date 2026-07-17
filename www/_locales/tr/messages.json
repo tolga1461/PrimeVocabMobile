@@ -872,9 +872,6 @@
   "game_context_no_words": {
     "message": "Bu oyun için en az 4 kelime gerekli."
   },
-  "game_score_lbl": {
-    "message": "Skor: {score}"
-  },
   "game_errors_lbl": {
     "message": "Hata"
   },

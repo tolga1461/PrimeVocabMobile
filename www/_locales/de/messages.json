@@ -860,9 +860,6 @@
   "game_context_no_words": {
     "message": "Für dieses Spiel sind mindestens 4 Wörter erforderlich."
   },
-  "game_score_lbl": {
-    "message": "Punkte: {score}"
-  },
   "game_errors_lbl": {
     "message": "Fehler"
   },
