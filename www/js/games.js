@@ -466,12 +466,37 @@ function renderScrambleQuestion() {
         hiddenInput.addEventListener('input', (e) => {
             const val = hiddenInput.value;
             if (val.length > 1) {
-                const char = val.charAt(val.length - 1).toLowerCase();
-                const tile = scrDiv.querySelector(`.scramble-tile[data-char="${char}"]:not(.used)`);
-                if (tile && !tile.disabled) {
-                    tile.click();
+                let typedText = val.toLowerCase();
+                if (typedText.startsWith(' ')) {
+                    typedText = typedText.substring(1);
                 }
+                
+                if (typedText.length === 1) {
+                    const tile = scrDiv.querySelector(`.scramble-tile[data-char="${typedText}"]:not(.used)`);
+                    if (tile && !tile.disabled) {
+                        tile.click();
+                    }
+                } else if (typedText.length > 1) {
+                    // Autocomplete suggestion selected
+                    activeGame.scrambleInput = [];
+                    scrDiv.querySelectorAll('.scramble-tile').forEach(t => {
+                        t.classList.remove('used');
+                        t.disabled = false;
+                    });
+                    for (let i = 0; i < typedText.length; i++) {
+                        const char = typedText.charAt(i);
+                        const tile = scrDiv.querySelector(`.scramble-tile[data-char="${char}"]:not(.used)`);
+                        if (tile && !tile.disabled) {
+                            tile.classList.add('used');
+                            activeGame.scrambleInput.push({ char: tile.dataset.char, index: parseInt(tile.dataset.index) });
+                        }
+                    }
+                    updateScrambleUI();
+                }
+                
                 hiddenInput.value = ' ';
+                hiddenInput.blur();
+                hiddenInput.focus();
             } else if (val.length === 0) {
                 if (typeof activeGame.undoScramble === 'function') {
                     activeGame.undoScramble();
@@ -1353,7 +1378,7 @@ function renderGameBreakdownTable(gameStats) {
     const games = [
         { type: 'multiple_choice', titleKey: 'game_mc_title', fallback: 'Çoktan Seçmeli' },
         { type: 'fill_blank', titleKey: 'game_blank_title', fallback: 'Boşluk Doldurma' },
-        { type: 'scramble', titleKey: 'game_scramble_title', fallback: 'Kelime Karıştırma' },
+        { type: 'scramble', titleKey: 'game_scramble_title', fallback: 'Kelime Oluşturma' },
         { type: 'match', titleKey: 'game_match_title', fallback: 'Kelime Eşleştirme' },
         { type: 'dictation', titleKey: 'game_dictation_title', fallback: 'Dikte' },
         { type: 'context_choice', titleKey: 'game_context_title', fallback: 'Sahne Eşleştirme' },
