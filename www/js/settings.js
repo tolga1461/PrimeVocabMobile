@@ -800,7 +800,7 @@ if (resetSrsBtn) {
                 let { currentStreak, lastStudyDate, bestStreak } = srsStreakStats;
                 const legacyMaxStreak = savedWords.reduce((m, w) => Math.max(m, w.streak ?? 0), 0);
                 const updates = {};
-                if ((currentStreak === 0 || !currentStreak) && legacyMaxStreak > 0) {
+                if (!lastStudyDate && legacyMaxStreak > 0) {
                     srsStreakStats.currentStreak = legacyMaxStreak;
                     srsStreakStats.lastStudyDate = new Date().toDateString();
                     srsStreakStats.bestStreak = Math.max(bestStreak || 0, legacyMaxStreak);

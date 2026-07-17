@@ -184,7 +184,7 @@ function updateStudyStreak() {
         currentStreak = (lastStudyDate === yesterdayStr) ? currentStreak + 1 : 1;
         lastStudyDate = today;
         bestStreak = Math.max(bestStreak, currentStreak);
-        chrome.storage.local.set({ srsStreakStats: { currentStreak, lastStudyDate, bestStreak } }, () => {
+        chrome.storage.local.set({ srsStreakStats: { currentStreak, lastStudyDate, bestStreak, timestamp: Date.now() } }, () => {
             const streakEl = document.getElementById('srs-streak-count');
             if (streakEl)
                 streakEl.textContent = currentStreak;
@@ -252,11 +252,12 @@ function srsLoadHome() {
         document.getElementById('srs-total-count').textContent = savedWords.length;
         let currentStreak = srsStreakStats.currentStreak || 0;
         const legacyMaxStreak = savedWords.reduce((m, w) => Math.max(m, w.streak ?? 0), 0);
-        if (currentStreak === 0 && legacyMaxStreak > 0) {
+        if (!srsStreakStats.lastStudyDate && legacyMaxStreak > 0) {
             currentStreak = legacyMaxStreak;
             srsStreakStats.currentStreak = legacyMaxStreak;
             srsStreakStats.lastStudyDate = today;
             srsStreakStats.bestStreak = Math.max(srsStreakStats.bestStreak || 0, legacyMaxStreak);
+            srsStreakStats.timestamp = Date.now();
             chrome.storage.local.set({ srsStreakStats });
         }
         const yesterday = new Date();
