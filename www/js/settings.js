@@ -1015,7 +1015,17 @@ if (ankiExportBtn) {
                         else if (item.source.season != null)
                             sourceStr += ` (S${String(item.source.season).padStart(2, '0')})`;
                     }
-                    const cefr = cefrMap[word.toLowerCase()] || '';
+                    const wl = word.toLowerCase();
+                    const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
+                    const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+                    let cefr = '';
+                    if (isPhrasal) {
+                        cefr = 'Phrasal';
+                    } else if (isIdiom) {
+                        cefr = 'Idiom';
+                    } else {
+                        cefr = cefrMap[wl] || '';
+                    }
                     let extraInfo = sourceStr;
                     if (cefr)
                         extraInfo = extraInfo ? `${extraInfo} [${cefr}]` : `[${cefr}]`;

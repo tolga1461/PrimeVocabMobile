@@ -1690,5 +1690,23 @@
   },
   "opacity_100": {
     "message": "%100"
+  },
+  "game_pool_title": {
+    "message": "Çalışma Havuzu"
+  },
+  "game_pool_all": {
+    "message": "Tümü"
+  },
+  "game_pool_words": {
+    "message": "Sadece Kelimeler"
+  },
+  "game_pool_phrasal": {
+    "message": "Sadece Phrasal Verb'ler"
+  },
+  "game_pool_idiom": {
+    "message": "Sadece Deyimler"
+  },
+  "game_insufficient_filtered_words": {
+    "message": "Bu oyunu oynamak için bu havuzda en az 4 kayıtlı kelimeniz olmalıdır."
   }
 }

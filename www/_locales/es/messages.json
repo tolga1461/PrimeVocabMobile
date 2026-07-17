@@ -1684,5 +1684,23 @@
   },
   "opacity_100": {
     "message": "100%"
+  },
+  "game_pool_title": {
+    "message": "Grupo de estudio"
+  },
+  "game_pool_all": {
+    "message": "Todo"
+  },
+  "game_pool_words": {
+    "message": "Solo palabras"
+  },
+  "game_pool_phrasal": {
+    "message": "Solo Phrasal Verbs"
+  },
+  "game_pool_idiom": {
+    "message": "Solo modismos"
+  },
+  "game_insufficient_filtered_words": {
+    "message": "Debes tener al menos 4 palabras guardadas de este tipo para jugar."
   }
 }

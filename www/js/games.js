@@ -157,6 +157,21 @@ function loadGamesHub() {
         if (statsContainer)
             statsContainer.style.display = 'flex';
         renderStatsTab();
+
+        // Çalışma Havuzu seçimi yükleme ve bağlama
+        const poolSelect = document.getElementById('game-pool-select');
+        chrome.storage.local.get({ selectedGamePool: 'all' }, ({ selectedGamePool }) => {
+            if (poolSelect) {
+                poolSelect.value = selectedGamePool || 'all';
+                if (!poolSelect._listenerBound) {
+                    poolSelect.addEventListener('change', (e) => {
+                        chrome.storage.local.set({ selectedGamePool: e.target.value });
+                    });
+                    poolSelect._listenerBound = true;
+                }
+            }
+        });
+
         if (savedWords.length < 4) {
             gamesHub.style.display = 'none';
             const emptyDiv = document.createElement('div');
@@ -203,13 +218,36 @@ function loadGamesHub() {
 }
 function startMiniGame(gameType, savedWords, showLearned = true) {
     let eligibleWords = showLearned ? savedWords : savedWords.filter(w => !w.learned);
+    
+    // Çalışma Havuzu Filtresi Uygulama
+    const poolSelect = document.getElementById('game-pool-select');
+    const poolFilter = poolSelect ? poolSelect.value : 'all';
+    
+    if (poolFilter === 'phrasal') {
+        eligibleWords = eligibleWords.filter(w => typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[w.word.toLowerCase()]);
+    } else if (poolFilter === 'idiom') {
+        eligibleWords = eligibleWords.filter(w => typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[w.word.toLowerCase()]);
+    } else if (poolFilter === 'words') {
+        eligibleWords = eligibleWords.filter(w => {
+            const lower = w.word.toLowerCase();
+            const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[lower];
+            const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[lower];
+            return !isPhrasal && !isIdiom;
+        });
+    }
+
     if (gameType === 'context_choice') {
         eligibleWords = eligibleWords.filter(w => w.context && w.context.trim() && w.context.toLowerCase().includes(w.word.toLowerCase()));
     }
+
     if (eligibleWords.length < 4) {
-        const msg = (eligibleWords.length === 0 || gameType !== 'context_choice')
-            ? (getMessage('game_insufficient_unlearned_words') || 'Bu oyunu oynamak için öğrenilmemiş en az 4 kelime gerekli.')
-            : (getMessage('game_context_no_words') || 'Bu oyun için cümlesi olan en az 4 kelime gerekli.');
+        let msg = (getMessage('game_insufficient_unlearned_words') || 'Bu oyunu oynamak için öğrenilmemiş en az 4 kelime gerekli.');
+        if (poolFilter !== 'all') {
+            msg = getMessage('game_insufficient_filtered_words') || 'Bu oyunu oynamak için bu havuzda en az 4 kayıtlı kelimeniz olmalıdır.';
+        } else if (gameType === 'context_choice') {
+            msg = getMessage('game_context_no_words') || 'Bu oyun için cümlesi olan en az 4 kelime gerekli.';
+        }
+
         const existing = document.querySelector('.context-no-words-msg');
         if (existing)
             existing.remove();
@@ -1258,7 +1296,7 @@ function renderAchievementsTab() {
     });
 }
 // ── İstatistikler ─────────────────────────────────────────────────────────────
-const CEFR_COLORS = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'phrasal': '#818cf8', '??': '#64748b' };
+const CEFR_COLORS = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'phrasal': '#818cf8', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b' };
 function renderStatsTab() {
     chrome.storage.local.get({ savedWords: [], gameStats: {} }, ({ savedWords, gameStats }) => {
         renderGameStatsCards(gameStats);
@@ -1272,7 +1310,20 @@ function renderStatsTab() {
         }
         chrome.runtime.sendMessage({ action: 'batch_lookup_cefr', words: uniqueWords }, (res) => {
             const cefrMap = res?.cefrMap || {};
-            const annotated = savedWords.map(w => ({ ...w, cefrLevel: cefrMap[w.word.toLowerCase()] || '??' }));
+            const annotated = savedWords.map(w => {
+                const wl = w.word.toLowerCase();
+                const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
+                const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+                let cefrLevel;
+                if (isPhrasal) {
+                    cefrLevel = 'Phrasal';
+                } else if (isIdiom) {
+                    cefrLevel = 'Idiom';
+                } else {
+                    cefrLevel = cefrMap[wl] || '??';
+                }
+                return { ...w, cefrLevel };
+            });
             renderCefrRingChart(annotated);
         });
     });

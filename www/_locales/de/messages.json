@@ -1684,5 +1684,23 @@
   },
   "opacity_100": {
     "message": "100%"
+  },
+  "game_pool_title": {
+    "message": "Lernpool"
+  },
+  "game_pool_all": {
+    "message": "Alle"
+  },
+  "game_pool_words": {
+    "message": "Nur Wörter"
+  },
+  "game_pool_phrasal": {
+    "message": "Nur Phrasal Verbs"
+  },
+  "game_pool_idiom": {
+    "message": "Nur Idiome"
+  },
+  "game_insufficient_filtered_words": {
+    "message": "Sie müssen mindestens 4 gespeicherte Wörter dieser Art haben, um zu spielen."
   }
 }

@@ -22,7 +22,8 @@ const fcContextBack = document.getElementById('fc-context-back');
 const fcDoneSub = document.getElementById('fc-done-sub');
 const cefrColorsFC = {
     'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308',
-    'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', '??': '#64748b'
+    'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7',
+    'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b'
 };
 function fcShowCard() {
     const allRemaining = [...fcDeck.slice(fcIndex), ...fcAgainQueue];
@@ -501,7 +502,16 @@ document.getElementById('srs-start-btn').addEventListener('click', () => {
         chrome.runtime.sendMessage({ action: "batch_lookup_cefr", words: uniqueWords }, (res) => {
             const cefrMap = res?.cefrMap || {};
             deck.forEach(item => {
-                item.cefrLevel = cefrMap[item.word.toLowerCase()] || '';
+                const wl = item.word.toLowerCase();
+                const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
+                const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+                if (isPhrasal) {
+                    item.cefrLevel = 'Phrasal';
+                } else if (isIdiom) {
+                    item.cefrLevel = 'Idiom';
+                } else {
+                    item.cefrLevel = cefrMap[wl] || '';
+                }
             });
             srsQueue = deck;
             srsQueueIndex = 0;
@@ -653,11 +663,24 @@ function srsLoadWords() {
         const uniqueWords = [...new Set(savedWords.map(w => w.word.toLowerCase()))];
         chrome.runtime.sendMessage({ action: "batch_lookup_cefr", words: uniqueWords }, (res) => {
             const cefrMap = res?.cefrMap || {};
-            let words = savedWords.map((item, originalIndex) => ({
-                ...item,
-                cefrLevel: cefrMap[item.word.toLowerCase()] || '??',
-                originalIndex
-            }));
+            let words = savedWords.map((item, originalIndex) => {
+                const wl = item.word.toLowerCase();
+                const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
+                const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+                let cefrLevel;
+                if (isPhrasal) {
+                    cefrLevel = 'Phrasal';
+                } else if (isIdiom) {
+                    cefrLevel = 'Idiom';
+                } else {
+                    cefrLevel = cefrMap[wl] || '??';
+                }
+                return {
+                    ...item,
+                    cefrLevel,
+                    originalIndex
+                };
+            });
             if (sortVal === 'alphabetical') {
                 words.sort((a, b) => a.word.localeCompare(b.word));
             }
@@ -677,12 +700,19 @@ function srsLoadWords() {
                     return sortVal === 'time-asc' ? aTime - bTime : bTime - aTime;
                 });
             }
-            const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', '??': '#64748b' };
+            const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b' };
             words.forEach((item) => {
-                const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[item.word.toLowerCase()];
-                let badgeHtml = isPhrasal
-                    ? `<span class="cefr-badge phrasal-badge srs-word-badge" style="padding:2px 5px;border-radius:4px;font-weight:600;">Phrasal</span>`
-                    : (() => { const c = cefrColors[item.cefrLevel] || '#64748b'; return `<span class="cefr-badge srs-word-badge" style="color:${c};background:${c}22;border:1px solid ${c}44;padding:2px 5px;border-radius:4px;font-weight:600;">${item.cefrLevel}</span>`; })();
+                const isPhrasal = item.cefrLevel === 'Phrasal';
+                const isIdiom = item.cefrLevel === 'Idiom';
+                let badgeHtml;
+                if (isPhrasal) {
+                    badgeHtml = `<span class="cefr-badge phrasal-badge srs-word-badge" style="padding:2px 5px;border-radius:4px;font-weight:600;background:#c084fc22;border:1px solid #c084fc44;color:#c084fc;">Phrasal</span>`;
+                } else if (isIdiom) {
+                    badgeHtml = `<span class="cefr-badge idiom-badge srs-word-badge" style="padding:2px 5px;border-radius:4px;font-weight:600;background:#fb923c22;border:1px solid #fb923c44;color:#fb923c;">Idiom</span>`;
+                } else {
+                    const c = cefrColors[item.cefrLevel] || '#64748b';
+                    badgeHtml = `<span class="cefr-badge srs-word-badge" style="color:${c};background:${c}22;border:1px solid ${c}44;padding:2px 5px;border-radius:4px;font-weight:600;">${item.cefrLevel}</span>`;
+                }
                 let reviewBadgeHtml = '';
                 if (item.learned) {
                     reviewBadgeHtml = `<span class="srs-word-status-badge" style="color:#10b981;background:rgba(16,185,129,0.1);padding:2px 6px;border-radius:4px;font-weight:600;border:1px solid rgba(16,185,129,0.2);">${getMessage("srs_status_learned") || '📖 Learned'}</span>`;
@@ -845,7 +875,7 @@ function srsShowCard() {
     else if (hintContainer) {
         hintContainer.style.display = 'none';
     }
-    const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7' };
+    const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'Phrasal': '#c084fc', 'Idiom': '#fb923c' };
     const level = item.cefrLevel || '';
     const color = cefrColors[level] || '#64748b';
     ['srs-card-level', 'srs-card-level-back'].forEach(id => {

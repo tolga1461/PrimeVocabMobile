@@ -2756,6 +2756,15 @@
         </div>
 
         <div id="games-hub" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="games-filter-row">
+            <span class="games-filter-label" data-i18n="game_pool_title">Çalışma Havuzu</span>
+            <select id="game-pool-select" class="game-pool-select">
+              <option value="all" data-i18n="game_pool_all">Tümü</option>
+              <option value="words" data-i18n="game_pool_words">Sadece Kelimeler</option>
+              <option value="phrasal" data-i18n="game_pool_phrasal">Sadece Phrasal Verb'ler</option>
+              <option value="idiom" data-i18n="game_pool_idiom">Sadece Deyimler</option>
+            </select>
+          </div>
           <div class="games-grid">
             <div class="game-card" data-game="multiple_choice">
               <span class="game-card-icon">🎯</span>
@@ -3339,6 +3348,7 @@
   <script src="js/config.js?v=3"></script>
   <script src="js/utils_common.js?v=3"></script>
   <script src="js/phrasal_verbs.js?v=3"></script>
+  <script src="js/idioms.js?v=3"></script>
   <script src="js/cefr_data.js?v=3"></script>
   <script src="js/apiClient.js?v=3"></script>
   <script src="js/panel_utils.js?v=3"></script>
