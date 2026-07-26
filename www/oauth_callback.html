@@ -131,11 +131,11 @@
                         
                         document.querySelector('.loader').style.display = 'none';
                         document.querySelector('h2').innerText = "🎉 Giriş Başarılı!";
-                        document.querySelector('p').innerHTML = "Google hesabınız başarıyla bağlandı.<br>Bu sekmeyi kapatıp eklentinize geri dönebilirsiniz.";
+                        document.querySelector('p').innerHTML = "Oturumunuz başarıyla açıldı. Eklentiye dönülüyor...";
                         
                         setTimeout(() => {
                             try { window.close(); } catch (_) {}
-                        }, 2500);
+                        }, 500);
                     } else {
                         throw new Error("No access token in response");
                     }
