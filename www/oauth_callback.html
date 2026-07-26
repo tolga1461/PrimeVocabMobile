@@ -155,10 +155,18 @@
                     }));
 
                     // Eklentiye doğrudan yönlendirme URL'i oluştur
+                    function safeAtob(str) {
+                        try {
+                            let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+                            while (base64.length % 4) base64 += '=';
+                            return decodeURIComponent(atob(base64));
+                        } catch (e) { return atob(str); }
+                    }
+
                     let targetUrl = '';
                     if (finalState && finalState.startsWith('ext_')) {
                         try {
-                            const decodedUrl = atob(finalState.substring(4));
+                            const decodedUrl = safeAtob(finalState.substring(4));
                             if (decodedUrl.startsWith('moz-extension://') || decodedUrl.startsWith('chrome-extension://')) {
                                 targetUrl = decodedUrl + '?google_email=' + encodeURIComponent(userEmail) + '&access_token=' + encodeURIComponent(data.access_token) + '&refresh_token=' + encodeURIComponent(data.refresh_token || "") + '&picture=' + encodeURIComponent(userPicture);
                             }
