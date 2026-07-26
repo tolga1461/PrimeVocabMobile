@@ -192,7 +192,7 @@
                     console.error("OAuth Exchange Error:", err);
                     document.querySelector('.loader').style.display = 'none';
                     document.querySelector('h2').innerText = "Giriş Başarısız";
-                    document.querySelector('p').innerText = "Kimlik doğrulaması tamamlanamadı. Lütfen tekrar deneyin.";
+                    document.querySelector('p').innerText = "Hata Detayı: " + (err.message || err);
                 });
             }
         } else {
