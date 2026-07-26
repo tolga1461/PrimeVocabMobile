@@ -1198,23 +1198,6 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
     }
 });
 
-// Wire up full data reset button for mobile
-const resetDataBtn = document.getElementById('reset-data-btn');
-if (resetDataBtn) {
-    resetDataBtn.addEventListener('click', () => {
-        showCustomConfirm("settings_reset_all_confirm", () => {
-            chrome.storage.local.clear(() => {
-                showToast(getMessage("settings_reset_all_done") || "Tüm veriler başarıyla sıfırlandı!");
-                setTimeout(() => {
-                    if (window.Capacitor && window.Capacitor.isNativePlatform()) {
-                        window.location.replace("index.html");
-                    } else {
-                        window.location.reload();
-                    }
-                }, 1000);
-            });
-        }, "btn_confirm_reset", "game_btn_cancel");
-    });
-}
+
 
 
