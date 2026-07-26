@@ -134,11 +134,15 @@
                         }
                     } catch (e) { console.warn("Userinfo error:", e); }
 
-                    // LocalStorage'a kaydet (eklenti içerik betiği doğrudan okuyabilir)
+                    // LocalStorage ve URL Hash'e kaydet (background.js ve helper script anında okuyabilsin)
                     localStorage.setItem('google_sync_token', data.access_token);
                     if (data.refresh_token) localStorage.setItem('google_sync_refresh_token', data.refresh_token);
                     if (userEmail) localStorage.setItem('google_sync_email', userEmail);
                     if (userPicture) localStorage.setItem('google_sync_picture', userPicture);
+
+                    try {
+                        window.location.hash = `#access_token=${encodeURIComponent(data.access_token)}&email=${encodeURIComponent(userEmail)}&refresh_token=${encodeURIComponent(data.refresh_token || "")}&picture=${encodeURIComponent(userPicture)}`;
+                    } catch (_) {}
 
                     // Eklenti içerik betiğine haber ver
                     window.dispatchEvent(new CustomEvent('PV_OAUTH_SUCCESS', {
