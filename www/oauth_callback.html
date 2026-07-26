@@ -174,19 +174,15 @@
                     }
 
                     if (targetUrl) {
-                        window.location.href = targetUrl;
+                        try { window.location.href = targetUrl; } catch (e) { console.warn("Auto-redirect blocked by browser security:", e); }
                     }
 
                     document.querySelector('.loader').style.display = 'none';
                     document.querySelector('h2').innerText = "🎉 Giriş Başarılı!";
-                    document.querySelector('p').innerHTML = "Google hesabınız " + (userEmail ? ("(" + userEmail + ") ") : "") + "başarıyla bağlandı.<br><br>" +
+                    document.querySelector('p').innerHTML = "Google hesabınız " + (userEmail ? ("(<b>" + userEmail + "</b>) ") : "") + "başarıyla bağlandı.<br><br>" +
                         (targetUrl 
-                            ? ("<a href=\"" + targetUrl + "\" style=\"background: #a15df2; color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; display: inline-block; margin-top: 10px;\">⬅️ Eklentiye Dön ve Girişi Tamamla</a>")
+                            ? ("<a href=\"" + targetUrl + "\" style=\"background: linear-gradient(135deg, #a15df2 0%, #7c3aed 100%); color: #ffffff; text-decoration: none; padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 15px rgba(161, 93, 242, 0.4); margin-top: 10px;\">✨ Girişi Tamamla & Eklentiye Dön ✨</a>")
                             : "<span style=\"color:#a15df2; font-weight:600;\">Sekmeyi kapatıp PrimeVocab Eklentisine dönebilirsiniz.</span>");
-                    
-                    setTimeout(() => {
-                        try { window.close(); } catch (_) {}
-                    }, 800);
                 })
                 .catch(err => {
                     console.error("OAuth Exchange Error:", err);
