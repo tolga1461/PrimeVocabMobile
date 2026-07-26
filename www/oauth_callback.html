@@ -107,45 +107,15 @@
                     document.querySelector('.loader').style.display = 'none';
                 });
             } else {
-                // Eklenti & Genel Giriş Akışı (Eski/Yeni tüm eklenti sürümleri için sekmeyi kapatır, index.html'e yönlendirmez)
-                const redirectUri = window.location.origin + window.location.pathname;
-                fetch('/api/token.js', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ code: finalCode, redirect_uri: redirectUri })
-                })
-                .then(res => {
-                    if (!res.ok) throw new Error("Token exchange failed");
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.access_token) {
-                        const expiresAt = Date.now() + (parseInt(data.expires_in || '3600') * 1000);
-                        localStorage.setItem('google_sync_token', data.access_token);
-                        localStorage.setItem('google_sync_token_expires', expiresAt);
-                        if (data.refresh_token) {
-                            localStorage.setItem('google_sync_refresh_token', data.refresh_token);
-                        }
-                        
-                        document.querySelector('.loader').style.display = 'none';
-                        document.querySelector('h2').innerText = "🎉 Giriş Başarılı!";
-                        document.querySelector('p').innerHTML = "Google hesabınız başarıyla bağlandı.<br><br><span style=\"color:#a15df2; font-weight:600;\">Sekmeyi kapatıp PrimeVocab Eklentisine dönebilirsiniz.</span>";
-                        
-                        setTimeout(() => {
-                            try { window.close(); } catch (_) {}
-                        }, 500);
-                    } else {
-                        throw new Error("No access token in response");
-                    }
-                })
-                .catch(err => {
-                    console.error("Authentication error:", err);
-                    document.querySelector('.loader').style.display = 'none';
-                    document.querySelector('h2').innerText = "Giriş Başarısız";
-                    document.querySelector('p').innerText = "Kimlik doğrulaması tamamlanamadı. Lütfen tekrar deneyin.";
-                });
+                // Eklenti Akışı: Bırakalım jeton değişimini tek yetkili olarak eklenti (background.js) yapsın.
+                // Çift jeton değişimi (race condition / code already used hatası) tamamen engellenir.
+                document.querySelector('.loader').style.display = 'none';
+                document.querySelector('h2').innerText = "🎉 Giriş Başarılı!";
+                document.querySelector('p').innerHTML = "Google hesabınız başarıyla bağlandı.<br><br><span style=\"color:#a15df2; font-weight:600;\">Bu sekme kapatılıyor... PrimeVocab eklentinize dönebilirsiniz.</span>";
+                
+                setTimeout(() => {
+                    try { window.close(); } catch (_) {}
+                }, 1000);
             }
         } else {
             const error = urlParams.get('error') || hashParams.get('error');
