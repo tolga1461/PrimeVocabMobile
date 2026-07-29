@@ -2584,6 +2584,12 @@ input:checked+.slider:before {
   border: 1px solid rgba(168, 85, 247, 0.4) !important;
 }
 
+.cefr-badge.idiom-badge {
+  color: #fb923c !important;
+  background: rgba(249, 115, 22, 0.15) !important;
+  border: 1px solid rgba(249, 115, 22, 0.4) !important;
+}
+
 /* Keymapper Styles */
 .customizable-kbd {
   cursor: pointer;

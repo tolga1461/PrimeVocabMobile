@@ -500,9 +500,20 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     words = words.map((item) => {
         const originalIndex = savedWords.indexOf(item);
         const isActive = licenseType !== 'FREE' || originalIndex < activeCutoffCount;
+        const wl = item.word.toLowerCase();
+        const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
+        const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+        let cefrLevel;
+        if (isPhrasal) {
+            cefrLevel = 'Phrasal';
+        } else if (isIdiom) {
+            cefrLevel = 'Idiom';
+        } else {
+            cefrLevel = cefrMap[wl] || '??';
+        }
         return {
             ...item,
-            cefrLevel: cefrMap[item.word.toLowerCase()] || '??',
+            cefrLevel,
             originalIndex, // silme için orijinal index
             isActive
         };
@@ -513,6 +524,9 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     }
     else if (archiveFilter === 'phrasal') {
         words = words.filter(item => typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[item.word.toLowerCase()]);
+    }
+    else if (archiveFilter === 'idiom') {
+        words = words.filter(item => typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[item.word.toLowerCase()]);
     }
     else if (archiveFilter !== 'all') {
         words = words.filter(item => item.cefrLevel === archiveFilter);
@@ -716,7 +730,8 @@ function updateVirtualScroll() {
 
     const cefrColors = {
         'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308',
-        'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', '??': '#64748b'
+        'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7',
+        'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b'
     };
 
     for (let i = startIndex; i <= endIndex; i++) {
@@ -747,10 +762,15 @@ function updateVirtualScroll() {
         const item = virtualWords[i];
         const isExpanded = virtualExpandAll ? !collapsedIndices.has(item.originalIndex) : expandedIndices.has(item.originalIndex);
 
-        const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[item.word.toLowerCase()];
+        const wl = item.word.toLowerCase();
+        const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
+        const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
         let badgeHtml = '';
         if (isPhrasal) {
             badgeHtml = `<span class="cefr-badge phrasal-badge">Phrasal</span>`;
+        }
+        else if (isIdiom) {
+            badgeHtml = `<span class="cefr-badge idiom-badge">Idiom</span>`;
         }
         else {
             const color = cefrColors[item.cefrLevel] || '#64748b';

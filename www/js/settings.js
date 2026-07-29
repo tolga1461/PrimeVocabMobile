@@ -807,11 +807,18 @@ if (resetSrsBtn) {
                     srsStreakStats.timestamp = Date.now();
                     updates.srsStreakStats = srsStreakStats;
                 }
+                const now = Date.now();
                 updates.savedWords = savedWords.map(w => { 
                     const { interval, easeFactor, nextReview, reviewCount, streak, firstReviewDate, againCount, hard, learned, ...rest } = w; 
-                    return { ...rest, againCount: 0, hard: false, timestamp: Date.now() }; 
+                    return { ...rest, againCount: 0, hard: false, timestamp: now }; 
                 });
-                chrome.storage.local.set(updates, () => { showToast(getMessage("settings_reset_srs_done")); updateReviewBadge(); });
+                chrome.storage.local.set(updates, () => { 
+                    showToast(getMessage("settings_reset_srs_done")); 
+                    updateReviewBadge(); 
+                    if (typeof performGoogleDriveSync === 'function') {
+                        performGoogleDriveSync(false).catch(() => {});
+                    }
+                });
             });
         }, "btn_confirm_reset", "game_btn_cancel");
     });
@@ -821,14 +828,15 @@ if (resetStreakBtn) {
     resetStreakBtn.addEventListener('click', () => {
         showCustomConfirm("settings_reset_streak_confirm", () => {
             chrome.storage.local.get({ savedWords: [] }, ({ savedWords }) => {
+                const now = Date.now();
                 const cleanedWords = savedWords.map(w => { 
                     if (w.streak !== undefined) {
                         const { streak, ...rest } = w;
-                        return { ...rest, timestamp: Date.now() };
+                        return { ...rest, timestamp: now };
                     } 
                     return w; 
                 });
-                chrome.storage.local.set({ savedWords: cleanedWords, srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0, timestamp: Date.now() } }, () => {
+                chrome.storage.local.set({ savedWords: cleanedWords, srsStreakStats: { currentStreak: 0, lastStudyDate: '', bestStreak: 0, timestamp: now } }, () => {
                     showToast(getMessage("settings_reset_streak_done"));
                     const streakEl = document.getElementById('srs-streak-count');
                     if (streakEl)
@@ -837,6 +845,9 @@ if (resetStreakBtn) {
                     if (bestContainer) {
                         bestContainer.textContent = '';
                         bestContainer.style.display = 'none';
+                    }
+                    if (typeof performGoogleDriveSync === 'function') {
+                        performGoogleDriveSync(false).catch(() => {});
                     }
                 });
             });
@@ -847,11 +858,15 @@ const resetGamesBtn = document.getElementById('reset-games-btn');
 if (resetGamesBtn) {
     resetGamesBtn.addEventListener('click', () => {
         showCustomConfirm("settings_reset_games_confirm", () => {
-            chrome.storage.local.set({ gameStats: { timestamp: Date.now() }, achievements: { timestamp: Date.now() } }, () => {
+            const now = Date.now();
+            chrome.storage.local.set({ gameStats: { timestamp: now }, achievements: { timestamp: now } }, () => {
                 showToast(getMessage("settings_reset_games_done"));
                 const expDisplay = document.getElementById('user-exp-display');
                 if (expDisplay)
                     expDisplay.textContent = '0';
+                if (typeof performGoogleDriveSync === 'function') {
+                    performGoogleDriveSync(false).catch(() => {});
+                }
             });
         }, "btn_confirm_reset", "game_btn_cancel");
     });
