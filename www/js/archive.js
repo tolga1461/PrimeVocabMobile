@@ -838,7 +838,11 @@ function updateVirtualScroll() {
       </div>
       <div class="word-item-collapse-content" style="${isExpanded ? 'display:block' : 'display:none'}">
         ${item.context
-                ? `<div class="word-item-context">${esc(item.context)}</div>`
+                ? `<div class="word-item-context">${esc(item.context)}</div>
+                   <div style="margin-top:4px; text-align:left;">
+                     <button type="button" class="archive-context-trans-btn" style="background:rgba(99,102,241,0.12); border:1px solid rgba(99,102,241,0.3); color:#818cf8; font-size:10.5px; padding:3px 8px; border-radius:10px; cursor:pointer; font-weight:600; font-family:inherit;" data-i18n="translate_sentence_btn">🌐 Google ile Cümleyi Çevir</button>
+                     <div class="archive-context-trans-result" style="display:none; margin-top:4px;"></div>
+                   </div>`
                 : ''}
         ${familyHtml}
       </div>
@@ -1048,6 +1052,16 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
             showRowTranslation(fw, fw.dataset.word);
         });
     });
+    const archiveTransBtn = div.querySelector('.archive-context-trans-btn');
+    if (archiveTransBtn && item.context) {
+        archiveTransBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const resEl = div.querySelector('.archive-context-trans-result');
+            if (typeof translateContextSentence === 'function') {
+                translateContextSentence(item.context, resEl);
+            }
+        });
+    }
     const transEl = div.querySelector('.word-item-trans');
     if (transEl) {
         transEl.title = getMessage('tooltip_edit_translation') || 'Düzenlemek için çift tıkla';

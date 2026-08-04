@@ -236,3 +236,157 @@ async function shareExportFile(fileName, fileContent, mimeType) {
     }
 }
 
+/**
+ * Cümle Çevirisi (Google Translate API + Web Fallback)
+ */
+async function translateContextSentence(sentence, resultEl) {
+    if (!sentence || !sentence.trim()) return;
+    const cleanSentence = sentence.replace(/^["'“«]+|["'”»]+$/g, '').trim();
+    if (!cleanSentence) return;
+
+    const userLang = (typeof getMessage === 'function' ? (getMessage("@@ui_locale") || "tr") : "tr").split('_')[0].split('-')[0];
+    const googleWebUrl = `https://translate.google.com/?sl=auto&tl=${userLang}&text=${encodeURIComponent(cleanSentence)}&op=translate`;
+
+    if (resultEl) {
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = `<span style="font-size:11px; color:var(--text-muted); opacity:0.8;">⏳ ${typeof getMessage === 'function' ? (getMessage("loading") || "Çevriliyor...") : "Çevriliyor..."}</span>`;
+    }
+
+    try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${userLang}&dt=t&q=${encodeURIComponent(cleanSentence)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        let translatedText = '';
+        if (data && data[0]) {
+            data[0].forEach(part => {
+                if (part && part[0]) translatedText += part[0];
+            });
+        }
+
+        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Translate'de Aç ↗") : "Google Translate'de Aç ↗";
+
+        if (resultEl) {
+            if (translatedText) {
+                resultEl.innerHTML = `
+                    <div style="font-size:12.5px; color:#818cf8; font-weight:600; margin-top:2px; line-height:1.4; background:rgba(99,102,241,0.08); padding:6px 10px; border-radius:8px; border:1px solid rgba(99,102,241,0.2); text-align:left;">
+                        💬 ${esc(translatedText)}
+                    </div>
+                    <div style="margin-top:4px; text-align:center;">
+                        <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:10.5px; color:var(--text-muted); text-decoration:underline; display:inline-flex; align-items:center; gap:3px;">
+                            🌐 ${openInGTranslateMsg}
+                        </a>
+                    </div>
+                `;
+            } else {
+                window.open(googleWebUrl, '_blank');
+                resultEl.style.display = 'none';
+            }
+        } else {
+            window.open(googleWebUrl, '_blank');
+        }
+    } catch (err) {
+        console.warn("Sentence translation failed:", err);
+        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Translate'de Aç ↗") : "Google Translate'de Aç ↗";
+        if (resultEl) {
+            resultEl.innerHTML = `
+                <div style="margin-top:4px; text-align:center;">
+                    <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:#818cf8; text-decoration:underline;">
+                        🌐 ${openInGTranslateMsg}
+                    </a>
+                </div>
+            `;
+        } else {
+            window.open(googleWebUrl, '_blank');
+        }
+    }
+}
+
+// Floating selection tooltip for translating any selected text with Google Translate
+(function initSelectionTranslateTooltip() {
+    let tooltipEl = null;
+
+    function removeTooltip() {
+        if (tooltipEl) {
+            tooltipEl.remove();
+            tooltipEl = null;
+        }
+    }
+
+    document.addEventListener('selectionchange', () => {
+        const sel = window.getSelection();
+        if (!sel || sel.isCollapsed || !sel.toString().trim()) {
+            setTimeout(() => {
+                const s = window.getSelection();
+                if (!s || s.isCollapsed || !s.toString().trim()) {
+                    removeTooltip();
+                }
+            }, 300);
+        }
+    });
+
+    document.addEventListener('mouseup', handleSelection);
+    document.addEventListener('touchend', (e) => {
+        setTimeout(handleSelection, 200);
+    });
+
+    function handleSelection(e) {
+        const sel = window.getSelection();
+        if (!sel || sel.isCollapsed) return;
+        const selectedText = sel.toString().trim();
+        if (!selectedText || selectedText.length < 2) return;
+
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
+
+        removeTooltip();
+
+        try {
+            const range = sel.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            if (!rect || (rect.width === 0 && rect.height === 0)) return;
+
+            tooltipEl = document.createElement('div');
+            tooltipEl.style.position = 'fixed';
+            tooltipEl.style.zIndex = '99999';
+            tooltipEl.style.left = `${Math.max(10, Math.min(window.innerWidth - 150, rect.left + (rect.width / 2) - 60))}px`;
+            tooltipEl.style.top = `${Math.max(10, rect.top - 38)}px`;
+            tooltipEl.style.background = '#1e1b4b';
+            tooltipEl.style.color = '#818cf8';
+            tooltipEl.style.border = '1px solid #6366f1';
+            tooltipEl.style.boxShadow = '0 4px 14px rgba(0,0,0,0.4)';
+            tooltipEl.style.padding = '4px 10px';
+            tooltipEl.style.borderRadius = '20px';
+            tooltipEl.style.fontSize = '11px';
+            tooltipEl.style.fontWeight = '700';
+            tooltipEl.style.cursor = 'pointer';
+            tooltipEl.style.userSelect = 'none';
+            tooltipEl.style.display = 'flex';
+            tooltipEl.style.alignItems = 'center';
+            tooltipEl.style.gap = '4px';
+            tooltipEl.innerHTML = `<span>🌐</span> <span>Google Çeviri</span>`;
+
+            tooltipEl.addEventListener('click', (evt) => {
+                evt.stopPropagation();
+                evt.preventDefault();
+                const userLang = (typeof getMessage === 'function' ? (getMessage("@@ui_locale") || "tr") : "tr").split('_')[0].split('-')[0];
+                const googleWebUrl = `https://translate.google.com/?sl=auto&tl=${userLang}&text=${encodeURIComponent(selectedText)}&op=translate`;
+                window.open(googleWebUrl, '_blank');
+                removeTooltip();
+            });
+
+            document.body.appendChild(tooltipEl);
+        } catch (err) {
+            console.warn("Selection tooltip error:", err);
+        }
+    }
+
+    document.addEventListener('mousedown', (e) => {
+        if (tooltipEl && !tooltipEl.contains(e.target)) {
+            removeTooltip();
+        }
+    });
+})();
+
+
+

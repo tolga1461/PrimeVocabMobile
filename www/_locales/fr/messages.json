@@ -206,6 +206,12 @@
   "filter_collocation": {
     "message": "🔗 Collocation"
   },
+  "translate_sentence_btn": {
+    "message": "🌐 Traduire la phrase avec Google"
+  },
+  "open_in_google_translate": {
+    "message": "Ouvrir dans Google Traduction ↗"
+  },
   "srs_next_card": {
     "message": "Prochaine carte : "
   },

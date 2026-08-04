@@ -885,8 +885,8 @@ async function start() {
     
     const tokenValid = cachedToken && cachedExpires && !isNearExpiry(cachedExpires);
     if (tokenValid) {
-        const savedEmail = localStorage.getItem('local_googleSyncEmail');
-        if (!savedEmail) {
+        const localData = await new Promise(resolve => chrome.storage.local.get({ googleSyncEmail: '' }, resolve));
+        if (!localData.googleSyncEmail) {
             // Token exists but email not saved → complete the login silently
             console.log("[PV-core] Detected pending OAuth token, completing login...");
             try {
@@ -897,6 +897,7 @@ async function start() {
                         googleSyncPicture: userInfo.picture || ''
                     }, resolve)
                 );
+                localStorage.setItem('local_googleSyncEmail', userInfo.email);
                 console.log("[PV-core] Auto-login complete:", userInfo.email);
                 updateProfileUI();
             } catch (e) {

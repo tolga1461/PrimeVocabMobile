@@ -2680,6 +2680,10 @@
               </div>
               <div class="srs-card-word" id="srs-card-word" lang="en"></div>
               <div class="srs-card-context" id="srs-card-context"></div>
+              <div id="srs-context-trans-wrap" style="display:none; margin: 4px 0 8px 0; text-align: center;">
+                <button type="button" id="srs-context-trans-btn" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 11.5px; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: inherit;" data-i18n="translate_sentence_btn">🌐 Google ile Cümleyi Çevir</button>
+                <div id="srs-context-trans-result" style="display:none; margin-top: 6px;"></div>
+              </div>
               <div id="srs-card-hint-container"
                 style="display:none; margin: 15px 0 5px 0; display: flex; flex-direction: column; align-items: center;">
                 <button class="srs-hint-btn" id="srs-hint-btn"
@@ -2703,6 +2707,10 @@
               <div class="srs-card-word" id="srs-card-word-back" lang="en"></div>
               <div class="srs-card-translation" id="srs-card-translation"></div>
               <div class="srs-card-context" id="srs-card-context-back"></div>
+              <div id="srs-context-back-trans-wrap" style="display:none; margin: 4px 0 8px 0; text-align: center;">
+                <button type="button" id="srs-context-back-trans-btn" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 11.5px; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: inherit;" data-i18n="translate_sentence_btn">🌐 Google ile Cümleyi Çevir</button>
+                <div id="srs-context-back-trans-result" style="display:none; margin-top: 6px;"></div>
+              </div>
               <div class="srs-rating-row">
                 <button class="srs-rate-btn srs-rate-again" id="srs-rate-again">
                   <span class="srs-rate-label" data-i18n="srs_rate_again">Bilmedim</span>
@@ -2910,8 +2918,8 @@
               </div>
             </div>
           </div>
-          <h3 style="margin: 0; font-size: 20px; color: var(--text); font-weight: 800; font-family: var(--font);" id="profile-username" data-i18n="profile_user_title">Kullanıcı</h3>
-          <small style="color: var(--text-muted); font-size: 13px; font-weight: 500; display: block; margin-top: 4px; font-family: var(--font);" id="profile-email" data-i18n="profile_local_user">Yerel Kullanıcı</small>
+          <h3 style="margin: 0; font-size: 20px; color: var(--text); font-weight: 800; font-family: var(--font);" id="profile-username">Kullanıcı</h3>
+          <small style="color: var(--text-muted); font-size: 13px; font-weight: 500; display: block; margin-top: 4px; font-family: var(--font);" id="profile-email">Yerel Kullanıcı</small>
           <div id="profile-membership-badge" style="margin-top: 10px; font-size: 11px; font-weight: 700; display: inline-block; padding: 4px 12px; border-radius: 12px; text-transform: uppercase;">FREE</div>
         </div>
 
@@ -3232,12 +3240,20 @@
             <div class="fc-level-badge" id="fc-level-badge"></div>
             <div class="fc-word" id="fc-word" lang="en">word</div>
             <div class="fc-context" id="fc-context"></div>
+            <div id="fc-context-trans-wrap" style="display:none; margin: 4px 0 8px 0; text-align: center;">
+              <button type="button" id="fc-context-trans-btn" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 11.5px; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: inherit;" data-i18n="translate_sentence_btn">🌐 Google ile Cümleyi Çevir</button>
+              <div id="fc-context-trans-result" style="display:none; margin-top: 6px;"></div>
+            </div>
             <button class="fc-reveal-btn" id="fc-reveal-btn" data-i18n="srs_card_reveal_btn">Çeviriyi Göster</button>
           </div>
           <div class="fc-back" id="fc-back" style="display:none">
             <div class="fc-word" id="fc-word-back" lang="en">word</div>
             <div class="fc-translation" id="fc-translation">çeviri</div>
             <div class="fc-context" id="fc-context-back"></div>
+            <div id="fc-context-back-trans-wrap" style="display:none; margin: 4px 0 8px 0; text-align: center;">
+              <button type="button" id="fc-context-back-trans-btn" style="background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.3); color: #818cf8; font-size: 11.5px; padding: 4px 10px; border-radius: 12px; cursor: pointer; font-weight: 600; font-family: inherit;" data-i18n="translate_sentence_btn">🌐 Google ile Cümleyi Çevir</button>
+              <div id="fc-context-back-trans-result" style="display:none; margin-top: 6px;"></div>
+            </div>
             <div class="fc-actions">
               <button class="fc-btn fc-again" id="fc-again" data-i18n="fc_again_btn">Tekrar 🔁</button>
               <button class="fc-btn fc-good" id="fc-good" data-i18n="fc_good_btn">Bildim ✓</button>
