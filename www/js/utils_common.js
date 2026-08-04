@@ -237,9 +237,9 @@ async function shareExportFile(fileName, fileContent, mimeType) {
 }
 
 /**
- * Cümle Çevirisi (Google Translate API + App / Web Fallback)
+ * Cümle Çevirisi (Google Translate API)
  */
-async function translateContextSentence(sentence, resultEl) {
+async function translateContextSentence(sentence, resultEl, btnEl = null) {
     if (!sentence || !sentence.trim()) return;
     const cleanSentence = sentence.replace(/^["'“«]+|["'”»]+$/g, '').trim();
     if (!cleanSentence) return;
@@ -264,9 +264,6 @@ async function translateContextSentence(sentence, resultEl) {
             }
         }
     } catch(e) {}
-
-    const googleIconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="#4285F4" style="vertical-align: text-bottom; display: inline-block;"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>`;
-    const googleWebUrl = `https://translate.google.com/?sl=auto&tl=${targetLang}&text=${encodeURIComponent(cleanSentence)}&op=translate`;
 
     if (resultEl) {
         resultEl.style.display = 'block';
@@ -297,40 +294,24 @@ async function translateContextSentence(sentence, resultEl) {
             }
         }
 
-        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Çeviri Uygulamasında Aç ↗") : "Google Çeviri Uygulamasında Aç ↗";
-
         if (resultEl) {
             if (translatedText && translatedText.trim().toLowerCase() !== cleanSentence.toLowerCase()) {
                 resultEl.innerHTML = `
                     <div style="font-size:12.5px; color:#818cf8; font-weight:600; margin-top:3px; line-height:1.4; background:rgba(99,102,241,0.08); padding:6px 10px; border-radius:8px; border:1px solid rgba(99,102,241,0.2); text-align:left;">
                         💬 ${esc(translatedText)}
                     </div>
-                    <div style="margin-top:4px; text-align:center;">
-                        <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:10.5px; color:#818cf8; text-decoration:underline; display:inline-flex; align-items:center; gap:4px; font-weight:600;">
-                            ${googleIconSvg} ${openInGTranslateMsg}
-                        </a>
-                    </div>
                 `;
+                if (btnEl) {
+                    btnEl.style.display = 'none';
+                }
             } else {
-                window.open(googleWebUrl, '_blank');
                 resultEl.style.display = 'none';
             }
-        } else {
-            window.open(googleWebUrl, '_blank');
         }
     } catch (err) {
         console.warn("Sentence translation failed:", err);
-        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Çeviri Uygulamasında Aç ↗") : "Google Çeviri Uygulamasında Aç ↗";
         if (resultEl) {
-            resultEl.innerHTML = `
-                <div style="margin-top:4px; text-align:center;">
-                    <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:#818cf8; text-decoration:underline; display:inline-flex; align-items:center; gap:4px; font-weight:600;">
-                        ${googleIconSvg} ${openInGTranslateMsg}
-                    </a>
-                </div>
-            `;
-        } else {
-            window.open(googleWebUrl, '_blank');
+            resultEl.style.display = 'none';
         }
     }
 }

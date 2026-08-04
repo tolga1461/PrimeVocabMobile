@@ -71,9 +71,13 @@ function fcShowCard() {
     const fcWrapBack = document.getElementById('fc-context-back-trans-wrap');
     const fcResFront = document.getElementById('fc-context-trans-result');
     const fcResBack = document.getElementById('fc-context-back-trans-result');
+    const fcBtnFront = document.getElementById('fc-context-trans-btn');
+    const fcBtnBack = document.getElementById('fc-context-back-trans-btn');
 
     if (fcResFront) { fcResFront.style.display = 'none'; fcResFront.innerHTML = ''; }
     if (fcResBack) { fcResBack.style.display = 'none'; fcResBack.innerHTML = ''; }
+    if (fcBtnFront) { fcBtnFront.style.display = 'inline-flex'; }
+    if (fcBtnBack) { fcBtnBack.style.display = 'inline-flex'; }
 
     if (item.context && item.context.trim()) {
         if (fcWrapFront) fcWrapFront.style.display = 'block';
@@ -936,9 +940,13 @@ function srsShowCard() {
     const srsWrapBack = document.getElementById('srs-context-back-trans-wrap');
     const srsResFront = document.getElementById('srs-context-trans-result');
     const srsResBack = document.getElementById('srs-context-back-trans-result');
+    const srsBtnFront = document.getElementById('srs-context-trans-btn');
+    const srsBtnBack = document.getElementById('srs-context-back-trans-btn');
 
     if (srsResFront) { srsResFront.style.display = 'none'; srsResFront.innerHTML = ''; }
     if (srsResBack) { srsResBack.style.display = 'none'; srsResBack.innerHTML = ''; }
+    if (srsBtnFront) { srsBtnFront.style.display = 'inline-flex'; }
+    if (srsBtnBack) { srsBtnBack.style.display = 'inline-flex'; }
 
     if (item.context && item.context.trim()) {
         if (srsWrapFront) srsWrapFront.style.display = 'block';
@@ -977,7 +985,7 @@ if (srsTransBtn) {
     srsTransBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (srsQueue && srsQueue[srsQueueIndex] && srsQueue[srsQueueIndex].context) {
-            translateContextSentence(srsQueue[srsQueueIndex].context, document.getElementById('srs-context-trans-result'));
+            translateContextSentence(srsQueue[srsQueueIndex].context, document.getElementById('srs-context-trans-result'), srsTransBtn);
         }
     });
 }
@@ -986,7 +994,7 @@ if (srsTransBackBtn) {
     srsTransBackBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (srsQueue && srsQueue[srsQueueIndex] && srsQueue[srsQueueIndex].context) {
-            translateContextSentence(srsQueue[srsQueueIndex].context, document.getElementById('srs-context-back-trans-result'));
+            translateContextSentence(srsQueue[srsQueueIndex].context, document.getElementById('srs-context-back-trans-result'), srsTransBackBtn);
         }
     });
 }
@@ -996,7 +1004,7 @@ if (fcTransBtn) {
     fcTransBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (fcDeck && fcDeck[fcIndex] && fcDeck[fcIndex].context) {
-            translateContextSentence(fcDeck[fcIndex].context, document.getElementById('fc-context-trans-result'));
+            translateContextSentence(fcDeck[fcIndex].context, document.getElementById('fc-context-trans-result'), fcTransBtn);
         }
     });
 }
@@ -1005,7 +1013,7 @@ if (fcTransBackBtn) {
     fcTransBackBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (fcDeck && fcDeck[fcIndex] && fcDeck[fcIndex].context) {
-            translateContextSentence(fcDeck[fcIndex].context, document.getElementById('fc-context-back-trans-result'));
+            translateContextSentence(fcDeck[fcIndex].context, document.getElementById('fc-context-back-trans-result'), fcTransBackBtn);
         }
     });
 }

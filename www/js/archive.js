@@ -1058,7 +1058,7 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
             e.stopPropagation();
             const resEl = div.querySelector('.archive-context-trans-result');
             if (typeof translateContextSentence === 'function') {
-                translateContextSentence(item.context, resEl);
+                translateContextSentence(item.context, resEl, archiveTransBtn);
             }
         });
     }
