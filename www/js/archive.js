@@ -60,14 +60,14 @@ function showSourcePopup(anchorEl, item) {
     if (src.showTitle) lines.push(`📺 <strong>${esc(src.showTitle)}</strong>`);
     if (src.title && src.title !== src.showTitle) lines.push(`🎬 ${esc(src.title)}`);
     if (src.season != null && src.episode != null) {
-        lines.push(`📂 S${String(src.season).padStart(2,'0')} E${String(src.episode).padStart(2,'0')}`);
+        lines.push(`📂 S${String(src.season).padStart(2, '0')} E${String(src.episode).padStart(2, '0')}`);
     } else if (src.season != null) {
         lines.push(`📂 Sezon ${src.season}`);
     }
     if (src.time != null) {
         const totalSec = Math.floor(src.time);
-        const m = Math.floor(totalSec / 60).toString().padStart(2,'0');
-        const s = (totalSec % 60).toString().padStart(2,'0');
+        const m = Math.floor(totalSec / 60).toString().padStart(2, '0');
+        const s = (totalSec % 60).toString().padStart(2, '0');
         lines.push(`⏱️ ${m}:${s}`);
     }
     if (lines.length === 0) return;
@@ -219,7 +219,7 @@ function estimateItemHeight(item, showFamily, showTags, isExpanded) {
     }
 
     // Exact base height matching physical heights: header (38/44/48) + padding (24) + safe buffer
-    let height = 64; 
+    let height = 64;
     if (scale === 1.15) height = 70;
     else if (scale === 1.30) height = 76;
 
@@ -307,8 +307,8 @@ function updateTagDropdown(savedWords) {
     if (!sel)
         return;
     const tags = [...new Set(savedWords
-            .flatMap(w => w.tags || [])
-            .filter(t => t && t.trim()))].sort();
+        .flatMap(w => w.tags || [])
+        .filter(t => t && t.trim()))].sort();
     sel.style.display = 'none';
     const current = archiveTag;
     sel.innerHTML = `<option value="all">${getMessage("all_tags_option") || '🏷️ Tüm etiketler'}</option>`;
@@ -474,7 +474,7 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
         limitContainer.style.display = 'none';
         limitContainer.innerHTML = '';
     }
-    
+
     virtualLicenseType = licenseType;
 
     // Sıralama
@@ -490,7 +490,7 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
         words.sort((a, b) => a.word.localeCompare(b.word));
     else if (archiveSort === 'za')
         words.sort((a, b) => b.word.localeCompare(a.word));
-    
+
     // FREE kullanıcılar için son 20 kelimenin sınırını belirleyelim
     // savedWords dizisine yeni eklenen kelimeler en başa unshift ile eklenmektedir.
     // Dolayısıyla dizinin ilk 20 elemanı (indeks 0'dan 19'a kadar) en yeni kelimelerdir ve aktif kalmalıdır.
@@ -503,11 +503,14 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
         const wl = item.word.toLowerCase();
         const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
         const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+        const isCollocation = wl.trim().includes(' ') && !isPhrasal && !isIdiom;
         let cefrLevel;
         if (isPhrasal) {
             cefrLevel = 'Phrasal';
         } else if (isIdiom) {
             cefrLevel = 'Idiom';
+        } else if (isCollocation) {
+            cefrLevel = 'COL';
         } else {
             cefrLevel = cefrMap[wl] || '??';
         }
@@ -527,6 +530,9 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     }
     else if (archiveFilter === 'idiom') {
         words = words.filter(item => typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[item.word.toLowerCase()]);
+    }
+    else if (archiveFilter === 'collocation' || archiveFilter === 'COL') {
+        words = words.filter(item => item.cefrLevel === 'COL');
     }
     else if (archiveFilter !== 'all') {
         words = words.filter(item => item.cefrLevel === archiveFilter);
@@ -640,16 +646,16 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             // which causes lastScrollTop comparisons to flip direction repeatedly.
             const maxScroll = Math.max(0, wordList.scrollHeight - wordList.clientHeight);
             const currentScrollTop = Math.min(Math.max(0, wordList.scrollTop), maxScroll);
-            
+
             if (isTogglingDetails) {
                 lastScrollTop = currentScrollTop;
                 return;
             }
-            
+
             // Larger threshold (120px) keeps bar state stable before the very end,
             // preventing isNearBottom from toggling rapidly as layout shifts.
             const isNearBottom = (currentScrollTop + wordList.clientHeight >= wordList.scrollHeight - 120);
-            
+
             // Auto-hiding header (Twitter style) toggling on .scrolled class
             const archivePanel = document.getElementById('panel-archive');
             if (archivePanel) {
@@ -672,7 +678,7 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
                     }
                 }
             }
-            
+
             // Auto-hiding bottom navigation bar (Twitter style) toggling on .app root container
             // NOTE: !isNearBottom guard is applied to the "remove" branch too so that
             // header and nav bar remain in sync and neither can toggle near the bottom.
@@ -731,7 +737,7 @@ function updateVirtualScroll() {
     const cefrColors = {
         'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308',
         'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7',
-        'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b'
+        'COL': '#38bdf8', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b'
     };
 
     for (let i = startIndex; i <= endIndex; i++) {
@@ -741,12 +747,12 @@ function updateVirtualScroll() {
                 existingEl.style.top = `${itemOffsets[i]}px`;
                 const item = virtualWords[i];
                 const isExpanded = virtualExpandAll ? !collapsedIndices.has(item.originalIndex) : expandedIndices.has(item.originalIndex);
-                
+
                 existingEl.classList.toggle('word-item-expanded', isExpanded);
                 existingEl.classList.toggle('word-item-inactive', !item.isActive);
                 const itemHeight = estimateItemHeight(item, virtualShowFamily, virtualShowTags, isExpanded);
                 existingEl.style.height = `${itemHeight - 6}px`;
-                
+
                 const collapseContent = existingEl.querySelector('.word-item-collapse-content');
                 if (collapseContent) {
                     collapseContent.style.display = isExpanded ? 'block' : 'none';
@@ -765,12 +771,16 @@ function updateVirtualScroll() {
         const wl = item.word.toLowerCase();
         const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
         const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+        const isCollocation = item.cefrLevel === 'COL' || (wl.trim().includes(' ') && !isPhrasal && !isIdiom);
         let badgeHtml = '';
         if (isPhrasal) {
             badgeHtml = `<span class="cefr-badge phrasal-badge">Phrasal</span>`;
         }
         else if (isIdiom) {
             badgeHtml = `<span class="cefr-badge idiom-badge">Idiom</span>`;
+        }
+        else if (isCollocation) {
+            badgeHtml = `<span class="cefr-badge collocation-badge" style="color:#38bdf8;background:#38bdf822;border:1px solid #38bdf844">COL</span>`;
         }
         else {
             const color = cefrColors[item.cefrLevel] || '#64748b';
@@ -828,8 +838,8 @@ function updateVirtualScroll() {
       </div>
       <div class="word-item-collapse-content" style="${isExpanded ? 'display:block' : 'display:none'}">
         ${item.context
-            ? `<div class="word-item-context">${esc(item.context)}</div>`
-            : ''}
+                ? `<div class="word-item-context">${esc(item.context)}</div>`
+                : ''}
         ${familyHtml}
       </div>
       ${tagsHtml}
@@ -904,11 +914,11 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
             const header = div.querySelector('.word-item-header');
             const collapse = div.querySelector('.word-item-collapse-content');
             const tags = div.querySelector('.word-item-tags');
-            
+
             if (header) header.style.transform = `translateX(${currentX}px)`;
             if (collapse) collapse.style.transform = `translateX(${currentX}px)`;
             if (tags) tags.style.transform = `translateX(${currentX}px)`;
-            
+
             // Show red background wrapper
             const swipeBg = div.querySelector('.swipe-delete-bg');
             if (swipeBg) {
@@ -929,7 +939,7 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
     div.addEventListener('touchend', (e) => {
         if (!isSwiping) return;
         isSwiping = false;
-        
+
         const header = div.querySelector('.word-item-header');
         const collapse = div.querySelector('.word-item-collapse-content');
         const tags = div.querySelector('.word-item-tags');
@@ -945,7 +955,7 @@ function bindVirtualItemEvents(div, item, virtualIndex) {
             if (header) header.style.transform = `translateX(-100%)`;
             if (collapse) collapse.style.transform = `translateX(-100%)`;
             if (tags) tags.style.transform = `translateX(-100%)`;
-            
+
             // Snap-back function to restore card if deletion is cancelled
             const snapBack = () => {
                 const h = div.querySelector('.word-item-header');
@@ -1245,7 +1255,7 @@ if (clearBtnEl) {
             }, ({ savedWords, deletedWords, srsStreakStats }) => {
                 let { currentStreak, lastStudyDate, bestStreak } = srsStreakStats;
                 const legacyMaxStreak = savedWords.reduce((m, w) => Math.max(m, w.streak ?? 0), 0);
-                
+
                 // Track all cleared words as deleted tombstones
                 const now = Date.now();
                 const deletionMap = new Map();

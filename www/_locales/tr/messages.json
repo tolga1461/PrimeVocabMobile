@@ -215,8 +215,20 @@
   "srs_unlimited": {
     "message": "Sınırsız"
   },
+  "filter_collocation": {
+    "message": "🔗 Eş Dizim"
+  },
   "srs_next_card": {
     "message": "Sonraki kart: "
+  },
+  "srs_next_in_minutes": {
+    "message": "{count} dakika sonra"
+  },
+  "srs_next_in_hours": {
+    "message": "{count} saat sonra"
+  },
+  "srs_next_in_days": {
+    "message": "{count} gün sonra"
   },
   "srs_add_words_first": {
     "message": "Sözlüğe kelime ekleyin."

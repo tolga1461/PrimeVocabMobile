@@ -203,8 +203,20 @@
   "srs_unlimited": {
     "message": "Unbegrenzt"
   },
+  "filter_collocation": {
+    "message": "🔗 Kollokation"
+  },
   "srs_next_card": {
     "message": "Nächste Karte: "
+  },
+  "srs_next_in_minutes": {
+    "message": "in {count} Min."
+  },
+  "srs_next_in_hours": {
+    "message": "in {count} Std."
+  },
+  "srs_next_in_days": {
+    "message": "in {count} Tagen"
   },
   "srs_add_words_first": {
     "message": "Fügen Sie Wörter zu Ihrem Wörterbuch hinzu."

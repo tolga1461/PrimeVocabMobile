@@ -203,8 +203,20 @@
   "srs_unlimited": {
     "message": "Illimité"
   },
+  "filter_collocation": {
+    "message": "🔗 Collocation"
+  },
   "srs_next_card": {
     "message": "Prochaine carte : "
+  },
+  "srs_next_in_minutes": {
+    "message": "dans {count} min"
+  },
+  "srs_next_in_hours": {
+    "message": "dans {count} h"
+  },
+  "srs_next_in_days": {
+    "message": "dans {count} j"
   },
   "srs_add_words_first": {
     "message": "Ajoutez d'abord des mots à votre dictionnaire."

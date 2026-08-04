@@ -1321,7 +1321,7 @@ function renderAchievementsTab() {
     });
 }
 // ── İstatistikler ─────────────────────────────────────────────────────────────
-const CEFR_COLORS = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'phrasal': '#818cf8', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b' };
+const CEFR_COLORS = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'phrasal': '#818cf8', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', 'COL': '#38bdf8', '??': '#64748b' };
 function renderStatsTab() {
     chrome.storage.local.get({ savedWords: [], gameStats: {} }, ({ savedWords, gameStats }) => {
         renderGameStatsCards(gameStats);
@@ -1339,11 +1339,14 @@ function renderStatsTab() {
                 const wl = w.word.toLowerCase();
                 const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
                 const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+                const isCollocation = wl.trim().includes(' ') && !isPhrasal && !isIdiom;
                 let cefrLevel;
                 if (isPhrasal) {
                     cefrLevel = 'Phrasal';
                 } else if (isIdiom) {
                     cefrLevel = 'Idiom';
+                } else if (isCollocation) {
+                    cefrLevel = 'COL';
                 } else {
                     cefrLevel = cefrMap[wl] || '??';
                 }

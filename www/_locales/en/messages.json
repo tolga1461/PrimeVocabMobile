@@ -215,8 +215,20 @@
   "srs_unlimited": {
     "message": "Unlimited"
   },
+  "filter_collocation": {
+    "message": "🔗 Collocation"
+  },
   "srs_next_card": {
     "message": "Next card: "
+  },
+  "srs_next_in_minutes": {
+    "message": "{count}m later"
+  },
+  "srs_next_in_hours": {
+    "message": "{count}h later"
+  },
+  "srs_next_in_days": {
+    "message": "{count}d later"
   },
   "srs_add_words_first": {
     "message": "Add words to your dictionary."

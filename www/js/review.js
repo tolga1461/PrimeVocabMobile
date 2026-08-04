@@ -23,7 +23,7 @@ const fcDoneSub = document.getElementById('fc-done-sub');
 const cefrColorsFC = {
     'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308',
     'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7',
-    'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b'
+    'COL': '#38bdf8', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b'
 };
 function fcShowCard() {
     const allRemaining = [...fcDeck.slice(fcIndex), ...fcAgainQueue];
@@ -292,11 +292,12 @@ function srsLoadHome() {
             const inMs = Math.min(...notDue.map(w => w.nextReview)) - now;
             const inH = inMs / 3600000;
             const lbl = getMessage("srs_next_card") || "Next card: ";
-            const mAbbr = getMessage("interval_months_abbr") || "mo";
-            document.getElementById('srs-next-text').textContent =
-                inH < 1 ? `${lbl}${Math.round(inMs / 60000)}${mAbbr === 'ay' ? ' dakika sonra' : 'm later'}` :
-                    inH < 24 ? `${lbl}${Math.round(inH)}${mAbbr === 'ay' ? ' saat sonra' : 'h later'}` :
-                        `${lbl}${Math.round(inH / 24)}${mAbbr === 'ay' ? ' gün sonra' : 'd later'}`;
+            const timeStr = inH < 1
+                ? (getMessage("srs_next_in_minutes") || "{count}m later").replace('{count}', Math.round(inMs / 60000))
+                : inH < 24
+                    ? (getMessage("srs_next_in_hours") || "{count}h later").replace('{count}', Math.round(inH))
+                    : (getMessage("srs_next_in_days") || "{count}d later").replace('{count}', Math.round(inH / 24));
+            document.getElementById('srs-next-text').textContent = `${lbl}${timeStr}`;
             nextInfo.style.display = '';
         }
         else {
@@ -506,10 +507,13 @@ document.getElementById('srs-start-btn').addEventListener('click', () => {
                 const wl = item.word.toLowerCase();
                 const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
                 const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+                const isCollocation = wl.trim().includes(' ') && !isPhrasal && !isIdiom;
                 if (isPhrasal) {
                     item.cefrLevel = 'Phrasal';
                 } else if (isIdiom) {
                     item.cefrLevel = 'Idiom';
+                } else if (isCollocation) {
+                    item.cefrLevel = 'COL';
                 } else {
                     item.cefrLevel = cefrMap[wl] || '';
                 }
@@ -668,11 +672,14 @@ function srsLoadWords() {
                 const wl = item.word.toLowerCase();
                 const isPhrasal = typeof PHRASAL_VERBS_DB !== 'undefined' && PHRASAL_VERBS_DB[wl];
                 const isIdiom = typeof IDIOMS_DB !== 'undefined' && IDIOMS_DB[wl];
+                const isCollocation = wl.trim().includes(' ') && !isPhrasal && !isIdiom;
                 let cefrLevel;
                 if (isPhrasal) {
                     cefrLevel = 'Phrasal';
                 } else if (isIdiom) {
                     cefrLevel = 'Idiom';
+                } else if (isCollocation) {
+                    cefrLevel = 'COL';
                 } else {
                     cefrLevel = cefrMap[wl] || '??';
                 }
@@ -701,15 +708,18 @@ function srsLoadWords() {
                     return sortVal === 'time-asc' ? aTime - bTime : bTime - aTime;
                 });
             }
-            const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b' };
+            const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'COL': '#38bdf8', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b' };
             words.forEach((item) => {
                 const isPhrasal = item.cefrLevel === 'Phrasal';
                 const isIdiom = item.cefrLevel === 'Idiom';
+                const isCollocation = item.cefrLevel === 'COL';
                 let badgeHtml;
                 if (isPhrasal) {
                     badgeHtml = `<span class="cefr-badge phrasal-badge srs-word-badge" style="padding:2px 5px;border-radius:4px;font-weight:600;background:#c084fc22;border:1px solid #c084fc44;color:#c084fc;">Phrasal</span>`;
                 } else if (isIdiom) {
                     badgeHtml = `<span class="cefr-badge idiom-badge srs-word-badge" style="padding:2px 5px;border-radius:4px;font-weight:600;background:#fb923c22;border:1px solid #fb923c44;color:#fb923c;">Idiom</span>`;
+                } else if (isCollocation) {
+                    badgeHtml = `<span class="cefr-badge collocation-badge srs-word-badge" style="padding:2px 5px;border-radius:4px;font-weight:600;background:#38bdf822;border:1px solid #38bdf844;color:#38bdf8;">COL</span>`;
                 } else {
                     const c = cefrColors[item.cefrLevel] || '#64748b';
                     badgeHtml = `<span class="cefr-badge srs-word-badge" style="color:${c};background:${c}22;border:1px solid ${c}44;padding:2px 5px;border-radius:4px;font-weight:600;">${item.cefrLevel}</span>`;
@@ -876,7 +886,7 @@ function srsShowCard() {
     else if (hintContainer) {
         hintContainer.style.display = 'none';
     }
-    const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'Phrasal': '#c084fc', 'Idiom': '#fb923c' };
+    const cefrColors = { 'A1': '#22c55e', 'A2': '#84cc16', 'B1': '#eab308', 'B2': '#f97316', 'C1': '#ef4444', 'C2': '#a855f7', 'COL': '#38bdf8', 'Phrasal': '#c084fc', 'Idiom': '#fb923c', '??': '#64748b' };
     const level = item.cefrLevel || '';
     const color = cefrColors[level] || '#64748b';
     ['srs-card-level', 'srs-card-level-back'].forEach(id => {
