@@ -237,15 +237,36 @@ async function shareExportFile(fileName, fileContent, mimeType) {
 }
 
 /**
- * Cümle Çevirisi (Google Translate API + Web Fallback)
+ * Cümle Çevirisi (Google Translate API + App / Web Fallback)
  */
 async function translateContextSentence(sentence, resultEl) {
     if (!sentence || !sentence.trim()) return;
     const cleanSentence = sentence.replace(/^["'“«]+|["'”»]+$/g, '').trim();
     if (!cleanSentence) return;
 
-    const userLang = (typeof getMessage === 'function' ? (getMessage("@@ui_locale") || "tr") : "tr").split('_')[0].split('-')[0];
-    const googleWebUrl = `https://translate.google.com/?sl=auto&tl=${userLang}&text=${encodeURIComponent(cleanSentence)}&op=translate`;
+    let targetLang = 'tr';
+    try {
+        const stored = await new Promise(r => {
+            if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+                chrome.storage.sync.get({ settings: { appLanguage: 'auto' } }, r);
+            } else {
+                r({ settings: { appLanguage: 'auto' } });
+            }
+        });
+        const appLang = stored?.settings?.appLanguage;
+        if (appLang && appLang !== 'auto') {
+            targetLang = appLang;
+        } else {
+            const uiLocale = typeof getMessage === 'function' ? (getMessage("@@ui_locale") || "tr") : "tr";
+            const langCode = uiLocale.split('_')[0].split('-')[0];
+            if (langCode && langCode !== 'en') {
+                targetLang = langCode;
+            }
+        }
+    } catch(e) {}
+
+    const googleIconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="#4285F4" style="vertical-align: text-bottom; display: inline-block;"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>`;
+    const googleWebUrl = `https://translate.google.com/?sl=auto&tl=${targetLang}&text=${encodeURIComponent(cleanSentence)}&op=translate`;
 
     if (resultEl) {
         resultEl.style.display = 'block';
@@ -253,7 +274,7 @@ async function translateContextSentence(sentence, resultEl) {
     }
 
     try {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${userLang}&dt=t&q=${encodeURIComponent(cleanSentence)}`;
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(cleanSentence)}`;
         const res = await fetch(url);
         const data = await res.json();
 
@@ -264,17 +285,29 @@ async function translateContextSentence(sentence, resultEl) {
             });
         }
 
-        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Translate'de Aç ↗") : "Google Translate'de Aç ↗";
+        // If returned text is identical to cleanSentence (e.g. tl was same language), fallback try 'tr'
+        if (translatedText.trim().toLowerCase() === cleanSentence.toLowerCase() && targetLang !== 'tr') {
+            const fallbackUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=tr&dt=t&q=${encodeURIComponent(cleanSentence)}`;
+            const res2 = await fetch(fallbackUrl);
+            const data2 = await res2.json();
+            if (data2 && data2[0]) {
+                let fbText = '';
+                data2[0].forEach(part => { if (part && part[0]) fbText += part[0]; });
+                if (fbText.trim()) translatedText = fbText;
+            }
+        }
+
+        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Çeviri Uygulamasında Aç ↗") : "Google Çeviri Uygulamasında Aç ↗";
 
         if (resultEl) {
-            if (translatedText) {
+            if (translatedText && translatedText.trim().toLowerCase() !== cleanSentence.toLowerCase()) {
                 resultEl.innerHTML = `
-                    <div style="font-size:12.5px; color:#818cf8; font-weight:600; margin-top:2px; line-height:1.4; background:rgba(99,102,241,0.08); padding:6px 10px; border-radius:8px; border:1px solid rgba(99,102,241,0.2); text-align:left;">
+                    <div style="font-size:12.5px; color:#818cf8; font-weight:600; margin-top:3px; line-height:1.4; background:rgba(99,102,241,0.08); padding:6px 10px; border-radius:8px; border:1px solid rgba(99,102,241,0.2); text-align:left;">
                         💬 ${esc(translatedText)}
                     </div>
                     <div style="margin-top:4px; text-align:center;">
-                        <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:10.5px; color:var(--text-muted); text-decoration:underline; display:inline-flex; align-items:center; gap:3px;">
-                            🌐 ${openInGTranslateMsg}
+                        <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:10.5px; color:#818cf8; text-decoration:underline; display:inline-flex; align-items:center; gap:4px; font-weight:600;">
+                            ${googleIconSvg} ${openInGTranslateMsg}
                         </a>
                     </div>
                 `;
@@ -287,12 +320,12 @@ async function translateContextSentence(sentence, resultEl) {
         }
     } catch (err) {
         console.warn("Sentence translation failed:", err);
-        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Translate'de Aç ↗") : "Google Translate'de Aç ↗";
+        const openInGTranslateMsg = typeof getMessage === 'function' ? (getMessage("open_in_google_translate") || "Google Çeviri Uygulamasında Aç ↗") : "Google Çeviri Uygulamasında Aç ↗";
         if (resultEl) {
             resultEl.innerHTML = `
                 <div style="margin-top:4px; text-align:center;">
-                    <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:#818cf8; text-decoration:underline;">
-                        🌐 ${openInGTranslateMsg}
+                    <a href="${googleWebUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:#818cf8; text-decoration:underline; display:inline-flex; align-items:center; gap:4px; font-weight:600;">
+                        ${googleIconSvg} ${openInGTranslateMsg}
                     </a>
                 </div>
             `;
@@ -346,6 +379,8 @@ async function translateContextSentence(sentence, resultEl) {
             const rect = range.getBoundingClientRect();
             if (!rect || (rect.width === 0 && rect.height === 0)) return;
 
+            const googleIconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="#4285F4" style="vertical-align: middle;"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>`;
+
             tooltipEl = document.createElement('div');
             tooltipEl.style.position = 'fixed';
             tooltipEl.style.zIndex = '99999';
@@ -355,7 +390,7 @@ async function translateContextSentence(sentence, resultEl) {
             tooltipEl.style.color = '#818cf8';
             tooltipEl.style.border = '1px solid #6366f1';
             tooltipEl.style.boxShadow = '0 4px 14px rgba(0,0,0,0.4)';
-            tooltipEl.style.padding = '4px 10px';
+            tooltipEl.style.padding = '5px 12px';
             tooltipEl.style.borderRadius = '20px';
             tooltipEl.style.fontSize = '11px';
             tooltipEl.style.fontWeight = '700';
@@ -363,14 +398,18 @@ async function translateContextSentence(sentence, resultEl) {
             tooltipEl.style.userSelect = 'none';
             tooltipEl.style.display = 'flex';
             tooltipEl.style.alignItems = 'center';
-            tooltipEl.style.gap = '4px';
-            tooltipEl.innerHTML = `<span>🌐</span> <span>Google Çeviri</span>`;
+            tooltipEl.style.gap = '5px';
+            tooltipEl.innerHTML = `${googleIconSvg} <span>Google Çeviri</span>`;
 
             tooltipEl.addEventListener('click', (evt) => {
                 evt.stopPropagation();
                 evt.preventDefault();
-                const userLang = (typeof getMessage === 'function' ? (getMessage("@@ui_locale") || "tr") : "tr").split('_')[0].split('-')[0];
-                const googleWebUrl = `https://translate.google.com/?sl=auto&tl=${userLang}&text=${encodeURIComponent(selectedText)}&op=translate`;
+                let targetLang = 'tr';
+                const uiLocale = typeof getMessage === 'function' ? (getMessage("@@ui_locale") || "tr") : "tr";
+                const langCode = uiLocale.split('_')[0].split('-')[0];
+                if (langCode && langCode !== 'en') targetLang = langCode;
+
+                const googleWebUrl = `https://translate.google.com/?sl=auto&tl=${targetLang}&text=${encodeURIComponent(selectedText)}&op=translate`;
                 window.open(googleWebUrl, '_blank');
                 removeTooltip();
             });
