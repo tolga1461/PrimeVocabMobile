@@ -68,23 +68,16 @@ function fcShowCard() {
     fcContextBack.textContent = item.context ? `"${item.context}"` : '';
 
     const fcWrapFront = document.getElementById('fc-context-trans-wrap');
-    const fcWrapBack = document.getElementById('fc-context-back-trans-wrap');
     const fcResFront = document.getElementById('fc-context-trans-result');
-    const fcResBack = document.getElementById('fc-context-back-trans-result');
     const fcBtnFront = document.getElementById('fc-context-trans-btn');
-    const fcBtnBack = document.getElementById('fc-context-back-trans-btn');
 
     if (fcResFront) { fcResFront.style.display = 'none'; fcResFront.innerHTML = ''; }
-    if (fcResBack) { fcResBack.style.display = 'none'; fcResBack.innerHTML = ''; }
     if (fcBtnFront) { fcBtnFront.style.display = 'inline-flex'; }
-    if (fcBtnBack) { fcBtnBack.style.display = 'inline-flex'; }
 
     if (item.context && item.context.trim()) {
         if (fcWrapFront) fcWrapFront.style.display = 'block';
-        if (fcWrapBack) fcWrapBack.style.display = 'block';
     } else {
         if (fcWrapFront) fcWrapFront.style.display = 'none';
-        if (fcWrapBack) fcWrapBack.style.display = 'none';
     }
 
     fcFront.style.display = 'flex';
@@ -937,23 +930,16 @@ function srsShowCard() {
     document.getElementById('srs-card-context-back').textContent = ctx2;
 
     const srsWrapFront = document.getElementById('srs-context-trans-wrap');
-    const srsWrapBack = document.getElementById('srs-context-back-trans-wrap');
     const srsResFront = document.getElementById('srs-context-trans-result');
-    const srsResBack = document.getElementById('srs-context-back-trans-result');
     const srsBtnFront = document.getElementById('srs-context-trans-btn');
-    const srsBtnBack = document.getElementById('srs-context-back-trans-btn');
 
     if (srsResFront) { srsResFront.style.display = 'none'; srsResFront.innerHTML = ''; }
-    if (srsResBack) { srsResBack.style.display = 'none'; srsResBack.innerHTML = ''; }
     if (srsBtnFront) { srsBtnFront.style.display = 'inline-flex'; }
-    if (srsBtnBack) { srsBtnBack.style.display = 'inline-flex'; }
 
     if (item.context && item.context.trim()) {
         if (srsWrapFront) srsWrapFront.style.display = 'block';
-        if (srsWrapBack) srsWrapBack.style.display = 'block';
     } else {
         if (srsWrapFront) srsWrapFront.style.display = 'none';
-        if (srsWrapBack) srsWrapBack.style.display = 'none';
     }
     const intEl = document.getElementById('srs-card-interval');
     if (item.reviewCount > 0) {
@@ -989,15 +975,6 @@ if (srsTransBtn) {
         }
     });
 }
-const srsTransBackBtn = document.getElementById('srs-context-back-trans-btn');
-if (srsTransBackBtn) {
-    srsTransBackBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (srsQueue && srsQueue[srsQueueIndex] && srsQueue[srsQueueIndex].context) {
-            translateContextSentence(srsQueue[srsQueueIndex].context, document.getElementById('srs-context-back-trans-result'), srsTransBackBtn);
-        }
-    });
-}
 
 const fcTransBtn = document.getElementById('fc-context-trans-btn');
 if (fcTransBtn) {
@@ -1005,15 +982,6 @@ if (fcTransBtn) {
         e.stopPropagation();
         if (fcDeck && fcDeck[fcIndex] && fcDeck[fcIndex].context) {
             translateContextSentence(fcDeck[fcIndex].context, document.getElementById('fc-context-trans-result'), fcTransBtn);
-        }
-    });
-}
-const fcTransBackBtn = document.getElementById('fc-context-back-trans-btn');
-if (fcTransBackBtn) {
-    fcTransBackBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (fcDeck && fcDeck[fcIndex] && fcDeck[fcIndex].context) {
-            translateContextSentence(fcDeck[fcIndex].context, document.getElementById('fc-context-back-trans-result'), fcTransBackBtn);
         }
     });
 }
