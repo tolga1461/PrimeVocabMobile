@@ -6,7 +6,7 @@
     "message": "Tamam"
   },
   "game_correct": {
-    "message": "✨ Doğru!"
+    "message": "Doğru!"
   },
   "game_wrong_template": {
     "message": "✗ Yanlış! Doğrusu: {word}"
@@ -152,8 +152,11 @@
   "filter_all": {
     "message": "Tümü"
   },
+  "games_pool_label": {
+    "message": "Havuz: {pool}"
+  },
   "filter_hard": {
-    "message": "🔥 Zor"
+    "message": "Zor"
   },
   "sort_newest": {
     "message": "En Yeni"
@@ -183,13 +186,13 @@
     "message": "Toplam kelime"
   },
   "srs_stat_streak": {
-    "message": "Gün serisi 🔥"
+    "message": "Gün serisi"
   },
   "srs_best_streak": {
     "message": "🏆 {count}"
   },
   "srs_weekly_title": {
-    "message": "📈 Haftalık Kelime"
+    "message": "Haftalık Kelime"
   },
   "srs_start_btn": {
     "message": "Çalışmaya Başla"
@@ -198,7 +201,7 @@
     "message": "Bugünkü çalışma tamamlandı!"
   },
   "srs_settings_title": {
-    "message": "⚙️ Çalışma Ayarları"
+    "message": "Çalışma Ayarları"
   },
   "srs_settings_new_limit": {
     "message": "Günlük Yeni Kart Limiti"
@@ -215,11 +218,17 @@
   "srs_unlimited": {
     "message": "Sınırsız"
   },
+  "license_exp_lifetime": {
+    "message": "Sınırsız (LIFETIME)"
+  },
   "filter_collocation": {
     "message": "🔗 Eş Dizim"
   },
   "translate_sentence_btn": {
     "message": "Google ile Cümleyi Çevir"
+  },
+  "google_translate_tooltip": {
+    "message": "Google Çeviri"
   },
   "open_in_google_translate": {
     "message": "Google Translate'de Aç ↗"
@@ -243,7 +252,7 @@
     "message": "Bugünkü yeni kart tanıtıldı. Yarın devam!"
   },
   "srs_card_hint_btn": {
-    "message": "💡 İpucu Göster"
+    "message": "İpucu Göster"
   },
   "srs_card_reveal_btn": {
     "message": "Çeviriyi Göster"
@@ -264,7 +273,7 @@
     "message": "Öğrendim"
   },
   "srs_rate_learned_interval": {
-    "message": "Sorma 🎓"
+    "message": "Sorma"
   },
   "srs_result_title": {
     "message": "Oturum Tamamlandı"
@@ -276,10 +285,10 @@
     "message": "Ana Sayfaya Dön"
   },
   "srs_study_list_btn": {
-    "message": "📋 Çalışma Listesi & İlerleme"
+    "message": "Çalışma Listesi"
   },
   "srs_overlay_title": {
-    "message": "📋 Çalışma Listesi"
+    "message": "Çalışma Listesi"
   },
   "srs_sort_time_asc": {
     "message": "Süreye Göre Artan (En Yakın)"
@@ -300,13 +309,16 @@
     "message": "Çalışma listesinde henüz kelime yok."
   },
   "srs_status_learned": {
-    "message": "🎓 Öğrenildi"
+    "message": "Öğrenildi"
   },
   "srs_status_new": {
-    "message": "🆕 Yeni"
+    "message": "Yeni"
   },
   "srs_status_due": {
-    "message": "⏳ Sırası Geldi"
+    "message": "Sırası Geldi"
+  },
+  "srs_status_today": {
+    "message": "Bugün"
   },
   "srs_status_tomorrow": {
     "message": "Yarın"
@@ -333,10 +345,10 @@
     "message": "Tekrar Başlat"
   },
   "fc_again_btn": {
-    "message": "Tekrar 🔁"
+    "message": "Tekrar"
   },
   "fc_good_btn": {
-    "message": "Bildim ✓"
+    "message": "Bildim"
   },
   "settings_section_general": {
     "message": "🌐 Genel"
@@ -471,7 +483,7 @@
     "message": "Kayıtlı Alan Adı (Varsayılan)"
   },
   "settings_section_data": {
-    "message": "🗄️ Veri"
+    "message": "Veri"
   },
   "settings_reset_srs": {
     "message": "SRS İlerlemesini Sıfırla"
@@ -521,8 +533,14 @@
   "archive_export_confirm": {
     "message": "Dışa aktarılacak kelime bulunamadı."
   },
+  "share_error_toast": {
+    "message": "Paylaşım hatası: {error}"
+  },
   "archive_clear_confirm": {
     "message": "Tüm kayıtlı kelimeleri silmek istediğinize emin misiniz?"
+  },
+  "archive_clear_title": {
+    "message": "Sözlüğü Temizle"
   },
   "seek_seekable_badge": {
     "message": "⏱️ Bu saniyeye git"
@@ -531,13 +549,13 @@
     "message": "Cümleyi çevir"
   },
   "srs_stat_streak_days": {
-    "message": "Gün serisi 🔥"
+    "message": "Gün serisi"
   },
   "word_list_no_results": {
     "message": "Eşleşen kelime bulunamadı."
   },
   "archive_word_family_lbl": {
-    "message": "📚 Aile: "
+    "message": "Kelime Ailesi"
   },
   "source_popup_added_time": {
     "message": "⏱ {time} sırasında eklendi"
@@ -662,6 +680,12 @@
   "translation_failed": {
     "message": "⚠️ Çeviri alınamadı"
   },
+  "translating_label": {
+    "message": "⏳ Çevriliyor..."
+  },
+  "connection_error_short": {
+    "message": "⚠️ Bağlantı hatası"
+  },
   "error": {
     "message": "Hata"
   },
@@ -765,10 +789,76 @@
     "message": "Tüm Sezonlar"
   },
   "subtab_srs": {
-    "message": "⚡ Antrenman"
+    "message": "Antrenman"
   },
   "subtab_games": {
-    "message": "🎮 Oyunlar"
+    "message": "Oyunlar"
+  },
+  "subtab_achievements": {
+    "message": "Başarımlar"
+  },
+  "srs_study_session": {
+    "message": "Çalışma Oturumu"
+  },
+  "srs_flip_card_hint": {
+    "message": "Kartı çevirmek için butona veya karta dokunun"
+  },
+  "srs_rate_learned_link": {
+    "message": "Bunu biliyorum, bir daha sorma"
+  },
+  "archive_search_placeholder": {
+    "message": "Kelime veya çeviri ara…"
+  },
+  "select_all_tags": {
+    "message": "Tüm etiketler"
+  },
+  "archive_card_add_tag": {
+    "message": "Etiket ekle"
+  },
+  "archive_card_mark_hard": {
+    "message": "Zor Olarak İşaretle"
+  },
+  "archive_card_unmark_hard": {
+    "message": "Zor İşaretini Kaldır"
+  },
+  "archive_card_delete": {
+    "message": "Sil"
+  },
+  "badge_phrasal": {
+    "message": "Phrasal"
+  },
+  "badge_idiom": {
+    "message": "Deyim"
+  },
+  "archive_card_tools_tooltip": {
+    "message": "İşlemler"
+  },
+  "archive_hard_badge_label": {
+    "message": "ZOR"
+  },
+  "archive_inactive_badge_label": {
+    "message": "⚠️ Altyazıda Pasif"
+  },
+  "badge_collocation": {
+    "message": "Eş Dizim"
+  },
+  "archive_tool_expand_all": {
+    "message": "Tüm Detayları Aç"
+  },
+  "archive_tool_word_family": {
+    "message": "Kelime Ailesi"
+  },
+  "archive_tool_tagging": {
+    "message": "Kelime Etiketleme"
+  },
+  "archive_tool_review_practice": {
+    "message": "Tekrar Antrenmanı"
+  },
+  "archive_tool_refresh_families": {
+    "message": "Aile bilgisini yenile"
+  },
+  "archive_tool_clear": {
+    "message": "Sözlüğü temizle"
   },
   "games_title": {
     "message": "Mini Oyunlar"
@@ -815,17 +905,44 @@
   "game_btn_continue": {
     "message": "Devam Et"
   },
+  "game_wrong": {
+    "message": "Yanlış"
+  },
   "game_result_title": {
-    "message": "Oyun Bitti! 🎉"
+    "message": "Oyun Tamamlandı!"
+  },
+  "game_result_perfect": {
+    "message": "Mükemmel! Tüm soruları doğru yanıtladınız."
+  },
+  "game_result_completed": {
+    "message": "Tebrikler! Pratik oturumunu tamamladınız."
+  },
+  "game_result_skipped_words": {
+    "message": "Atlanan Kelimeler ({count})"
+  },
+  "game_stat_score": {
+    "message": "Skor"
+  },
+  "game_stat_accuracy": {
+    "message": "Başarı"
+  },
+  "game_stat_xp": {
+    "message": "XP"
+  },
+  "game_btn_retry": {
+    "message": "Tekrar Oyna"
   },
   "game_result_score": {
     "message": "Skorunuz: {score} / {total}"
   },
   "game_result_btn_back": {
-    "message": "Oyun Seçimine Dön"
+    "message": "Oyunlara Dön"
   },
   "game_score_lbl": {
-    "message": "Skor: {score}"
+    "message": "{score} Puan"
+  },
+  "game_quit_title": {
+    "message": "Oyundan Çıkılsın mı?"
   },
   "game_quit_confirm": {
     "message": "Oyundan çıkmak istediğinize emin misiniz? İlerlemeniz silinecek."
@@ -852,7 +969,7 @@
     "message": "Atla"
   },
   "settings_section_games": {
-    "message": "🎮 Kelime Oyunları"
+    "message": "Kelime Oyunları"
   },
   "settings_games_sound": {
     "message": "Oyun Ses Efektleri"
@@ -861,25 +978,25 @@
     "message": "Oyunlarda doğru ve yanlış cevaplarda ses efekti çalar."
   },
   "game_dictation_title": {
-    "message": "Dikte"
+    "message": "Dinle ve Yaz"
   },
   "game_dictation_desc": {
-    "message": "Duyduğunuz kelimeyi doğru şekilde yazın."
+    "message": "Duyduğunuz kelimeyi dinleyip doğru şekilde yazın."
   },
   "game_dictation_placeholder": {
-    "message": "Kelimeyi buraya yazın..."
+    "message": "Duyduğunuz kelimeyi yazın..."
   },
   "game_dictation_listen": {
-    "message": "🔊 Tekrar Dinle"
+    "message": "Tekrar Dinle"
   },
   "game_dictation_correct": {
-    "message": "✨ Harika, doğru heceleme!"
+    "message": "Harika, doğru heceleme!"
   },
   "game_dictation_almost": {
-    "message": "⚠️ Neredeyse doğru! Doğru yazılışı: {word}"
+    "message": "Neredeyse doğru! Doğru yazılışı: {word}"
   },
   "game_dictation_wrong": {
-    "message": "❌ Yanlış! Doğrusu: {word}"
+    "message": "Yanlış! Doğrusu: {word}"
   },
   "game_context_title": {
     "message": "Hafıza Kartları"
@@ -893,11 +1010,44 @@
   "game_errors_lbl": {
     "message": "Hata"
   },
-  "subtab_achievements": {
-    "message": "🏆 Başarımlar"
-  },
   "subtab_stats": {
-    "message": "📊 İstatistik"
+    "message": "İstatistik"
+  },
+  "stats_title": {
+    "message": "Öğrenme İstatistikleri"
+  },
+  "stats_vocab_growth": {
+    "message": "Kelime Büyümesi — Son 30 Gün"
+  },
+  "stats_level_dist": {
+    "message": "CEFR Seviye Dağılımı"
+  },
+  "stats_game_perf": {
+    "message": "Oyun Performansı"
+  },
+  "stats_total_games": {
+    "message": "Oynanan Oyun"
+  },
+  "stats_total_correct": {
+    "message": "Doğru Cevap"
+  },
+  "stats_best_score": {
+    "message": "En Yüksek Skor"
+  },
+  "stats_avg_accuracy": {
+    "message": "Ortalama Başarı"
+  },
+  "stats_perfect_games": {
+    "message": "Kusursuz Oyunlar"
+  },
+  "stats_total_exp": {
+    "message": "Toplam EXP"
+  },
+  "stats_no_data": {
+    "message": "Henüz kayıtlı kelime yok."
+  },
+  "stats_words_added": {
+    "message": "kelime eklendi"
   },
   "user_exp_label": {
     "message": "Toplam Puanınız"
@@ -924,181 +1074,154 @@
     "message": "Kilitli"
   },
   "ach_first_step_title": {
-    "message": "🌱 İlk Adım"
+    "message": "İlk Adım"
   },
   "ach_first_step_desc": {
     "message": "İlk kelimeyi sözlüğe ekle"
   },
   "ach_word_hunter_title": {
-    "message": "📚 Kelime Avcısı"
+    "message": "Kelime Avcısı"
   },
   "ach_word_hunter_desc": {
     "message": "10 kelime ekle"
   },
   "ach_word_expert_title": {
-    "message": "🔥 Kelime Uzmanı"
+    "message": "Kelime Uzmanı"
   },
   "ach_word_expert_desc": {
     "message": "150 kelime ekle"
   },
   "ach_word_master_title": {
-    "message": "🏆 Kelime Ustası"
+    "message": "Kelime Ustası"
   },
   "ach_word_master_desc": {
     "message": "300 kelime ekle"
   },
   "ach_perfect_game_title": {
-    "message": "🎯 Mükemmel Oyun"
+    "message": "Mükemmel Oyun"
   },
   "ach_perfect_game_desc": {
     "message": "Bir oyunda %100 skor al"
   },
   "ach_speed_player_title": {
-    "message": "⚡ Hız Oyuncusu"
+    "message": "Hız Oyuncusu"
   },
   "ach_speed_player_desc": {
     "message": "20 oyun tamamla"
   },
   "ach_game_addict_title": {
-    "message": "🎮 Oyun Bağımlısı"
+    "message": "Oyun Bağımlısı"
   },
   "ach_game_addict_desc": {
     "message": "100 oyun tamamla"
   },
   "ach_ear_master_title": {
-    "message": "🎧 Kulak Ustası"
+    "message": "Kulak Ustası"
   },
   "ach_ear_master_desc": {
     "message": "Dikte oyununda 25 kelime doğru yaz"
   },
   "ach_context_hero_title": {
-    "message": "🎬 Bağlam Kahramanı"
+    "message": "Bağlam Kahramanı"
   },
   "ach_context_hero_desc": {
     "message": "Sahne eşleştirmede 25 kelime doğru bul"
   },
   "ach_hard_conqueror_title": {
-    "message": "🔬 Zorlayıcı"
+    "message": "Zorlayıcı"
   },
   "ach_hard_conqueror_desc": {
     "message": "10 zor kelimeyi oyunda doğru cevapla"
   },
   "ach_word_collector_title": {
-    "message": "🎒 Kelime Koleksiyoncusu"
+    "message": "Kelime Koleksiyoncusu"
   },
   "ach_word_collector_desc": {
     "message": "50 kelime ekle"
   },
   "ach_word_legend_title": {
-    "message": "👑 Kelime Efsanesi"
+    "message": "Kelime Efsanesi"
   },
   "ach_word_legend_desc": {
     "message": "750 kelime ekle"
   },
   "ach_word_god_title": {
-    "message": "🧠 Dil Dehası"
+    "message": "Dil Dehası"
   },
   "ach_word_god_desc": {
     "message": "1500 kelime ekle"
   },
   "ach_perfectionist_title": {
-    "message": "💎 Kusursuzluk Abidesi"
+    "message": "Kusursuzluk Abidesi"
   },
   "ach_perfectionist_desc": {
     "message": "10 oyunda %100 skor al"
   },
   "ach_game_rookie_title": {
-    "message": "🏁 İlk Deneyim"
+    "message": "İlk Deneyim"
   },
   "ach_game_rookie_desc": {
     "message": "1 oyun tamamla"
   },
   "ach_game_champion_title": {
-    "message": "⚔️ Oyun Fatihi"
+    "message": "Oyun Fatihi"
   },
   "ach_game_champion_desc": {
     "message": "250 oyun tamamla"
   },
   "ach_ear_god_title": {
-    "message": "🎙️ Altın Kulak"
+    "message": "Altın Kulak"
   },
   "ach_ear_god_desc": {
     "message": "Dikte oyununda 100 kelime doğru yaz"
   },
   "ach_context_god_title": {
-    "message": "📽️ Sahne Yönetmeni"
+    "message": "Sahne Yönetmeni"
   },
   "ach_context_god_desc": {
     "message": "Sahne eşleştirmede 100 kelime doğru bul"
   },
   "ach_hard_annihilator_title": {
-    "message": "🌋 Alev Bükücü"
+    "message": "Alev Bükücü"
   },
   "ach_hard_annihilator_desc": {
     "message": "30 zor kelimeyi oyunda doğru cevapla"
   },
   "ach_a1_explorer_title": {
-    "message": "🗺️ Keşifçi"
+    "message": "Keşifçi"
   },
   "ach_a1_explorer_desc": {
     "message": "25 adet A1/A2 seviye kelime ekle"
   },
   "ach_b1_scholar_title": {
-    "message": "🎓 Akademisyen"
+    "message": "Akademisyen"
   },
   "ach_b1_scholar_desc": {
     "message": "35 adet B1/B2 seviye kelime ekle"
   },
   "ach_c1_polymath_title": {
-    "message": "🔮 Bilge"
+    "message": "Bilge"
   },
   "ach_c1_polymath_desc": {
     "message": "15 adet C1/C2 seviye kelime ekle"
   },
   "ach_phrasal_master_title": {
-    "message": "📚 Deyim Ustası"
+    "message": "Phrasal Ustası"
   },
   "ach_phrasal_master_desc": {
-    "message": "15 adet phrasal verb (deyimsel fiil) ekle"
+    "message": "15 adet deyimsel fiil (phrasal verb) ekle"
   },
   "ach_streak_3_title": {
-    "message": "🔥 Üçlü Seri"
+    "message": "Üçlü Seri"
   },
   "ach_streak_3_desc": {
     "message": "Bir kelimede 5 çalışma serisine ulaş"
   },
   "ach_streak_7_title": {
-    "message": "⚡ Haftalık Yangın"
+    "message": "Haftalık Yangın"
   },
   "ach_streak_7_desc": {
     "message": "Bir kelimede 14 çalışma serisine ulaş"
-  },
-  "stats_title": {
-    "message": "Öğrenme İstatistikleri"
-  },
-  "stats_vocab_growth": {
-    "message": "📈 Kelime Büyümesi (Son 30 Gün)"
-  },
-  "stats_level_dist": {
-    "message": "🎓 CEFR Seviye Dağılımı"
-  },
-  "stats_game_perf": {
-    "message": "🎮 Oyun Performansı"
-  },
-  "stats_total_games": {
-    "message": "Toplam Oyun"
-  },
-  "stats_total_correct": {
-    "message": "Doğru Cevap"
-  },
-  "stats_best_score": {
-    "message": "En Yüksek Skor"
-  },
-  "stats_no_data": {
-    "message": "Henüz veri yok."
-  },
-  "stats_words_added": {
-    "message": "kelime eklendi"
   },
   "settings_reset_games": {
     "message": "Oyun ve Başarımları Sıfırla"
@@ -1134,64 +1257,55 @@
     "message": "En Yüksek"
   },
   "ach_exp_bronze_title": {
-    "message": "🥉 Bronz Kaşif"
+    "message": "Bronz Kaşif"
   },
   "ach_exp_bronze_desc": {
     "message": "Toplam 500 EXP puanına ulaş"
   },
   "ach_exp_silver_title": {
-    "message": "🥈 Gümüş Savaşçı"
+    "message": "Gümüş Savaşçı"
   },
   "ach_exp_silver_desc": {
     "message": "Toplam 2000 EXP puanına ulaş"
   },
   "ach_exp_gold_title": {
-    "message": "🥇 Altın Fatih"
+    "message": "Altın Fatih"
   },
   "ach_exp_gold_desc": {
     "message": "Toplam 5000 EXP puanına ulaş"
   },
   "ach_exp_legend_title": {
-    "message": "👑 Puan Efsanesi"
+    "message": "Puan Efsanesi"
   },
   "ach_exp_legend_desc": {
     "message": "Toplam 10000 EXP puanına ulaş"
   },
-  "stats_avg_accuracy": {
-    "message": "Ortalama Başarı"
-  },
-  "stats_perfect_games": {
-    "message": "Kusursuz Oyunlar"
-  },
-  "stats_total_exp": {
-    "message": "Toplam EXP"
-  },
   "ach_exp_deity_title": {
-    "message": "🌟 Puan İlahı"
+    "message": "Puan İlahı"
   },
   "ach_exp_deity_desc": {
     "message": "Toplam 25000 EXP puanına ulaş"
   },
   "ach_word_titan_title": {
-    "message": "🌌 Sözlük Titanı"
+    "message": "Sözlük Titanı"
   },
   "ach_word_titan_desc": {
     "message": "Toplam 1000 kelime ekle"
   },
   "ach_perfect_sovereign_title": {
-    "message": "👑 Kusursuz Hükümdar"
+    "message": "Kusursuz Hükümdar"
   },
   "ach_perfect_sovereign_desc": {
     "message": "30 oyunda %100 skor al"
   },
   "ach_game_grandmaster_title": {
-    "message": "🏆 Oyun Büyükustası"
+    "message": "Oyun Büyükustası"
   },
   "ach_game_grandmaster_desc": {
     "message": "500 oyun tamamla"
   },
   "ach_streak_30_title": {
-    "message": "🌋 Zaman Bükücü"
+    "message": "Zaman Bükücü"
   },
   "ach_streak_30_desc": {
     "message": "Bir kelimede 30 çalışma serisine ulaş"
@@ -1305,10 +1419,10 @@
     "message": "Eklenti Hakkında"
   },
   "info_title": {
-    "message": "ℹ️ PrimeVocab Hakkında"
+    "message": "PrimeVocab Hakkında"
   },
   "info_desc": {
-    "message": "PrimeVocab, video izlerken çift altyazı ve aralıklı tekrar yöntemiyle dil öğrenmenizi sağlayan akıllı bir eklentidir."
+    "message": "PrimeVocab, çift dilli altyazı ve aralıklı tekrar (SRS) yöntemiyle kelime öğrenmenizi sağlayan akıllı bir dil öğrenme ekosistemidir. Bu mobil uygulama, kelimelerinizi her an tekrar etmenizi ve oyunlarla pratik yapmanızı sağlar."
   },
   "info_developer": {
     "message": "Geliştirici:"
@@ -1320,7 +1434,7 @@
     "message": "Gizlilik & Koşullar:"
   },
   "info_legal_view": {
-    "message": "Oku"
+    "message": "Politikaları Gör"
   },
   "profile_btn_title": {
     "message": "Kullanıcı Profili"
@@ -1379,6 +1493,12 @@
   "profile_last_sync_never": {
     "message": "Henüz Yapılmadı"
   },
+  "settings_last_sync_status": {
+    "message": "Son eşitleme: {time}"
+  },
+  "settings_sync_not_setup": {
+    "message": "Eşitleme kurulmadı"
+  },
   "profile_logout": {
     "message": "Çıkış Yap"
   },
@@ -1418,9 +1538,6 @@
   "archive_inactive_badge_title": {
     "message": "Ücretsiz sürüm limiti (Son 50 kelime) dışında kaldığı için altyazılarda taranmaz."
   },
-  "archive_inactive_badge_label": {
-    "message": "⚠️ Altyazıda Pasif"
-  },
   "premium_smart_locked_desc": {
     "message": "Akıllı Özellikleri (Shadowing, Otomatik Geri Sarma, Yavaşlatma vb.) kullanabilmek için Premium üyeliğe yükseltmeniz gerekmektedir."
   },
@@ -1436,8 +1553,14 @@
   "premium_modal_close_btn": {
     "message": "Kapat"
   },
+  "premium_modal_desktop_hint": {
+    "message": "Premium üyelik işlemlerini bilgisayarınızdaki <strong>Chrome Eklentisi</strong> üzerinden profil sekmesini açarak gerçekleştirebilirsiniz."
+  },
   "profile_login_btn": {
     "message": "🔑 Google ile Giriş Yap"
+  },
+  "login_failed_toast": {
+    "message": "Giriş yapılamadı: {error}"
   },
   "premium_sync_required_desc": {
     "message": "Google hesabınız bağlandı, ancak bulut senkronizasyonu özelliğini kullanabilmek için Premium üyeliğe yükseltmeniz gerekmektedir."
@@ -1476,7 +1599,7 @@
     "message": "PrimeVocab Hakkında"
   },
   "info_btn_back": {
-    "message": "↩️ Geri Dön"
+    "message": "Geri Dön"
   },
   "settings_about_label": {
     "message": "PrimeVocab Hakkında"
@@ -1485,7 +1608,7 @@
     "message": "Uygulama sürümü, geliştirici ve detaylar"
   },
   "info_modal_title": {
-    "message": "ℹ️ Bilgi"
+    "message": "Bilgi"
   },
   "info_about_btn": {
     "message": "PrimeVocab Hakkında"
@@ -1584,19 +1707,19 @@
     "message": "Seviye: "
   },
   "settings_danger_zone_title": {
-    "message": "⚠️ Tehlikeli Bölge (Sıfırlama)"
+    "message": "Tehlikeli Bölge (Sıfırlama)"
   },
   "settings_reset_all_done": {
     "message": "Tüm veriler başarıyla sıfırlandı!"
   },
   "profile_stats_title": {
-    "message": "📊 İstatistikler ve Seviye"
+    "message": "İstatistikler ve Seviye"
   },
   "profile_achievements_title": {
-    "message": "🏆 Başarımlar"
+    "message": "Başarımlar"
   },
   "profile_sync_title": {
-    "message": "🔄 Bulut Eşitleme"
+    "message": "Bulut Eşitleme"
   },
   "profile_days_count": {
     "message": "$1 Gün"
@@ -1715,6 +1838,9 @@
   "game_pool_words": {
     "message": "Sadece Kelimeler"
   },
+  "game_pool_collocation": {
+    "message": "Sadece Eş Dizimler"
+  },
   "game_pool_phrasal": {
     "message": "Sadece Phrasal Verb'ler"
   },
@@ -1723,5 +1849,239 @@
   },
   "game_insufficient_filtered_words": {
     "message": "Bu oyunu oynamak için bu havuzda en az 4 kayıtlı kelimeniz olmalıdır."
+  },
+  "ach_phrasal_explorer_title": {
+    "message": "Fiil Kaşifi"
+  },
+  "ach_phrasal_explorer_desc": {
+    "message": "5 adet deyimsel fiil (phrasal verb) ekle"
+  },
+  "ach_phrasal_guru_title": {
+    "message": "Phrasal Gurusu"
+  },
+  "ach_phrasal_guru_desc": {
+    "message": "35 adet deyimsel fiil (phrasal verb) ekle"
+  },
+  "ach_idiom_hunter_title": {
+    "message": "Deyim Avcısı"
+  },
+  "ach_idiom_hunter_desc": {
+    "message": "5 adet İngilizce deyim (idiom) ekle"
+  },
+  "ach_idiom_master_title": {
+    "message": "Deyim Ustası"
+  },
+  "ach_idiom_master_desc": {
+    "message": "15 adet İngilizce deyim (idiom) ekle"
+  },
+  "ach_idiom_sage_title": {
+    "message": "Deyim Bilgesi"
+  },
+  "ach_idiom_sage_desc": {
+    "message": "30 adet İngilizce deyim (idiom) ekle"
+  },
+  "ach_collocation_seeker_title": {
+    "message": "Eş Dizim Çırağı"
+  },
+  "ach_collocation_seeker_desc": {
+    "message": "5 adet eş dizim (collocation) kalıbı ekle"
+  },
+  "ach_collocation_master_title": {
+    "message": "Eş Dizim Ustası"
+  },
+  "ach_collocation_master_desc": {
+    "message": "15 adet eş dizim (collocation) kalıbı ekle"
+  },
+  "ach_collocation_architect_title": {
+    "message": "Kalıp Mimarı"
+  },
+  "ach_collocation_architect_desc": {
+    "message": "30 adet eş dizim (collocation) kalıbı ekle"
+  },
+  "achievement_unlocked_title": {
+    "message": "Başarım Kazanıldı!"
+  },
+  "srs_stat_completed_100": {
+    "message": "100% Tamamlandı"
+  },
+  "srs_view_words_btn": {
+    "message": "Kelimeleri İncele"
+  },
+  "archive_click_for_translation": {
+    "message": "çevirisi için tıkla"
+  },
+  "archive_no_match_help": {
+    "message": "Filtreleri veya arama terimini değiştirmeyi deneyin"
+  },
+  "archive_no_match_title": {
+    "message": "Eşleşen kelime bulunamadı"
+  },
+  "archive_remove_tag_tooltip": {
+    "message": "Etiketi kaldır"
+  },
+  "archive_tag_placeholder": {
+    "message": "etiket…"
+  },
+  "archive_tools_btn": {
+    "message": "İşlemler"
+  },
+  "fc_done_completed": {
+    "message": "{total} kelimelik pratik oturumunu tamamladın."
+  },
+  "fc_done_mixed": {
+    "message": "{total} kelimeden {correct} doğru yaptın ({incorrect} tekrar gereken)."
+  },
+  "fc_done_perfect": {
+    "message": "Kusursuz! {total} kelimenin tamamını bildin."
+  },
+  "fc_retry_missed_count": {
+    "message": "Bilemediklerimi Tekrar Et ({count})"
+  },
+  "fc_stat_accuracy": {
+    "message": "Başarı"
+  },
+  "fc_stat_remembered": {
+    "message": "Bildim"
+  },
+  "fc_stat_total": {
+    "message": "Toplam"
+  },
+  "filter_level_tooltip": {
+    "message": "Seviye ve tür filtresi"
+  },
+  "filter_sort_tooltip": {
+    "message": "Sıralama ölçütü"
+  },
+  "filter_source_tooltip": {
+    "message": "Kaynak video/dizi filtresi"
+  },
+  "filter_tag_tooltip": {
+    "message": "Etiket filtresi"
+  },
+  "premium_connect_google_first": {
+    "message": "Devam etmek için Google hesabınızı bağlayın..."
+  },
+  "premium_google_connect_cancelled": {
+    "message": "Google bağlantısı iptal edildi."
+  },
+  "search_no_results": {
+    "message": "Eşleşen kelime bulunamadı."
+  },
+  "srs_btn_back_tooltip": {
+    "message": "Geri Dön"
+  },
+  "srs_result_subtitle": {
+    "message": "Bugünkü çalışma hedefini başarıyla tamamladın."
+  },
+  "srs_toggle_learned_tooltip": {
+    "message": "Öğrenildi durumunu değiştir"
+  },
+  "toast_no_words_to_refresh": {
+    "message": "Yenilenecek kelime bulunamadı."
+  },
+  "tooltip_double_click_edit": {
+    "message": "Düzenlemek için çift tıkla"
+  },
+  "tooltip_speak": {
+    "message": "Seslendir"
+  },
+  "archive_existing_tags_lbl": {
+    "message": "Mevcut Etiketler"
+  },
+  "modal_btn_close": {
+    "message": "Kapat"
+  },
+  "share_dialog_title": {
+    "message": "Paylaş"
+  },
+  "srs_words_sort_title": {
+    "message": "Sıralama Seçenekleri"
+  },
+  "info_companion_badge": {
+    "message": "Mobil Uygulama"
+  },
+  "info_close_btn": {
+    "message": "Kapat"
+  },
+  "settings_guide_label": {
+    "message": "Kullanım Rehberi"
+  },
+  "settings_guide_sublabel": {
+    "message": "Sayfaların işleyişi ve ipuçları"
+  },
+  "header_streak_tooltip": {
+    "message": "Çalışma Serisi"
+  },
+  "profile_view_achievements": {
+    "message": "Başarımları Gör"
+  },
+  "profile_sync_backup_title": {
+    "message": "İlerlemeni Buluta Yedekle"
+  },
+  "profile_sync_backup_desc": {
+    "message": "Kelimelerini ve serilerini tüm cihazlarında senkronize et."
+  },
+  "profile_google_sign_in": {
+    "message": "Google ile Giriş Yap"
+  },
+  "profile_terms_privacy": {
+    "message": "Gizlilik Politikası & Kullanım Koşulları"
+  },
+  "fc_retry_missed_btn": {
+    "message": "Bilemediklerimi Tekrar Et"
+  },
+  "archive_scene_go_to": {
+    "message": "Sahneye Git ({time})"
+  },
+  "archive_scene_go_to": {
+    "message": "Sahneye Git ({time})"
+  },
+  "archive_scene_open": {
+    "message": "Videoyu Aç"
+  },
+  "settings_haptics_title": {
+    "message": "Dokunsal Titreşim (Haptik)"
+  },
+  "settings_haptics_desc": {
+    "message": "Kartlarda ve mini oyunlarda dokunma hissi"
+  },
+  "settings_reminder_title": {
+    "message": "Günlük Çalışma Hatırlatıcısı"
+  },
+  "settings_reminder_desc": {
+    "message": "Serinizi korumak ve kelimeleri unutmamak için bildirim alın"
+  },
+  "settings_reminder_time_title": {
+    "message": "Hatırlatıcı Saati"
+  },
+  "settings_reminder_time_desc": {
+    "message": "Bildirimin her gün gönderileceği saat"
+  },
+  "reminder_notif_title": {
+    "message": "PrimeVocab · Günlük Tekrar Zamanı! 🔥"
+  },
+  "reminder_notif_body": {
+    "message": "Bugün tekrar etmen gereken kelimeler var. Serini korumak için pratik yap!"
+  },
+  "reminder_test_success": {
+    "message": "Tebrikler! Hatırlatıcı bildiriminiz başarıyla çalışıyor."
+  },
+  "reminder_permission_denied": {
+    "message": "Bildirim izni verilmedi. Lütfen cihaz ayarlarından bildirimlere izin verin."
+  },
+  "settings_time_picker_title": {
+    "message": "Hatırlatıcı Saati"
+  },
+  "time_unit_hour": {
+    "message": "Saat"
+  },
+  "time_unit_min": {
+    "message": "Dakika"
+  },
+  "settings_test_notif_title": {
+    "message": "Test Bildirimi Gönder"
+  },
+  "settings_test_notif_desc": {
+    "message": "Bildirimlerin cihazınızda çalıştığını test edin"
   }
 }

@@ -211,7 +211,7 @@ function loadSettings() {
             if (isPremium && localData.licenseExpiration) {
                 expRow.style.display = 'flex';
                 if (localData.licenseType === 'LIFETIME') {
-                    expDate.textContent = 'Sınırsız (LIFETIME)';
+                    expDate.textContent = getMessage('license_exp_lifetime') || 'Sınırsız (LIFETIME)';
                 } else {
                     expDate.textContent = new Date(localData.licenseExpiration).toLocaleDateString();
                 }
@@ -291,15 +291,9 @@ function loadSettings() {
             });
         }
 
-        // Dynamic kilit icons for games grid in review
-        document.querySelectorAll('.game-card').forEach(card => {
-            const gameType = card.dataset.game;
-            // Only multiple_choice and fill_blank are free
-            if (gameType === 'multiple_choice' || gameType === 'fill_blank' || isPremium) {
-                card.classList.remove('locked');
-            } else {
-                card.classList.add('locked');
-            }
+        // Dynamic kilit icons for games grid in review (Geliştirme sürecinde kilitler kaldırıldı)
+        document.querySelectorAll('.game-card, .game-tile').forEach(card => {
+            card.classList.remove('locked');
         });
 
         chrome.storage.sync.get({ settings: { appLanguage: 'auto', appFontSize: 'normal', gamesSound: true, deleteConfirm: true, autoplaySound: false, showLearnedInGames: true, youtube: {}, prime: {}, netflix: {} } }, ({ settings }) => {
@@ -331,6 +325,21 @@ function loadSettings() {
         const showLearnedInGamesToggle = document.getElementById('show-learned-in-games-toggle');
         if (showLearnedInGamesToggle)
             showLearnedInGamesToggle.checked = settings.showLearnedInGames !== false;
+        const hapticsToggle = document.getElementById('haptics-toggle');
+        if (hapticsToggle)
+            hapticsToggle.checked = settings.hapticsEnabled !== false;
+        const reminderToggle = document.getElementById('reminder-toggle');
+        const reminderTimeRow = document.getElementById('reminder-time-trigger-row');
+        const reminderTimeValEl = document.getElementById('reminder-time-value');
+        if (reminderToggle) {
+            reminderToggle.checked = settings.dailyReminderEnabled === true;
+            if (reminderTimeRow) {
+                reminderTimeRow.style.display = reminderToggle.checked ? 'flex' : 'none';
+            }
+        }
+        if (reminderTimeValEl) {
+            reminderTimeValEl.textContent = settings.dailyReminderTime || '20:00';
+        }
         const enabledPlats = settings.enabledPlatforms || { youtube: true, netflix: true, prime: true };
         const ytToggle = document.getElementById('platform-toggle-youtube');
         if (ytToggle)
@@ -454,7 +463,7 @@ function loadSettings() {
     });
 }
 let lastLocalWriteTime = 0;
-function saveSetting(key, value) {
+function saveSetting(key, value, callback) {
     lastLocalWriteTime = Date.now();
     chrome.storage.sync.get({ settings: {} }, ({ settings }) => {
         if (!settings)
@@ -485,6 +494,7 @@ function saveSetting(key, value) {
             } else {
                 console.log("[PV-settings] saveSetting success:", key, value);
             }
+            if (typeof callback === 'function') callback();
         });
     });
 }
@@ -675,6 +685,167 @@ if (deleteConfirmToggleEl)
 const showLearnedInGamesToggleEl = document.getElementById('show-learned-in-games-toggle');
 if (showLearnedInGamesToggleEl)
     showLearnedInGamesToggleEl.addEventListener('change', (e) => saveSetting('showLearnedInGames', e.target.checked));
+
+const hapticsToggleEl = document.getElementById('haptics-toggle');
+if (hapticsToggleEl) {
+    hapticsToggleEl.addEventListener('change', (e) => {
+        saveSetting('hapticsEnabled', e.target.checked);
+        if (window.HapticsService) {
+            window.HapticsService.setEnabled(e.target.checked);
+            if (e.target.checked) window.HapticsService.tap();
+        }
+    });
+}
+
+const reminderToggleEl = document.getElementById('reminder-toggle');
+const reminderTimeTriggerRowEl = document.getElementById('reminder-time-trigger-row');
+const reminderTimeValEl = document.getElementById('reminder-time-value');
+
+// Android Material Time Picker Dialog Elements
+const timePickerModal = document.getElementById('time-picker-modal');
+const tpdHourVal = document.getElementById('tpd-hour-val');
+const tpdMinVal = document.getElementById('tpd-min-val');
+const tpdHourUp = document.getElementById('tpd-hour-up');
+const tpdHourDown = document.getElementById('tpd-hour-down');
+const tpdMinUp = document.getElementById('tpd-min-up');
+const tpdMinDown = document.getElementById('tpd-min-down');
+const tpdCancelBtn = document.getElementById('tpd-cancel-btn');
+const tpdSaveBtn = document.getElementById('tpd-save-btn');
+const tpdChips = document.querySelectorAll('.tpd-chip');
+
+let currentHour = 20;
+let currentMin = 0;
+
+function syncTimePickerDisplay() {
+    if (tpdHourVal) tpdHourVal.textContent = String(currentHour).padStart(2, '0');
+    if (tpdMinVal) tpdMinVal.textContent = String(currentMin).padStart(2, '0');
+    const timeStr = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`;
+    tpdChips.forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.time === timeStr);
+    });
+}
+
+function openTimePicker() {
+    const rawVal = reminderTimeValEl ? reminderTimeValEl.textContent.trim() : '20:00';
+    const [h, m] = (rawVal || '20:00').split(':');
+    currentHour = parseInt(h, 10) || 20;
+    currentMin = parseInt(m, 10) || 0;
+    syncTimePickerDisplay();
+    if (timePickerModal) timePickerModal.style.display = 'flex';
+}
+
+function closeTimePicker() {
+    if (timePickerModal) timePickerModal.style.display = 'none';
+}
+
+if (reminderTimeTriggerRowEl) {
+    reminderTimeTriggerRowEl.addEventListener('click', openTimePicker);
+}
+
+if (tpdHourUp) {
+    tpdHourUp.addEventListener('click', () => {
+        currentHour = (currentHour + 1) % 24;
+        syncTimePickerDisplay();
+        if (window.HapticsService) window.HapticsService.tap();
+    });
+}
+if (tpdHourDown) {
+    tpdHourDown.addEventListener('click', () => {
+        currentHour = (currentHour - 1 + 24) % 24;
+        syncTimePickerDisplay();
+        if (window.HapticsService) window.HapticsService.tap();
+    });
+}
+if (tpdMinUp) {
+    tpdMinUp.addEventListener('click', () => {
+        currentMin = (currentMin + 5) % 60;
+        syncTimePickerDisplay();
+        if (window.HapticsService) window.HapticsService.tap();
+    });
+}
+if (tpdMinDown) {
+    tpdMinDown.addEventListener('click', () => {
+        currentMin = (currentMin - 5 + 60) % 60;
+        syncTimePickerDisplay();
+        if (window.HapticsService) window.HapticsService.tap();
+    });
+}
+
+tpdChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+        const [h, m] = chip.dataset.time.split(':');
+        currentHour = parseInt(h, 10) || 20;
+        currentMin = parseInt(m, 10) || 0;
+        syncTimePickerDisplay();
+        if (window.HapticsService) window.HapticsService.tap();
+    });
+});
+
+const tpdCloseIconBtn = document.getElementById('tpd-close-icon-btn');
+if (tpdCloseIconBtn) {
+    tpdCloseIconBtn.addEventListener('click', closeTimePicker);
+}
+
+if (tpdCancelBtn) {
+    tpdCancelBtn.addEventListener('click', closeTimePicker);
+}
+
+if (timePickerModal) {
+    timePickerModal.addEventListener('click', (e) => {
+        if (e.target === timePickerModal) closeTimePicker();
+    });
+}
+
+if (tpdSaveBtn) {
+    tpdSaveBtn.addEventListener('click', async () => {
+        const timeStr = `${String(currentHour).padStart(2, '0')}:${String(currentMin).padStart(2, '0')}`;
+        if (reminderTimeValEl) reminderTimeValEl.textContent = timeStr;
+        saveSetting('dailyReminderTime', timeStr);
+        if (reminderToggleEl && reminderToggleEl.checked && window.NotificationService) {
+            await window.NotificationService.scheduleDailyReminder(timeStr);
+        }
+        if (window.HapticsService) window.HapticsService.success();
+        closeTimePicker();
+        if (typeof showCustomToast === 'function') {
+            showCustomToast((typeof getMessage === 'function' ? getMessage('settings_saved') : null) || 'Kaydedildi');
+        }
+    });
+}
+
+if (reminderToggleEl) {
+    reminderToggleEl.addEventListener('change', async (e) => {
+        const isEnabled = e.target.checked;
+        if (reminderTimeTriggerRowEl) {
+            reminderTimeTriggerRowEl.style.display = isEnabled ? 'flex' : 'none';
+        }
+        if (isEnabled) {
+            if (window.NotificationService) {
+                const granted = await window.NotificationService.requestPermission();
+                if (!granted) {
+                    reminderToggleEl.checked = false;
+                    if (reminderTimeTriggerRowEl) reminderTimeTriggerRowEl.style.display = 'none';
+                    const msg = (typeof getMessage === 'function' ? getMessage('reminder_permission_denied') : null) || 'Bildirim izni verilmedi.';
+                    if (typeof showCustomToast === 'function') showCustomToast(msg);
+                    return;
+                }
+                const timeStr = reminderTimeValEl ? reminderTimeValEl.textContent.trim() : '20:00';
+                await window.NotificationService.scheduleDailyReminder(timeStr);
+                saveSetting('dailyReminderEnabled', true);
+                saveSetting('dailyReminderTime', timeStr);
+                if (window.HapticsService) window.HapticsService.tap();
+                if (typeof showCustomToast === 'function') {
+                    showCustomToast((typeof getMessage === 'function' ? getMessage('settings_saved') : null) || 'Kaydedildi');
+                }
+            }
+        } else {
+            saveSetting('dailyReminderEnabled', false);
+            if (window.NotificationService) {
+                await window.NotificationService.cancelDailyReminder();
+            }
+            if (window.HapticsService) window.HapticsService.tap();
+        }
+    });
+}
 ['youtube', 'netflix', 'prime'].forEach(plat => {
     const el = document.getElementById(`platform-toggle-${plat}`);
     if (el) {
@@ -774,10 +945,20 @@ if (targetSelectEl)
 const appLangSelectEl = document.getElementById('app-lang-select');
 if (appLangSelectEl) {
     appLangSelectEl.addEventListener('change', (e) => { 
-        saveSetting('appLanguage', e.target.value); 
-        initI18n().then(() => {
-            localizeHtml();
-            loadSettings();
+        const selectedLang = e.target.value;
+        saveSetting('appLanguage', selectedLang, async () => {
+            await initI18n(selectedLang);
+            if (typeof applyLanguageEverywhere === 'function') {
+                applyLanguageEverywhere();
+            } else {
+                localizeHtml();
+                loadSettings();
+                if (typeof updateProfileUI === 'function') updateProfileUI();
+                if (typeof loadProfileData === 'function') loadProfileData();
+                if (typeof loadArchive === 'function') loadArchive();
+                if (typeof loadSrs === 'function') loadSrs();
+                if (typeof syncSelectsToTriggers === 'function') syncSelectsToTriggers();
+            }
         });
     });
 }
@@ -1160,9 +1341,13 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
             const newLang = changes.settings.newValue?.appLanguage || 'auto';
             const currentVal = document.getElementById('app-lang-select')?.value;
             if (currentVal && newLang !== currentVal) {
-                initI18n().then(() => {
-                    localizeHtml();
-                    loadSettings();
+                initI18n(newLang).then(() => {
+                    if (typeof applyLanguageEverywhere === 'function') {
+                        applyLanguageEverywhere();
+                    } else {
+                        localizeHtml();
+                        loadSettings();
+                    }
                 });
                 return;
             }
@@ -1177,10 +1362,14 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
         if (activeTab && activeTab.dataset.tab === 'archive')
             loadArchive();
         if (activeTab && activeTab.dataset.tab === 'review') {
+            const srsBtn = document.getElementById('subtab-srs');
+            const isSrsActive = srsBtn && srsBtn.classList.contains('active');
+            const gamePlayArea = document.getElementById('game-play-area');
+            const isGameActive = gamePlayArea && gamePlayArea.style.display !== 'none';
             const sessionEl = document.getElementById('srs-session');
             const resultEl = document.getElementById('srs-result');
             const isSessionActive = (sessionEl && sessionEl.style.display !== 'none') || (resultEl && resultEl.style.display !== 'none');
-            if (!isSessionActive)
+            if (isSrsActive && !isSessionActive && !isGameActive)
                 srsLoadHome();
             const srsWordsOverlay = document.getElementById('srs-words-overlay');
             if (srsWordsOverlay && srsWordsOverlay.style.display !== 'none')

@@ -9006,15 +9006,26 @@ var IRREGULAR_FORMS = {
 };
 // CEFR seviyesini renk olarak döndür
 function getCEFRColor(level) {
+    if (!level) return '#94a3b8';
+    if (typeof GLOBAL_CEFR_COLORS !== 'undefined') {
+        const str = String(level).trim();
+        return GLOBAL_CEFR_COLORS[str] || GLOBAL_CEFR_COLORS[str.toUpperCase()] || GLOBAL_CEFR_COLORS[str.toLowerCase()] || '#94a3b8';
+    }
     const colors = {
-        'A1': '#22c55e', // yeşil
-        'A2': '#84cc16', // açık yeşil
-        'B1': '#eab308', // sarı
-        'B2': '#f97316', // turuncu
-        'C1': '#ef4444', // kırmızı
-        'C2': '#a855f7' // mor
+        'A1': '#4ade80',
+        'A2': '#16a34a',
+        'B1': '#fde047',
+        'B2': '#ca8a04',
+        'C1': '#f87171',
+        'C2': '#b91c1c',
+        'PHRASAL': '#c084fc',
+        'PHR': '#c084fc',
+        'IDIOM': '#fb923c',
+        'DEYİM': '#fb923c',
+        'COL': '#38bdf8'
     };
-    return colors[level] || '#94a3b8';
+    const s = String(level).trim().toUpperCase();
+    return colors[s] || '#94a3b8';
 }
 // Kelimeyi ara (lowercase) + Düzensiz Çekim Algılama + Akıllı Kök Bulma (Stemming)
 function lookupCEFR(word) {

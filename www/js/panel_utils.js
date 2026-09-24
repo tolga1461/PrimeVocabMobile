@@ -17,6 +17,12 @@ function localizeHtml() {
         if (val)
             el.placeholder = val;
     });
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+        const key = el.getAttribute('data-i18n-aria-label');
+        const val = getMessage(key);
+        if (val)
+            el.setAttribute('aria-label', val);
+    });
 }
 function showToast(msg, duration = 2800) {
     let toast = document.getElementById('primevocab-toast');
@@ -196,12 +202,12 @@ function showPremiumModal(title, message) {
             </p>
             <div style="background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.2); border-radius:10px; padding:14px; margin:16px 0; text-align:left;">
                 <p style="color:#cbd5e1; font-family:'Outfit', sans-serif; font-size:12px; line-height:1.6; margin:0;">
-                    Premium üyelik işlemlerini bilgisayarınızdaki <strong>Chrome Eklentisi</strong> üzerinden profil sekmesini açarak gerçekleştirebilirsiniz.
+                    ${getMessage('premium_modal_desktop_hint') || 'Premium üyelik işlemlerini bilgisayarınızdaki <strong>Chrome Eklentisi</strong> üzerinden profil sekmesini açarak gerçekleştirebilirsiniz.'}
                 </p>
             </div>
             <div style="display:flex; flex-direction:column; gap:10px;">
                 <button id="custom-premium-alert-close-btn" style="background:linear-gradient(135deg, #334155 0%, #1e293b 100%); border:1px solid #475569; color:#cbd5e1; padding:12px 24px; border-radius:8px; font-family:'Outfit', sans-serif; font-size:14px; cursor:pointer; font-weight:700; text-align:center; width:100%;">
-                    Kapat
+                    ${esc(getMessage('premium_modal_close_btn') || 'Kapat')}
                 </button>
             </div>
         </div>

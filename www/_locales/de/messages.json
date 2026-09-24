@@ -140,8 +140,11 @@
   "filter_all": {
     "message": "Alle"
   },
+  "games_pool_label": {
+    "message": "Pool: {pool}"
+  },
   "filter_hard": {
-    "message": "🔥 Schwer"
+    "message": "Schwer"
   },
   "sort_newest": {
     "message": "Neueste"
@@ -171,13 +174,13 @@
     "message": "Wörter insgesamt"
   },
   "srs_stat_streak": {
-    "message": "Tage in Folge 🔥"
+    "message": "Tage in Folge"
   },
   "srs_best_streak": {
     "message": "🏆 {count}"
   },
   "srs_weekly_title": {
-    "message": "📈 Wöchentliche Wörter"
+    "message": "Wöchentliche Wörter"
   },
   "srs_start_btn": {
     "message": "Lernen starten"
@@ -186,7 +189,7 @@
     "message": "Heutiges Lernen abgeschlossen!"
   },
   "srs_settings_title": {
-    "message": "⚙️ Lerneinstellungen"
+    "message": "Lerneinstellungen"
   },
   "srs_settings_new_limit": {
     "message": "Tägliches Limit für neue Karten"
@@ -203,11 +206,17 @@
   "srs_unlimited": {
     "message": "Unbegrenzt"
   },
+  "license_exp_lifetime": {
+    "message": "Unbegrenzt (LIFETIME)"
+  },
   "filter_collocation": {
     "message": "🔗 Kollokation"
   },
   "translate_sentence_btn": {
     "message": "Satz mit Google übersetzen"
+  },
+  "google_translate_tooltip": {
+    "message": "Google Übersetzer"
   },
   "open_in_google_translate": {
     "message": "In Google Übersetzer öffnen ↗"
@@ -231,7 +240,7 @@
     "message": "Heutiges Limit für neue Karten erreicht. Morgen fortsetzen!"
   },
   "srs_card_hint_btn": {
-    "message": "💡 Hinweis anzeigen"
+    "message": "Hinweis anzeigen"
   },
   "srs_card_reveal_btn": {
     "message": "Übersetzung anzeigen"
@@ -252,7 +261,7 @@
     "message": "Gelernt"
   },
   "srs_rate_learned_interval": {
-    "message": "Nicht fragen 🎓"
+    "message": "Nicht fragen"
   },
   "srs_result_title": {
     "message": "Sitzung abgeschlossen"
@@ -264,10 +273,10 @@
     "message": "Zurück zur Startseite"
   },
   "srs_study_list_btn": {
-    "message": "📋 Lernliste & Fortschritt"
+    "message": "Lernliste & Fortschritt"
   },
   "srs_overlay_title": {
-    "message": "📋 Lernliste"
+    "message": "Lernliste"
   },
   "srs_sort_time_asc": {
     "message": "Verbleibende Zeit (aufsteigend)"
@@ -288,16 +297,22 @@
     "message": "Noch keine Wörter in der Lernliste."
   },
   "srs_status_learned": {
-    "message": "🎓 Gelernt"
+    "message": "Gelernt"
   },
   "srs_status_new": {
-    "message": "🆕 Neu"
+    "message": "Neu"
   },
   "srs_status_due": {
     "message": "⏳ Fällig"
   },
+  "srs_status_today": {
+    "message": "Heute"
+  },
   "srs_status_tomorrow": {
     "message": "Morgen"
+  },
+  "srs_flip_card_hint": {
+    "message": "Tippen Sie auf die Schaltfläche oder die Karte, um sie umzudrehen"
   },
   "srs_status_days_later": {
     "message": "In {days} Tagen"
@@ -321,10 +336,10 @@
     "message": "Neu starten"
   },
   "fc_again_btn": {
-    "message": "Wiederholen 🔁"
+    "message": "Wiederholen"
   },
   "fc_good_btn": {
-    "message": "Gewusst ✓"
+    "message": "Gewusst"
   },
   "settings_section_general": {
     "message": "🌐 Allgemein"
@@ -459,7 +474,7 @@
     "message": "Gespeicherte Domain (Standard)"
   },
   "settings_section_data": {
-    "message": "🗄️ Daten"
+    "message": "Daten"
   },
   "settings_reset_srs": {
     "message": "SRS-Fortschritt zurücksetzen"
@@ -509,8 +524,14 @@
   "archive_export_confirm": {
     "message": "Keine Wörter zum Exportieren gefunden."
   },
+  "share_error_toast": {
+    "message": "Freigabefehler: {error}"
+  },
   "archive_clear_confirm": {
     "message": "Sind Sie sicher, dass Sie alle gespeicherten Wörter löschen möchten?"
+  },
+  "archive_clear_title": {
+    "message": "Wörterbuch leeren"
   },
   "seek_seekable_badge": {
     "message": "⏱️ Zu dieser Sekunde springen"
@@ -519,13 +540,13 @@
     "message": "Satz übersetzen"
   },
   "srs_stat_streak_days": {
-    "message": "Tage in Folge 🔥"
+    "message": "Tage in Folge"
   },
   "word_list_no_results": {
     "message": "Keine passenden Wörter gefunden."
   },
   "archive_word_family_lbl": {
-    "message": "📚 Familie: "
+    "message": "Familie"
   },
   "source_popup_added_time": {
     "message": "⏱ Hinzugefügt bei {time}"
@@ -650,6 +671,12 @@
   "translation_failed": {
     "message": "⚠️ Übersetzung fehlgeschlagen"
   },
+  "translating_label": {
+    "message": "⏳ Wird übersetzt..."
+  },
+  "connection_error_short": {
+    "message": "⚠️ Verbindungsfehler"
+  },
   "error": {
     "message": "Fehler"
   },
@@ -753,10 +780,10 @@
     "message": "Alle Staffeln"
   },
   "subtab_srs": {
-    "message": "⚡ Training"
+    "message": "Training"
   },
   "subtab_games": {
-    "message": "🎮 Spiele"
+    "message": "Spiele"
   },
   "games_title": {
     "message": "Mini-Spiele"
@@ -804,7 +831,7 @@
     "message": "Weiter"
   },
   "game_result_title": {
-    "message": "Spiel beendet! 🎉"
+    "message": "Spiel beendet!"
   },
   "game_result_score": {
     "message": "Ihr Ergebnis: {score} / {total}"
@@ -812,11 +839,35 @@
   "game_result_btn_back": {
     "message": "Zurück zu den Spielen"
   },
+  "game_result_perfect": {
+    "message": "Perfekt! Du hast alle Fragen richtig beantwortet."
+  },
+  "game_result_completed": {
+    "message": "Glückwunsch! Du hast die Übungseinheit abgeschlossen."
+  },
+  "game_result_skipped_words": {
+    "message": "Übersprungene Wörter ({count})"
+  },
+  "game_stat_score": {
+    "message": "Punktzahl"
+  },
+  "game_stat_accuracy": {
+    "message": "Genauigkeit"
+  },
+  "game_stat_xp": {
+    "message": "XP"
+  },
+  "game_btn_retry": {
+    "message": "Wiederholen"
+  },
   "game_score_lbl": {
     "message": "Ergebnis: {score}"
   },
   "game_quit_confirm": {
     "message": "Sind Sie sicher, dass Sie das Spiel beenden möchten? Ihr Fortschritt geht verloren."
+  },
+  "game_quit_title": {
+    "message": "Spiel beenden?"
   },
   "game_btn_quit": {
     "message": "Beenden"
@@ -858,16 +909,16 @@
     "message": "Wort hier eingeben..."
   },
   "game_dictation_listen": {
-    "message": "🔊 Nochmals anhören"
+    "message": "Nochmals anhören"
   },
   "game_dictation_correct": {
-    "message": "✨ Super, richtige Schreibweise!"
+    "message": "Super, richtige Schreibweise!"
   },
   "game_dictation_almost": {
-    "message": "⚠️ Fast richtig! Die richtige Schreibweise ist: {word}"
+    "message": "Fast richtig! Die richtige Schreibweise ist: {word}"
   },
   "game_dictation_wrong": {
-    "message": "❌ Falsch! Das richtige Wort ist: {word}"
+    "message": "Falsch! Das richtige Wort ist: {word}"
   },
   "game_context_title": {
     "message": "Gedächtniskarten"
@@ -882,10 +933,10 @@
     "message": "Fehler"
   },
   "subtab_achievements": {
-    "message": "🏆 Erfolge"
+    "message": "Erfolge"
   },
   "subtab_stats": {
-    "message": "📊 Statistiken"
+    "message": "Statistiken"
   },
   "achievements_title": {
     "message": "Erfolge"
@@ -900,151 +951,151 @@
     "message": "Gesperrt"
   },
   "ach_first_step_title": {
-    "message": "🌱 Erster Schritt"
+    "message": "Erster Schritt"
   },
   "ach_first_step_desc": {
     "message": "Erstes Wort hinzufügen"
   },
   "ach_word_hunter_title": {
-    "message": "📚 Wortjäger"
+    "message": "Wortjäger"
   },
   "ach_word_hunter_desc": {
     "message": "10 Wörter hinzufügen"
   },
   "ach_word_expert_title": {
-    "message": "🔥 Wortexperte"
+    "message": "Wortexperte"
   },
   "ach_word_expert_desc": {
     "message": "150 Wörter hinzufügen"
   },
   "ach_word_master_title": {
-    "message": "🏆 Wortmeister"
+    "message": "Wortmeister"
   },
   "ach_word_master_desc": {
     "message": "300 Wörter hinzufügen"
   },
   "ach_perfect_game_title": {
-    "message": "🎯 Perfektes Spiel"
+    "message": "Perfektes Spiel"
   },
   "ach_perfect_game_desc": {
     "message": "100% in einem Spiel erzielen"
   },
   "ach_speed_player_title": {
-    "message": "⚡ Schnellspieler"
+    "message": "Schnellspieler"
   },
   "ach_speed_player_desc": {
     "message": "20 Spiele beenden"
   },
   "ach_game_addict_title": {
-    "message": "🎮 Spielsüchtig"
+    "message": "Spielsüchtig"
   },
   "ach_game_addict_desc": {
     "message": "100 Spiele beenden"
   },
   "ach_ear_master_title": {
-    "message": "🎧 Ohrmeister"
+    "message": "Ohrmeister"
   },
   "ach_ear_master_desc": {
     "message": "25 Wörter im Diktat richtig schreiben"
   },
   "ach_context_hero_title": {
-    "message": "🎬 Kontext-Held"
+    "message": "Kontext-Held"
   },
   "ach_context_hero_desc": {
     "message": "25 Szenen-Match-Fragen richtig beantworten"
   },
   "ach_hard_conqueror_title": {
-    "message": "🔬 Schwierigkeitsbezwinger"
+    "message": "Schwierigkeitsbezwinger"
   },
   "ach_hard_conqueror_desc": {
     "message": "10 schwere Wörter in Spielen richtig beantworten"
   },
   "ach_word_collector_title": {
-    "message": "🎒 Wortsammler"
+    "message": "Wortsammler"
   },
   "ach_word_collector_desc": {
     "message": "50 Wörter hinzufügen"
   },
   "ach_word_legend_title": {
-    "message": "👑 Wortlegende"
+    "message": "Wortlegende"
   },
   "ach_word_legend_desc": {
     "message": "750 Wörter hinzufügen"
   },
   "ach_word_god_title": {
-    "message": "🧠 Sprachgenie"
+    "message": "Sprachgenie"
   },
   "ach_word_god_desc": {
     "message": "1500 Wörter hinzufügen"
   },
   "ach_perfectionist_title": {
-    "message": "💎 Perfektionist"
+    "message": "Perfektionist"
   },
   "ach_perfectionist_desc": {
     "message": "100% in 10 Spielen erzielen"
   },
   "ach_game_rookie_title": {
-    "message": "🏁 Erstes Spiel"
+    "message": "Erstes Spiel"
   },
   "ach_game_rookie_desc": {
     "message": "1 Spiel beenden"
   },
   "ach_game_champion_title": {
-    "message": "⚔️ Spielmeister"
+    "message": "Spielmeister"
   },
   "ach_game_champion_desc": {
     "message": "250 Spiele beenden"
   },
   "ach_ear_god_title": {
-    "message": "🎙️ Goldenes Ohr"
+    "message": "Goldenes Ohr"
   },
   "ach_ear_god_desc": {
     "message": "100 Wörter im Diktat richtig schreiben"
   },
   "ach_context_god_title": {
-    "message": "📽️ Szenen-Regisseur"
+    "message": "Szenen-Regisseur"
   },
   "ach_context_god_desc": {
     "message": "100 Szenen-Match-Fragen richtig beantworten"
   },
   "ach_hard_annihilator_title": {
-    "message": "🌋 Flammenbändiger"
+    "message": "Flammenbändiger"
   },
   "ach_hard_annihilator_desc": {
     "message": "30 schwere Wörter in Spielen richtig beantworten"
   },
   "ach_a1_explorer_title": {
-    "message": "🗺️ Entdecker"
+    "message": "Entdecker"
   },
   "ach_a1_explorer_desc": {
     "message": "25 Wörter auf Niveau A1/A2 hinzufügen"
   },
   "ach_b1_scholar_title": {
-    "message": "🎓 Gelehrter"
+    "message": "Gelehrter"
   },
   "ach_b1_scholar_desc": {
     "message": "35 Wörter auf Niveau B1/B2 hinzufügen"
   },
   "ach_c1_polymath_title": {
-    "message": "🔮 Universalgelehrter"
+    "message": "Universalgelehrter"
   },
   "ach_c1_polymath_desc": {
     "message": "15 Wörter auf Niveau C1/C2 hinzufügen"
   },
   "ach_phrasal_master_title": {
-    "message": "📚 Phrasal-Meister"
+    "message": "Phrasal-Meister"
   },
   "ach_phrasal_master_desc": {
-    "message": "15 Phrasal Verbs hinzufügen"
+    "message": "Füge 15 Phrasal Verbs zu deinem Wortschatz hinzu"
   },
   "ach_streak_3_title": {
-    "message": "🔥 3-Tage-Serie"
+    "message": "3-Tage-Serie"
   },
   "ach_streak_3_desc": {
     "message": "Erreiche eine Lernserie von 5 bei einem beliebigen Wort"
   },
   "ach_streak_7_title": {
-    "message": "⚡ Wöchentliches Feuer"
+    "message": "Wöchentliches Feuer"
   },
   "ach_streak_7_desc": {
     "message": "Erreiche eine Lernserie von 14 bei einem beliebigen Wort"
@@ -1053,13 +1104,13 @@
     "message": "Lernstatistiken"
   },
   "stats_vocab_growth": {
-    "message": "📈 Wortschatzwachstum (Letzte 30 Tage)"
+    "message": "Wortschatzwachstum (Letzte 30 Tage)"
   },
   "stats_level_dist": {
-    "message": "🎓 GER-Niveau-Verteilung"
+    "message": "GER-Niveau-Verteilung"
   },
   "stats_game_perf": {
-    "message": "🎮 Spielleistung"
+    "message": "Spielleistung"
   },
   "stats_total_games": {
     "message": "Spiele gesamt"
@@ -1131,55 +1182,55 @@
     "message": "Gesamt-EXP"
   },
   "ach_exp_bronze_title": {
-    "message": "🥉 Bronze-Entdecker"
+    "message": "Bronze-Entdecker"
   },
   "ach_exp_bronze_desc": {
     "message": "Sammle insgesamt 500 EXP"
   },
   "ach_exp_silver_title": {
-    "message": "🥈 Silber-Krieger"
+    "message": "Silber-Krieger"
   },
   "ach_exp_silver_desc": {
     "message": "Sammle insgesamt 2000 EXP"
   },
   "ach_exp_gold_title": {
-    "message": "🥇 Gold-Fatih"
+    "message": "Gold-Bezwinger"
   },
   "ach_exp_gold_desc": {
     "message": "Sammle insgesamt 5000 EXP"
   },
   "ach_exp_legend_title": {
-    "message": "👑 EXP-Legende"
+    "message": "EXP-Legende"
   },
   "ach_exp_legend_desc": {
     "message": "Sammle insgesamt 10000 EXP"
   },
   "ach_exp_deity_title": {
-    "message": "🌟 EXP-Gottheit"
+    "message": "EXP-Gottheit"
   },
   "ach_exp_deity_desc": {
     "message": "Sammle insgesamt 25000 EXP"
   },
   "ach_word_titan_title": {
-    "message": "🌌 Wort-Titan"
+    "message": "Wort-Titan"
   },
   "ach_word_titan_desc": {
     "message": "1000 Wörter hinzufügen"
   },
   "ach_perfect_sovereign_title": {
-    "message": "👑 Perfekter Souverän"
+    "message": "Perfekter Souverän"
   },
   "ach_perfect_sovereign_desc": {
     "message": "100% in 30 Spielen erzielen"
   },
   "ach_game_grandmaster_title": {
-    "message": "🏆 Spiel-Großmeister"
+    "message": "Spiel-Großmeister"
   },
   "ach_game_grandmaster_desc": {
     "message": "500 Spiele beenden"
   },
   "ach_streak_30_title": {
-    "message": "🌋 Zeitbändiger"
+    "message": "Zeitbändiger"
   },
   "ach_streak_30_desc": {
     "message": "Erreiche eine Lernserie von 30 bei einem beliebigen Wort"
@@ -1293,10 +1344,10 @@
     "message": "Über die Erweiterung"
   },
   "info_title": {
-    "message": "ℹ️ Über PrimeVocab"
+    "message": "Über PrimeVocab"
   },
   "info_desc": {
-    "message": "PrimeVocab ist eine intelligente Erweiterung, mit der Sie beim Videoschauen durch zweisprachige Untertitel und zeitlich versetzte Wiederholung Sprachen lernen können."
+    "message": "PrimeVocab ist ein intelligentes Sprachlern-Ökosystem mit doppelten Untertiteln und Abstands-Wiederholung (SRS). Mit dieser mobilen App können Sie Ihren Wortschatz jederzeit wiederholen und vertiefen."
   },
   "info_developer": {
     "message": "Entwickler:"
@@ -1305,10 +1356,10 @@
     "message": "Kontakt:"
   },
   "info_legal": {
-    "message": "Datenschutz & Bedingungen:"
+    "message": "Datenschutz & AGB:"
   },
   "info_legal_view": {
-    "message": "Lesen"
+    "message": "Richtlinien ansehen"
   },
   "profile_btn_title": {
     "message": "Benutzerprofil"
@@ -1323,13 +1374,13 @@
     "message": "Lokaler Benutzer"
   },
   "profile_total_words": {
-    "message": "Wörter gesamt:"
+    "message": "Wörter gesamt"
   },
   "profile_streak": {
-    "message": "Lernserie:"
+    "message": "Lernserie"
   },
   "profile_exp": {
-    "message": "Punkte gesamt (EXP):"
+    "message": "Punkte gesamt (EXP)"
   },
   "profile_sync_enable": {
     "message": "Cloud-Synchronisation"
@@ -1366,6 +1417,12 @@
   },
   "profile_last_sync_never": {
     "message": "Nie"
+  },
+  "settings_last_sync_status": {
+    "message": "Letzte Synchronisierung: {time}"
+  },
+  "settings_sync_not_setup": {
+    "message": "Synchronisierung nicht eingerichtet"
   },
   "profile_logout": {
     "message": "Abmelden"
@@ -1424,8 +1481,14 @@
   "premium_modal_close_btn": {
     "message": "Schließen"
   },
+  "premium_modal_desktop_hint": {
+    "message": "Sie können Ihre Premium-Mitgliedschaft über die <strong>Chrome-Erweiterung</strong> auf Ihrem Computer verwalten, indem Sie dort den Profil-Tab öffnen."
+  },
   "profile_login_btn": {
     "message": "🔑 Mit Google anmelden"
+  },
+  "login_failed_toast": {
+    "message": "Anmeldung fehlgeschlagen: {error}"
   },
   "premium_sync_required_desc": {
     "message": "Ihr Google-Konto ist verbunden, aber Sie benötigen eine Premium-Mitgliedschaft, um die Cloud-Synchronisierung nutzen zu können."
@@ -1437,7 +1500,7 @@
     "message": "⚙️ Abonnement verwalten"
   },
   "info_modal_title": {
-    "message": "ℹ️ Info"
+    "message": "Information"
   },
   "info_about_btn": {
     "message": "Über PrimeVocab"
@@ -1536,19 +1599,19 @@
     "message": "Stufe: "
   },
   "settings_danger_zone_title": {
-    "message": "⚠️ Gefahrenbereich (Zurücksetzen)"
+    "message": "Gefahrenbereich (Zurücksetzen)"
   },
   "settings_reset_all_done": {
     "message": "Alle Daten wurden erfolgreich zurückgesetzt!"
   },
   "profile_stats_title": {
-    "message": "📊 Statistiken & Level"
+    "message": "Statistiken & Level"
   },
   "profile_achievements_title": {
-    "message": "🏆 Erfolge"
+    "message": "Erfolge"
   },
   "profile_sync_title": {
-    "message": "🔄 Cloud-Synchronisation"
+    "message": "Cloud-Synchronisation"
   },
   "profile_days_count": {
     "message": "$1 Tage"
@@ -1602,7 +1665,7 @@
     "message": "Über PrimeVocab"
   },
   "info_btn_back": {
-    "message": "↩️ Zurück"
+    "message": "Zurück"
   },
   "archive_btn_review_title": {
     "message": "Wörter wiederholen / Karte lernen"
@@ -1709,6 +1772,9 @@
   "game_pool_words": {
     "message": "Nur Wörter"
   },
+  "game_pool_collocation": {
+    "message": "Nur Kollokationen"
+  },
   "game_pool_phrasal": {
     "message": "Nur Phrasal Verbs"
   },
@@ -1717,5 +1783,302 @@
   },
   "game_insufficient_filtered_words": {
     "message": "Sie müssen mindestens 4 gespeicherte Wörter dieser Art haben, um zu spielen."
+  },
+  "ach_phrasal_explorer_title": {
+    "message": "Phrasal-Entdecker"
+  },
+  "ach_phrasal_explorer_desc": {
+    "message": "Füge 5 Phrasal Verbs zu deinem Wortschatz hinzu"
+  },
+  "ach_phrasal_guru_title": {
+    "message": "Phrasal-Guru"
+  },
+  "ach_phrasal_guru_desc": {
+    "message": "Füge 35 Phrasal Verbs zu deinem Wortschatz hinzu"
+  },
+  "ach_idiom_hunter_title": {
+    "message": "Redewendungs-Jäger"
+  },
+  "ach_idiom_hunter_desc": {
+    "message": "Füge 5 Redewendungen/Idiome hinzu"
+  },
+  "ach_idiom_master_title": {
+    "message": "Redewendungs-Meister"
+  },
+  "ach_idiom_master_desc": {
+    "message": "Füge 15 Redewendungen/Idiome hinzu"
+  },
+  "ach_idiom_sage_title": {
+    "message": "Redewendungs-Weiser"
+  },
+  "ach_idiom_sage_desc": {
+    "message": "Füge 30 Redewendungen/Idiome hinzu"
+  },
+  "ach_collocation_seeker_title": {
+    "message": "Kollokations-Sucher"
+  },
+  "ach_collocation_seeker_desc": {
+    "message": "Füge 5 Kollokationen/Wortverbindungen hinzu"
+  },
+  "ach_collocation_master_title": {
+    "message": "Kollokations-Meister"
+  },
+  "ach_collocation_master_desc": {
+    "message": "Füge 15 Kollokationen hinzu"
+  },
+  "ach_collocation_architect_title": {
+    "message": "Kollokations-Architekt"
+  },
+  "ach_collocation_architect_desc": {
+    "message": "Füge 30 Kollokationen hinzu"
+  },
+  "achievement_unlocked_title": {
+    "message": "Erfolg freigeschaltet!"
+  },
+  "archive_delete_word_confirm": {
+    "message": "Sind Sie sicher, dass Sie dieses Wort löschen möchten?"
+  },
+  "btn_delete_confirm_ok": {
+    "message": "Löschen"
+  },
+  "srs_study_session": {
+    "message": "Lernsitzung"
+  },
+  "srs_rate_learned_link": {
+    "message": "Ich weiß das, nicht mehr anzeigen"
+  },
+  "archive_search_placeholder": {
+    "message": "Wort oder Übersetzung suchen…"
+  },
+  "select_all_tags": {
+    "message": "Alle Tags"
+  },
+  "archive_card_add_tag": {
+    "message": "Tag hinzufügen"
+  },
+  "archive_card_mark_hard": {
+    "message": "Als schwer markieren"
+  },
+  "archive_card_unmark_hard": {
+    "message": "Markierung „Schwer“ entfernen"
+  },
+  "archive_card_delete": {
+    "message": "Löschen"
+  },
+  "badge_phrasal": {
+    "message": "Phrasal"
+  },
+  "badge_idiom": {
+    "message": "Redewendung"
+  },
+  "archive_card_tools_tooltip": {
+    "message": "Aktionen"
+  },
+  "archive_hard_badge_label": {
+    "message": "SCHWER"
+  },
+  "badge_collocation": {
+    "message": "Kollokation"
+  },
+  "archive_tool_expand_all": {
+    "message": "Alle Details anzeigen"
+  },
+  "archive_tool_word_family": {
+    "message": "Wortfamilie"
+  },
+  "archive_tool_tagging": {
+    "message": "Wort-Tagging"
+  },
+  "archive_tool_review_practice": {
+    "message": "Wiederholungsübung"
+  },
+  "archive_tool_refresh_families": {
+    "message": "Wortfamilien aktualisieren"
+  },
+  "archive_tool_clear": {
+    "message": "Wörterbuch leeren"
+  },
+  "game_wrong": {
+    "message": "Falsch"
+  },
+  "srs_stat_completed_100": {
+    "message": "100% Abgeschlossen"
+  },
+  "srs_view_words_btn": {
+    "message": "Wörter überprüfen"
+  },
+  "archive_click_for_translation": {
+    "message": "Klicken für Übersetzung"
+  },
+  "archive_no_match_help": {
+    "message": "Versuchen Sie, Filter oder Suchbegriff zu ändern"
+  },
+  "archive_no_match_title": {
+    "message": "Keine passenden Wörter gefunden"
+  },
+  "archive_remove_tag_tooltip": {
+    "message": "Tag entfernen"
+  },
+  "archive_tag_placeholder": {
+    "message": "Tag…"
+  },
+  "archive_tools_btn": {
+    "message": "Aktionen"
+  },
+  "fc_done_completed": {
+    "message": "Du hast die Übungseinheit mit {total} Wörtern abgeschlossen."
+  },
+  "fc_done_mixed": {
+    "message": "Du hast {correct} von {total} Wörtern richtig gewusst ({incorrect} zu wiederholen)."
+  },
+  "fc_done_perfect": {
+    "message": "Perfekt! Du wusstest alle {total} Wörter."
+  },
+  "fc_retry_missed_count": {
+    "message": "Nicht gewusste wiederholen ({count})"
+  },
+  "fc_stat_accuracy": {
+    "message": "Genauigkeit"
+  },
+  "fc_stat_remembered": {
+    "message": "Gewusst"
+  },
+  "fc_stat_total": {
+    "message": "Gesamt"
+  },
+  "filter_level_tooltip": {
+    "message": "Level- und Typfilter"
+  },
+  "filter_sort_tooltip": {
+    "message": "Sortierung"
+  },
+  "filter_source_tooltip": {
+    "message": "Quellen-Videofilter"
+  },
+  "filter_tag_tooltip": {
+    "message": "Tag-Filter"
+  },
+  "premium_connect_google_first": {
+    "message": "Verbinden Sie Ihr Google-Konto, um fortzufahren..."
+  },
+  "premium_google_connect_cancelled": {
+    "message": "Google-Verbindung abgebrochen."
+  },
+  "search_no_results": {
+    "message": "Keine passenden Wörter gefunden."
+  },
+  "srs_btn_back_tooltip": {
+    "message": "Zurück"
+  },
+  "srs_result_subtitle": {
+    "message": "Du hast dein heutiges Lernziel erfolgreich erreicht."
+  },
+  "srs_toggle_learned_tooltip": {
+    "message": "Gelernt-Status umschalten"
+  },
+  "toast_no_words_to_refresh": {
+    "message": "Keine Wörter zum Aktualisieren gefunden."
+  },
+  "tooltip_double_click_edit": {
+    "message": "Doppelklick zum Bearbeiten"
+  },
+  "tooltip_speak": {
+    "message": "Anhören"
+  },
+  "archive_existing_tags_lbl": {
+    "message": "Vorhandene Tags"
+  },
+  "modal_btn_close": {
+    "message": "Schließen"
+  },
+  "share_dialog_title": {
+    "message": "Teilen"
+  },
+  "srs_words_sort_title": {
+    "message": "Sortieroptionen"
+  },
+  "info_companion_badge": {
+    "message": "Mobile Begleit-App"
+  },
+  "info_close_btn": {
+    "message": "Schließen"
+  },
+  "settings_guide_label": {
+    "message": "Benutzerhandbuch"
+  },
+  "settings_guide_sublabel": {
+    "message": "Seitenfunktionen und hilfreiche Tipps"
+  },
+  "header_streak_tooltip": {
+    "message": "Lernserie"
+  },
+  "profile_view_achievements": {
+    "message": "Erfolge anzeigen"
+  },
+  "profile_sync_backup_title": {
+    "message": "Fortschritt in Cloud sichern"
+  },
+  "profile_sync_backup_desc": {
+    "message": "Synchronisiere Wörter und Serien auf all deinen Geräten."
+  },
+  "profile_google_sign_in": {
+    "message": "Mit Google anmelden"
+  },
+  "profile_terms_privacy": {
+    "message": "Datenschutz & Nutzungsbedingungen"
+  },
+  "fc_retry_missed_btn": {
+    "message": "Unbekannte wiederholen"
+  },
+  "archive_scene_go_to": {
+    "message": "Zur Szene ({time})"
+  },
+  "archive_scene_open": {
+    "message": "Video öffnen"
+  },
+  "settings_haptics_title": {
+    "message": "Haptisches Feedback"
+  },
+  "settings_haptics_desc": {
+    "message": "Spürbare Vibration bei Karten und Spielen"
+  },
+  "settings_reminder_title": {
+    "message": "Tägliche Lernerinnerung"
+  },
+  "settings_reminder_desc": {
+    "message": "Erinnerung erhalten, um die Serie zu halten"
+  },
+  "settings_reminder_time_title": {
+    "message": "Erinnerungszeit"
+  },
+  "settings_reminder_time_desc": {
+    "message": "Uhrzeit für die tägliche Benachrichtigung"
+  },
+  "reminder_notif_title": {
+    "message": "PrimeVocab · Zeit zum Üben! 🔥"
+  },
+  "reminder_notif_body": {
+    "message": "Heute stehen Wörter zur Wiederholung an. Übe jetzt, um deine Serie zu halten!"
+  },
+  "reminder_test_success": {
+    "message": "Erfolg! Ihre Erinnerungsbenachrichtigung funktioniert."
+  },
+  "reminder_permission_denied": {
+    "message": "Benachrichtigungsberechtigung verweigert. Bitte in den Geräteeinstellungen erlauben."
+  },
+  "settings_time_picker_title": {
+    "message": "Erinnerungszeit festlegen"
+  },
+  "time_unit_hour": {
+    "message": "Std"
+  },
+  "time_unit_min": {
+    "message": "Min"
+  },
+  "settings_test_notif_title": {
+    "message": "Test-Benachrichtigung senden"
+  },
+  "settings_test_notif_desc": {
+    "message": "Testen Sie, ob Benachrichtigungen funktionieren"
   }
 }

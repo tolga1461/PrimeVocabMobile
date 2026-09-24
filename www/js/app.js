@@ -3,7 +3,10 @@
 
 // Helper: Get localized message
 function getMessage(key, substitutions) {
-    return chrome.i18n.getMessage(key, substitutions);
+    if (!chrome.i18n) return '';
+    const msg = chrome.i18n.getMessage(key, substitutions);
+    if (msg && msg !== key) return msg;
+    return '';
 }
 
 // ── HTML Localization Utility ──
@@ -12,7 +15,7 @@ function localizeHtml() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
         const msg = getMessage(key);
-        if (msg) {
+        if (msg && msg !== key) {
             // If it contains HTML elements, keep them
             if (el.children.length === 0) {
                 el.textContent = msg;
@@ -33,11 +36,31 @@ function localizeHtml() {
     });
 
     document.querySelectorAll('[data-i18n-title]').forEach(el => {
-        const key = el.dataset.i18nTitle;
+        const key = el.getAttribute('data-i18n-title') || el.dataset.i18nTitle;
         const msg = getMessage(key);
         if (msg) el.title = msg;
     });
+
+    document.querySelectorAll('[data-i18n-aria-label]').forEach(el => {
+        const key = el.getAttribute('data-i18n-aria-label') || el.dataset.i18nAriaLabel;
+        const msg = getMessage(key);
+        if (msg) el.setAttribute('aria-label', msg);
+    });
 }
+
+// ── Comprehensive App Re-Localization ──
+window.applyLanguageEverywhere = function() {
+    console.log("[PV-core] Applying language everywhere across all views");
+    localizeHtml();
+    if (typeof loadSettings === 'function') loadSettings();
+    if (typeof updateProfileUI === 'function') updateProfileUI();
+    if (typeof loadProfileData === 'function') loadProfileData();
+    if (typeof syncSelectsToTriggers === 'function') syncSelectsToTriggers();
+    if (typeof loadArchive === 'function') loadArchive();
+    if (typeof loadSrs === 'function') loadSrs();
+    if (typeof renderHeatmap === 'function') renderHeatmap();
+    if (typeof loadGamesHub === 'function') loadGamesHub();
+};
 
 // ── Badge & UI Updaters ──
 function updateArchiveBadge() {
@@ -72,6 +95,8 @@ function updateReviewBadge() {
 }
 
 // ── Profile Banner UI Updater ──
+const PV_USER_AVATAR_SVG = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: #a5b4fc; padding: 18%;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+
 function updateProfileUI() {
     chrome.storage.local.get({
         googleSyncEmail: "",
@@ -161,7 +186,7 @@ function updateProfileUI() {
                 } else {
                     tabAvatarRing.style.background = 'linear-gradient(135deg, #6366f1, #a855f7)';
                 }
-                tabAvatarInner.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='👤';" style="width:100%; height:100%; object-fit:cover;">`;
+                tabAvatarInner.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.innerHTML=PV_USER_AVATAR_SVG;" style="width:100%; height:100%; object-fit:cover;">`;
             } else {
                 tabProfileBtn.classList.remove('has-avatar');
                 if (tabAvatarRing) {
@@ -191,9 +216,9 @@ function updateProfileUI() {
             // Sync user avatar
             if (avatarContainer) {
                 if (data.googleSyncPicture) {
-                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='👤';" style="width:100%; height:100%; object-fit:cover;">`;
+                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.innerHTML=PV_USER_AVATAR_SVG;" style="width:100%; height:100%; object-fit:cover;">`;
                 } else {
-                    avatarContainer.innerHTML = '👤';
+                    avatarContainer.innerHTML = PV_USER_AVATAR_SVG;
                 }
             }
 
@@ -205,9 +230,9 @@ function updateProfileUI() {
             if (settingsLogoutBtn) settingsLogoutBtn.style.display = 'block';
             if (settingsUserAvatar) {
                 if (data.googleSyncPicture) {
-                    settingsUserAvatar.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='👤';" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">`;
+                    settingsUserAvatar.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.innerHTML=PV_USER_AVATAR_SVG;" style="width:32px; height:32px; border-radius:50%; object-fit:cover;">`;
                 } else {
-                    settingsUserAvatar.innerHTML = '👤';
+                    settingsUserAvatar.innerHTML = PV_USER_AVATAR_SVG;
                 }
             }
         } else {
@@ -221,7 +246,7 @@ function updateProfileUI() {
             if (syncStatus) syncStatus.textContent = getMessage('profile_sync_status_unlinked') || 'Senkronizasyon Kapalı';
             if (syncNowBtn) syncNowBtn.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = 'none';
-            if (avatarContainer) avatarContainer.innerHTML = '👤';
+            if (avatarContainer) avatarContainer.innerHTML = PV_USER_AVATAR_SVG;
 
             // Settings view updates
             if (settingsLoginBtn) settingsLoginBtn.style.display = 'block';
@@ -239,9 +264,10 @@ function updateProfileUI() {
             
             if (lastSyncTimeEl) lastSyncTimeEl.textContent = timeStr;
             if (settingsLastSyncEl && syncData.lastGoogleSyncTime) {
-                settingsLastSyncEl.textContent = `Son eşitleme: ${timeStr}`;
+                const tpl = getMessage('settings_last_sync_status') || 'Son eşitleme: {time}';
+                settingsLastSyncEl.textContent = tpl.replace('{time}', timeStr);
             } else if (settingsLastSyncEl) {
-                settingsLastSyncEl.textContent = 'Eşitleme kurulmadı';
+                settingsLastSyncEl.textContent = getMessage('settings_sync_not_setup') || 'Eşitleme kurulmadı';
             }
         });
     });
@@ -274,6 +300,12 @@ function switchMainTab(tabName, isBack = false) {
 
     if (tabEl) tabEl.classList.add('active');
     if (panelEl) panelEl.classList.add('active');
+
+    // Restore bars if hidden & reset scroll state
+    const appContainer = document.querySelector('.app');
+    if (appContainer) appContainer.classList.remove('nav-hidden', 'review-nav-hidden');
+    // Reset archive scroll state so header shows correctly on re-entry
+    if (typeof resetArchiveScrollState === 'function') resetArchiveScrollState();
 
     sessionStorage.setItem('activeMainTab', tabName);
 
@@ -345,10 +377,12 @@ function loadProfileData() {
         
         const totalWordsEl = document.getElementById('profile-total-words');
         const streakEl = document.getElementById('profile-streak');
+        const headerStreakEl = document.getElementById('header-streak-count');
         const expEl = document.getElementById('profile-exp');
         
         if (totalWordsEl) totalWordsEl.textContent = totalWords.toLocaleString();
         if (streakEl) streakEl.textContent = getMessage('profile_days_count', String(streak));
+        if (headerStreakEl) headerStreakEl.textContent = String(streak);
         if (expEl) expEl.textContent = exp.toLocaleString();
 
         // XP Level calculations
@@ -448,7 +482,15 @@ function updateAndShowInfoModal(tabName) {
         descKey = 'info_profile_desc';
     }
 
-    if (titleEl) titleEl.textContent = getMessage(titleKey) || "Bilgi";
+    const iconBox = document.getElementById('info-modal-icon-box');
+    if (iconBox) {
+        iconBox.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`;
+    }
+
+    if (titleEl) {
+        titleEl.setAttribute('data-i18n', titleKey || 'info_modal_title');
+        titleEl.textContent = getMessage(titleKey) || getMessage('info_modal_title') || "Bilgi";
+    }
     
     if (contentEl) {
         // Handle newlines correctly in desc
@@ -459,25 +501,79 @@ function updateAndShowInfoModal(tabName) {
     // Localize buttons in modal
     const aboutBtnText = document.getElementById('info-about-btn-text');
     if (aboutBtnText) aboutBtnText.textContent = getMessage('info_btn_about') || "PrimeVocab Hakkında";
-    const backBtnText = document.getElementById('info-back-btn-text');
-    if (backBtnText) backBtnText.textContent = getMessage('info_btn_back') || "Geri Dön";
+
+    localizeHtml();
 
     overlay.style.display = 'flex';
 }
 
-function showAboutModal() {
+let aboutOrigin = 'help'; // Tracks if about modal was opened from 'settings' or 'help'
+
+function showAboutModal(fromSettings = false) {
     const overlay = document.getElementById('info-overlay');
     if (!overlay) return;
+
+    aboutOrigin = fromSettings ? 'settings' : 'help';
 
     const dynamicView = document.getElementById('info-dynamic-view');
     const aboutView = document.getElementById('info-about-view');
     const titleEl = document.getElementById('info-modal-title');
+    const iconBox = document.getElementById('info-modal-icon-box');
 
     if (dynamicView) dynamicView.style.display = 'none';
     if (aboutView) aboutView.style.display = 'flex';
-    if (titleEl) titleEl.textContent = "ℹ️ " + (getMessage('info_btn_about') || "PrimeVocab Hakkında");
+    
+    if (titleEl) {
+        titleEl.setAttribute('data-i18n', 'info_about_btn');
+        titleEl.textContent = getMessage('info_about_btn') || "PrimeVocab Hakkında";
+    }
+    if (iconBox) {
+        iconBox.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>`;
+    }
+
+    const backBtnText = document.getElementById('info-back-btn-text');
+    const backBtnIcon = document.getElementById('info-back-icon');
+    if (backBtnText) {
+        if (aboutOrigin === 'settings') {
+            backBtnText.setAttribute('data-i18n', 'info_close_btn');
+            backBtnText.textContent = getMessage('info_close_btn') || "Kapat";
+            if (backBtnIcon) {
+                backBtnIcon.innerHTML = `<path d="M18 6 6 18"/><path d="m6 6 12 12"/>`;
+            }
+        } else {
+            backBtnText.setAttribute('data-i18n', 'info_back_btn');
+            backBtnText.textContent = getMessage('info_btn_back') || getMessage('info_back_btn') || "Geri Dön";
+            if (backBtnIcon) {
+                backBtnIcon.innerHTML = `<path d="m15 18-6-6 6-6"/>`;
+            }
+        }
+    }
+
+    localizeHtml();
 
     overlay.style.display = 'flex';
+}
+
+// Header streak badge click -> open profile tab
+const headerStreakBadge = document.getElementById('header-streak-badge');
+if (headerStreakBadge) {
+    headerStreakBadge.addEventListener('click', () => {
+        const profileTab = document.querySelector('.tab[data-tab="profile"]');
+        if (profileTab) profileTab.click();
+    });
+}
+
+// Profile achievements box click -> open Review -> Achievements subtab
+const profileAchBox = document.getElementById('profile-achievements-box');
+if (profileAchBox) {
+    profileAchBox.addEventListener('click', () => {
+        const reviewTab = document.querySelector('.tab[data-tab="review"]');
+        if (reviewTab) reviewTab.click();
+        setTimeout(() => {
+            const achSubtab = document.getElementById('subtab-achievements');
+            if (achSubtab) achSubtab.click();
+        }, 60);
+    });
 }
 
 // Info overlay events
@@ -497,13 +593,18 @@ if (infoCloseBtn) {
 const infoAboutBtn = document.getElementById('info-about-btn');
 if (infoAboutBtn) {
     infoAboutBtn.addEventListener('click', () => {
-        showAboutModal();
+        showAboutModal(false);
     });
 }
 const infoBackBtn = document.getElementById('info-back-btn');
 if (infoBackBtn) {
     infoBackBtn.addEventListener('click', () => {
-        updateAndShowInfoModal();
+        if (aboutOrigin === 'settings') {
+            const overlay = document.getElementById('info-overlay');
+            if (overlay) overlay.style.display = 'none';
+        } else {
+            updateAndShowInfoModal();
+        }
     });
 }
 
@@ -511,7 +612,7 @@ if (infoBackBtn) {
 const aboutTriggerRow = document.getElementById('about-trigger-row');
 if (aboutTriggerRow) {
     aboutTriggerRow.addEventListener('click', () => {
-        showAboutModal();
+        showAboutModal(true);
     });
 }
 
@@ -612,7 +713,8 @@ async function handleLogin() {
         });
     } catch (err) {
         console.error("[PV-core] Google login failed:", err);
-        showToast("Giriş yapılamadı: " + err.message);
+        const tpl = getMessage("login_failed_toast") || "Giriş yapılamadı: {error}";
+        showToast(tpl.replace('{error}', err.message));
     }
 }
 
@@ -773,38 +875,12 @@ function bindAuthButtons() {
 }
 
 
-// ── Service Worker PWA Installation prompt ──
+// ── Service Worker PWA Installation prompt (Disabled per user request) ──
 let deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredInstallPrompt = e;
-    const banner = document.getElementById('install-banner');
-    if (banner) banner.style.display = 'flex';
 });
-
-const installActionBtn = document.getElementById('install-action-btn');
-if (installActionBtn) {
-    installActionBtn.addEventListener('click', () => {
-        if (deferredInstallPrompt) {
-            deferredInstallPrompt.prompt();
-            deferredInstallPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                }
-                deferredInstallPrompt = null;
-                const banner = document.getElementById('install-banner');
-                if (banner) banner.style.display = 'none';
-            });
-        }
-    });
-}
-const installCloseBtn = document.getElementById('install-close-btn');
-if (installCloseBtn) {
-    installCloseBtn.addEventListener('click', () => {
-        const banner = document.getElementById('install-banner');
-        if (banner) banner.style.display = 'none';
-    });
-}
 
 // ── SRS streak migrations ──
 function migrateLegacyStreakIfNeeded() {
@@ -1003,11 +1079,20 @@ function initBottomSheetController() {
         Array.from(selectEl.options).forEach(opt => {
             const row = document.createElement('div');
             row.className = 'bottom-sheet-option';
-            if (opt.value === selectEl.value) {
+            const isActive = opt.value === selectEl.value;
+            if (isActive) {
                 row.classList.add('active');
             }
-            row.textContent = opt.textContent || opt.value;
-            
+            const label = document.createElement('span');
+            label.textContent = opt.textContent || opt.value;
+            row.appendChild(label);
+            if (isActive) {
+                const check = document.createElement('span');
+                check.className = 'bottom-sheet-option-check';
+                check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" width="18" height="18"><path d="M4 12l5 5L20 6"/></svg>';
+                row.appendChild(check);
+            }
+
             // Set option on click
             row.addEventListener('click', () => {
                 selectEl.value = opt.value;
@@ -1128,6 +1213,7 @@ function initBottomSheetController() {
 
     // Check periodically for changes (very cheap, maintains 100% reactive parity)
     setInterval(syncSelectsToTriggers, 300);
+    window.syncSelectsToTriggers = syncSelectsToTriggers;
 }
 
 // Initialize bottom sheet controller
@@ -1433,4 +1519,13 @@ document.addEventListener('visibilitychange', () => {
         triggerSilentSync(true);
     }
 });
+
+// Check and maintain daily study reminder schedule on startup
+try {
+    chrome.storage.sync.get({ settings: {} }, ({ settings }) => {
+        if (settings && settings.dailyReminderEnabled && window.NotificationService) {
+            window.NotificationService.scheduleDailyReminder(settings.dailyReminderTime || '20:00');
+        }
+    });
+} catch (e) {}
 
