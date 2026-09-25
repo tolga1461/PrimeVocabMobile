@@ -941,11 +941,36 @@ async function start() {
 
     migrateLegacyStreakIfNeeded();
     
-    // Sync current logged-in email to last_logged_sync_email on startup
-    chrome.storage.local.get({ googleSyncEmail: "" }, (data) => {
-        if (data.googleSyncEmail) {
-            localStorage.setItem('last_logged_sync_email', data.googleSyncEmail);
-        }
+    // Purge any legacy developer backdoor account from storage
+    await new Promise(resolve => {
+        chrome.storage.local.get({ googleSyncEmail: "" }, (data) => {
+            if (data.googleSyncEmail === 'developer@primevocab.app') {
+                chrome.storage.local.remove([
+                    'googleSyncEmail', 
+                    'googleSyncPicture', 
+                    'googleSyncEnabled', 
+                    'lastGoogleSyncTime',
+                    'isPremium',
+                    'licenseType',
+                    'licenseStatus',
+                    'licenseExpiration',
+                    'licenseSignature'
+                ], resolve);
+                localStorage.removeItem('local_googleSyncEmail');
+                localStorage.removeItem('local_googleSyncName');
+                localStorage.removeItem('local_licenseType');
+                localStorage.removeItem('local_licenseStatus');
+                localStorage.removeItem('local_isPremium');
+                if (localStorage.getItem('last_logged_sync_email') === 'developer@primevocab.app') {
+                    localStorage.removeItem('last_logged_sync_email');
+                }
+            } else {
+                if (data.googleSyncEmail) {
+                    localStorage.setItem('last_logged_sync_email', data.googleSyncEmail);
+                }
+                resolve();
+            }
+        });
     });
     
     await initI18n();

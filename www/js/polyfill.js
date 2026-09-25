@@ -227,32 +227,23 @@ window.seedSampleWords = function(force = false) {
   return false;
 };
 
-// Seed default sample words and developer license for development and standalone PWA preview
+// Remove any legacy developer backdoor credentials if present
 (function() {
   try {
-    const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
-    if (isDev) {
-      if (!localStorage.getItem('local_licenseType') || localStorage.getItem('local_licenseType') === 'FREE') {
-        localStorage.setItem('local_licenseType', 'LIFETIME');
-        localStorage.setItem('local_licenseStatus', 'ACTIVE');
-        localStorage.setItem('local_isPremium', 'true');
-        if (!localStorage.getItem('local_googleSyncEmail')) {
-          localStorage.setItem('local_googleSyncEmail', 'developer@primevocab.app');
-          localStorage.setItem('local_googleSyncName', 'Geliştirici');
-        }
-      }
+    if (localStorage.getItem('local_googleSyncEmail') === 'developer@primevocab.app') {
+      localStorage.removeItem('local_googleSyncEmail');
+      localStorage.removeItem('local_googleSyncName');
+      localStorage.removeItem('local_licenseType');
+      localStorage.removeItem('local_licenseStatus');
+      localStorage.removeItem('local_isPremium');
     }
     const existing = localStorage.getItem('local_savedWords');
-    let words = [];
-    try { words = JSON.parse(existing) || []; } catch(e) {}
-    if (!existing || existing === '[]' || existing === 'null' || words.length < 15) {
+    if (!existing || existing === 'null') {
       localStorage.setItem('local_savedWords', JSON.stringify(SAMPLE_DUMMY_WORDS));
-      localStorage.setItem('local_srsStreakStats', JSON.stringify({ currentStreak: 5, bestStreak: 12, lastStudyDate: new Date().toDateString() }));
-      localStorage.setItem('pv_dev_seeded', '1');
-      console.log('[Polyfill] Directly seeded ' + SAMPLE_DUMMY_WORDS.length + ' sample words into local_savedWords.');
+      localStorage.setItem('local_srsStreakStats', JSON.stringify({ currentStreak: 0, bestStreak: 0, lastStudyDate: '' }));
     }
   } catch(e) {
-    console.warn('[Polyfill] Seeder error', e);
+    console.warn('[Polyfill] Init error', e);
   }
 })();
 
@@ -348,7 +339,7 @@ chrome.runtime = {
           });
         return true;
       } else {
-        if (callback) callback({ success: true, licenseType: 'LIFETIME', isPremium: true, status: 'ACTIVE' });
+        if (callback) callback({ success: false, message: 'PV_ApiClient not available' });
       }
     } else if (message.action === "api_sync_usage") {
       if (window.PV_ApiClient && typeof window.PV_ApiClient.syncUsage === 'function') {
