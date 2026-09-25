@@ -327,6 +327,17 @@
       align-items: center !important;
     }
 
+    /* Bottom Nav Profile Avatar & Icon Toggle */
+    #tab-profile.has-avatar .tab-icon {
+      display: none !important;
+    }
+    #tab-profile:not(.has-avatar) .tab-profile-avatar-ring {
+      display: none !important;
+    }
+    #tab-profile.has-avatar .tab-profile-avatar-ring {
+      display: flex !important;
+    }
+
     .tab::before {
       font-size: 24px !important;
       /* Larger, clearer emoji icons */

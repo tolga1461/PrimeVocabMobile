@@ -167,13 +167,16 @@ function updateProfileUI() {
         if (tabProfileBtn) {
             let tabAvatarRing = tabProfileBtn.querySelector('.tab-profile-avatar-ring');
             let tabAvatarInner = tabProfileBtn.querySelector('.tab-profile-avatar-inner');
+            const defaultTabIcon = tabProfileBtn.querySelector('.tab-icon');
             
             if (data.googleSyncEmail && data.googleSyncPicture) {
                 tabProfileBtn.classList.add('has-avatar');
+                if (defaultTabIcon) defaultTabIcon.style.display = 'none';
+
                 if (!tabAvatarRing) {
                     tabAvatarRing = document.createElement('div');
                     tabAvatarRing.className = 'tab-profile-avatar-ring';
-                    tabAvatarRing.style.cssText = 'width: 26px; height: 26px; border-radius: 50%; padding: 1.5px; margin-bottom: 2px; display: flex; align-items: center; justify-content: center;';
+                    tabAvatarRing.style.cssText = 'width: 26px; height: 26px; border-radius: 50%; padding: 1.5px; margin-bottom: 2px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;';
                     tabAvatarInner = document.createElement('div');
                     tabAvatarInner.className = 'tab-profile-avatar-inner';
                     tabAvatarInner.style.cssText = 'width: 100%; height: 100%; border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--bg); font-size: 14px;';
@@ -186,11 +189,14 @@ function updateProfileUI() {
                 } else {
                     tabAvatarRing.style.background = 'linear-gradient(135deg, #6366f1, #a855f7)';
                 }
-                tabAvatarInner.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.innerHTML=PV_USER_AVATAR_SVG;" style="width:100%; height:100%; object-fit:cover;">`;
+                tabAvatarInner.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.parentElement.innerHTML=PV_USER_AVATAR_SVG;" style="width:100%; height:100%; object-fit:cover; border-radius:50%; display:block;">`;
             } else {
                 tabProfileBtn.classList.remove('has-avatar');
                 if (tabAvatarRing) {
                     tabAvatarRing.style.display = 'none';
+                }
+                if (defaultTabIcon) {
+                    defaultTabIcon.style.display = 'block';
                 }
             }
         }
@@ -216,7 +222,7 @@ function updateProfileUI() {
             // Sync user avatar
             if (avatarContainer) {
                 if (data.googleSyncPicture) {
-                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.innerHTML=PV_USER_AVATAR_SVG;" style="width:100%; height:100%; object-fit:cover;">`;
+                    avatarContainer.innerHTML = `<img src="${data.googleSyncPicture}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.parentElement.innerHTML=PV_USER_AVATAR_SVG;" style="width:100%; height:100%; object-fit:cover; border-radius:50%; display:block;">`;
                 } else {
                     avatarContainer.innerHTML = PV_USER_AVATAR_SVG;
                 }
@@ -794,7 +800,7 @@ function showPremiumBlockerModal(email, userCase) {
 }
 
 async function forceLogoutWithoutConfirm() {
-    await clearGoogleAuthToken();
+    clearGoogleAuthToken().catch(() => {});
     await new Promise(resolve => {
         chrome.storage.local.remove([
             'googleSyncEmail', 
@@ -808,6 +814,13 @@ async function forceLogoutWithoutConfirm() {
             'licenseSignature'
         ], resolve);
     });
+    localStorage.removeItem('google_sync_token');
+    localStorage.removeItem('google_sync_token_expires');
+    localStorage.removeItem('google_sync_refresh_token');
+    localStorage.removeItem('local_googleSyncEmail');
+    localStorage.removeItem('googleSyncEmail');
+    localStorage.removeItem('googleSyncPicture');
+    localStorage.removeItem('googleSyncEnabled');
     updateProfileUI();
 }
 
@@ -815,28 +828,22 @@ async function handleLogout() {
     showCustomConfirm(
         "profile_logout_confirm",
         async () => {
-            showToast(getMessage('profile_logging_out') || "Çıkış yapılıyor...");
-
-            // Silent sync before logout to secure local progress in cloud
+            // Save the current logged-in email to last_logged_sync_email before clearing it
             try {
-                console.log("[PV-core] Performing silent sync before logout...");
-                await performGoogleDriveSync(false);
-                console.log("[PV-core] Silent sync before logout completed successfully.");
-            } catch (syncErr) {
-                console.warn("[PV-core] Silent sync before logout failed (offline or not premium), proceeding with logout:", syncErr);
+                const data = await new Promise(resolve => {
+                    chrome.storage.local.get({ googleSyncEmail: "" }, resolve);
+                });
+                if (data && data.googleSyncEmail) {
+                    localStorage.setItem('last_logged_sync_email', data.googleSyncEmail);
+                }
+            } catch (e) {
+                console.warn("[PV-core] Error saving last email:", e);
             }
 
-            // Save the current logged-in email to last_logged_sync_email before clearing it
-            await new Promise(resolve => {
-                chrome.storage.local.get({ googleSyncEmail: "" }, (data) => {
-                    if (data.googleSyncEmail) {
-                        localStorage.setItem('last_logged_sync_email', data.googleSyncEmail);
-                    }
-                    resolve();
-                });
-            });
+            // Immediately clear tokens & revocation in background without blocking
+            clearGoogleAuthToken().catch(err => console.warn("[PV-core] Error revoking token:", err));
 
-            await clearGoogleAuthToken();
+            // Clean storage immediately
             await new Promise(resolve => {
                 chrome.storage.local.remove([
                     'googleSyncEmail', 
@@ -850,6 +857,18 @@ async function handleLogout() {
                     'licenseSignature'
                 ], resolve);
             });
+
+            // Clean local storage items
+            localStorage.removeItem('google_sync_token');
+            localStorage.removeItem('google_sync_token_expires');
+            localStorage.removeItem('google_sync_refresh_token');
+            localStorage.removeItem('local_googleSyncEmail');
+            localStorage.removeItem('googleSyncEmail');
+            localStorage.removeItem('googleSyncPicture');
+            localStorage.removeItem('googleSyncEnabled');
+
+            // Instantly update UI and trigger haptic feedback
+            if (window.HapticsService) window.HapticsService.light();
             updateProfileUI();
             showToast(getMessage('profile_logged_out_toast') || "Çıkış yapıldı.");
         },
