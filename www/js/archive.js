@@ -252,6 +252,31 @@ let archiveAccumulatedDelta = 0;
 let archiveLastDirection = null;
 let isResettingScroll = false;
 let isTogglingDetails = false;
+let isNavTransitioning = false;
+let navTransitionTimer = null;
+
+function setHeaderCollapsed(collapsed) {
+    if (headerCollapsed === collapsed) return;
+    const appContainer = document.querySelector('.app');
+    const panelEl = document.getElementById('panel-archive');
+    headerCollapsed = collapsed;
+    isNavTransitioning = true;
+
+    if (appContainer) {
+        appContainer.classList.toggle('nav-hidden', collapsed);
+    }
+
+    clearTimeout(navTransitionTimer);
+    navTransitionTimer = setTimeout(() => {
+        isNavTransitioning = false;
+        if (panelEl) {
+            const maxScroll = Math.max(0, panelEl.scrollHeight - panelEl.clientHeight);
+            lastScrollTop = Math.min(Math.max(0, panelEl.scrollTop), maxScroll);
+            archiveAccumulatedDelta = 0;
+            archiveLastDirection = null;
+        }
+    }, 320);
+}
 
 function throttle(fn, ms) {
     let last = 0;
@@ -268,11 +293,11 @@ function throttle(fn, ms) {
 
 function resetArchiveScrollState() {
     lastScrollTop = 0;
-    headerCollapsed = false;
     archiveAccumulatedDelta = 0;
     archiveLastDirection = null;
-    const appContainer = document.querySelector('.app');
-    if (appContainer) appContainer.classList.remove('nav-hidden');
+    isNavTransitioning = false;
+    clearTimeout(navTransitionTimer);
+    setHeaderCollapsed(false);
 }
 
 
@@ -832,11 +857,16 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     });
 
     if (!scrollListenerAttached) {
-        const appContainer = document.querySelector('.app');
         const panelEl = document.getElementById('panel-archive');
 
         const handleArchiveScroll = throttle(() => {
-            if (isTogglingDetails) return;
+            if (isTogglingDetails || isNavTransitioning) {
+                if (panelEl) {
+                    const maxScroll = Math.max(0, panelEl.scrollHeight - panelEl.clientHeight);
+                    lastScrollTop = Math.min(Math.max(0, panelEl.scrollTop), maxScroll);
+                }
+                return;
+            }
             if (!panelEl) return;
 
             const maxScroll = Math.max(0, panelEl.scrollHeight - panelEl.clientHeight);
@@ -844,21 +874,15 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
 
             // If page is short, keep bars visible
             if (maxScroll <= 80) {
-                if (appContainer && appContainer.classList.contains('nav-hidden')) {
-                    appContainer.classList.remove('nav-hidden');
-                }
-                headerCollapsed = false;
+                setHeaderCollapsed(false);
                 archiveAccumulatedDelta = 0;
                 lastScrollTop = currentScrollTop;
                 return;
             }
 
-            // 1. Twitter behavior: Always show when at the very top (within 15px)
-            if (currentScrollTop <= 15) {
-                if (headerCollapsed) {
-                    headerCollapsed = false;
-                    if (appContainer) appContainer.classList.remove('nav-hidden');
-                }
+            // 1. Twitter behavior: Always show when at the very top (within 20px)
+            if (currentScrollTop <= 20) {
+                setHeaderCollapsed(false);
                 archiveAccumulatedDelta = 0;
                 archiveLastDirection = null;
                 lastScrollTop = currentScrollTop;
@@ -894,21 +918,15 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             }
 
             // 3. Twitter (X) Hysteresis thresholds:
-            // Down: Requires continuous downward movement of at least 32px AND beyond top margin (50px)
-            // Up: Responsive reappearance after at least 14px of continuous upward movement
+            // Down: Requires continuous downward movement of at least 36px AND beyond top margin (50px)
+            // Up: Responsive reappearance after at least 20px of continuous upward movement
             if (currentDirection === 'down') {
-                if (archiveAccumulatedDelta >= 32 && currentScrollTop > 50) {
-                    if (!headerCollapsed) {
-                        headerCollapsed = true;
-                        if (appContainer) appContainer.classList.add('nav-hidden');
-                    }
+                if (archiveAccumulatedDelta >= 36 && currentScrollTop > 50) {
+                    setHeaderCollapsed(true);
                 }
             } else {
-                if (archiveAccumulatedDelta >= 14) {
-                    if (headerCollapsed) {
-                        headerCollapsed = false;
-                        if (appContainer) appContainer.classList.remove('nav-hidden');
-                    }
+                if (archiveAccumulatedDelta >= 20) {
+                    setHeaderCollapsed(false);
                 }
             }
         }, 25);
