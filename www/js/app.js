@@ -1331,7 +1331,9 @@ function initPullToRefresh() {
     const spinnerPath = ptr.querySelector('.ptr-spinner-path');
     const circumference = 62.8; // 2 * pi * r (r=10)
 
+    let startX = 0;
     let startY = 0;
+    let canPull = false;
     let isPulling = false;
     let lastPullDistance = 0;
     const triggerThreshold = 65; // Pull distance in px to trigger sync
@@ -1356,72 +1358,110 @@ function initPullToRefresh() {
     }
 
     wordList.addEventListener('touchstart', (e) => {
-        // Only trigger pull-to-refresh if scrolled to top
-        if (wordList.scrollTop <= 0 && !ptr.classList.contains('loading')) {
+        // Only trigger pull-to-refresh if:
+        // 1. Panel is scrolled to the absolute top (panel.scrollTop <= 1)
+        // 2. Not currently loading
+        // 3. Search query is empty
+        const panelScrollTop = panel ? panel.scrollTop : 0;
+        const searchInput = document.getElementById('archive-search');
+        const hasSearch = searchInput && searchInput.value.trim().length > 0;
+
+        if (panelScrollTop <= 1 && !ptr.classList.contains('loading') && !hasSearch) {
+            canPull = true;
+            startX = e.touches[0].screenX;
             startY = e.touches[0].screenY;
             isPulling = false;
             lastPullDistance = 0;
 
             // Set initial top position
             ptr.style.top = `${getGapBaseTop()}px`;
+        } else {
+            canPull = false;
         }
     }, { passive: true });
 
     wordList.addEventListener('touchmove', (e) => {
-        if (wordList.scrollTop > 0 || ptr.classList.contains('loading')) return;
+        if (!canPull || ptr.classList.contains('loading')) return;
 
-        // Skip if search or filters are active
-        const searchInput = document.getElementById('archive-search');
-        if (searchInput && searchInput.value.trim().length > 0) return;
+        // Double check panel scroll position - if user scrolled down, cancel pulling
+        const panelScrollTop = panel ? panel.scrollTop : 0;
+        if (panelScrollTop > 1) {
+            canPull = false;
+            if (isPulling) {
+                isPulling = false;
+                if (panel) panel.classList.remove('word-list-pulling');
+                ptr.classList.remove('pulling');
+                wordList.style.transform = 'translateY(0)';
+            }
+            return;
+        }
 
+        const currentX = e.touches[0].screenX;
         const currentY = e.touches[0].screenY;
+        const deltaX = Math.abs(currentX - startX);
         const deltaY = currentY - startY;
 
-        if (deltaY > 0) {
-            const pullDistance = Math.min(deltaY * 0.45, maxPullDistance); // Apply resistance
-            if (pullDistance > 6) {
-                isPulling = true;
-                lastPullDistance = pullDistance;
-                
-                // Prevent elastic scroll bounce on iOS/Android PWA
-                if (e.cancelable) {
-                    e.preventDefault();
-                }
+        // If gesture is horizontal, ignore pull-to-refresh
+        if (!isPulling && deltaX > Math.abs(deltaY)) {
+            canPull = false;
+            return;
+        }
 
-                if (panel) {
-                    panel.classList.add('word-list-pulling');
-                    ptr.style.top = `${getGapBaseTop()}px`;
-                }
-                ptr.classList.remove('loading');
-                ptr.classList.add('pulling');
-                
-                // Translate the spinner slightly slower than the list (parallax reveal)
-                const ptrTranslate = pullDistance * 0.35;
-                ptr.style.setProperty('--ptr-translate', `${ptrTranslate}px`);
-                
-                // Shift the word list down (accordion pull effect)
-                wordList.style.transform = `translateY(${pullDistance}px)`;
+        // If user is swiping up (scrolling down the list), cancel pulling
+        if (deltaY <= 0) {
+            if (isPulling) {
+                isPulling = false;
+                if (panel) panel.classList.remove('word-list-pulling');
+                ptr.classList.remove('pulling');
+                wordList.style.transform = 'translateY(0)';
+            }
+            return;
+        }
 
-                // Fill the SVG circle dynamically
-                if (spinnerPath) {
-                    const progress = Math.min(pullDistance / triggerThreshold, 1);
-                    const offset = circumference - (circumference * progress * 0.85);
-                    spinnerPath.style.strokeDashoffset = offset;
-                }
+        const pullDistance = Math.min(deltaY * 0.45, maxPullDistance); // Apply resistance
+        if (pullDistance > 6) {
+            isPulling = true;
+            lastPullDistance = pullDistance;
+            
+            // Prevent elastic scroll bounce on iOS/Android PWA
+            if (e.cancelable) {
+                e.preventDefault();
+            }
 
-                // Add visual indicator if reached threshold
-                if (pullDistance >= triggerThreshold) {
-                    ptr.style.transform = `translate(-50%, ${ptrTranslate}px) scale(1.15)`;
-                    ptr.style.borderColor = 'var(--accent)';
-                } else {
-                    ptr.style.transform = `translate(-50%, ${ptrTranslate}px) scale(1)`;
-                    ptr.style.borderColor = 'var(--border2)';
-                }
+            if (panel) {
+                panel.classList.add('word-list-pulling');
+                ptr.style.top = `${getGapBaseTop()}px`;
+            }
+            ptr.classList.remove('loading');
+            ptr.classList.add('pulling');
+            
+            // Translate the spinner slightly slower than the list (parallax reveal)
+            const ptrTranslate = pullDistance * 0.35;
+            ptr.style.setProperty('--ptr-translate', `${ptrTranslate}px`);
+            
+            // Shift the word list down (accordion pull effect)
+            wordList.style.transform = `translateY(${pullDistance}px)`;
+
+            // Fill the SVG circle dynamically
+            if (spinnerPath) {
+                const progress = Math.min(pullDistance / triggerThreshold, 1);
+                const offset = circumference - (circumference * progress * 0.85);
+                spinnerPath.style.strokeDashoffset = offset;
+            }
+
+            // Add visual indicator if reached threshold
+            if (pullDistance >= triggerThreshold) {
+                ptr.style.transform = `translate(-50%, ${ptrTranslate}px) scale(1.15)`;
+                ptr.style.borderColor = 'var(--accent)';
+            } else {
+                ptr.style.transform = `translate(-50%, ${ptrTranslate}px) scale(1)`;
+                ptr.style.borderColor = 'var(--border2)';
             }
         }
     }, { passive: false });
 
-    wordList.addEventListener('touchend', async () => {
+    const handleTouchEndOrCancel = async () => {
+        canPull = false;
         if (!isPulling) return;
         isPulling = false;
 
@@ -1496,7 +1536,10 @@ function initPullToRefresh() {
                 spinnerPath.style.strokeDashoffset = circumference;
             }
         }
-    });
+    };
+
+    wordList.addEventListener('touchend', handleTouchEndOrCancel);
+    wordList.addEventListener('touchcancel', handleTouchEndOrCancel);
 }
 
 initPullToRefresh();
