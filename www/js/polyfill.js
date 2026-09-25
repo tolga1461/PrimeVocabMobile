@@ -218,48 +218,7 @@ chrome.storage = {
   }
 };
 
-const SAMPLE_DUMMY_WORDS = [
-  { word: "resilient", translation: "dirençli, esnek", cefrLevel: "B2", reviewCount: 0, interval: 0, nextReview: 0, learned: false, context: "Children are often remarkably resilient.", tags: ["psikoloji"], wordFamily: ["resilience", "resiliently"], source: { showTitle: "The Crown", season: 4, episode: 3, time: 1420, url: "https://netflix.com" } },
-  { word: "serendipity", translation: "mutlu tesadüf", cefrLevel: "C1", reviewCount: 2, interval: 3, nextReview: Date.now() - 10000, learned: false, context: "Finding this cafe was pure serendipity.", tags: ["favori", "akademik"], wordFamily: ["serendipitous", "serendipitously"], source: { showTitle: "Friends", season: 2, episode: 14, time: 745, url: "https://netflix.com" } },
-  { word: "ephemeral", translation: "geçici, kısa ömürlü", cefrLevel: "C2", reviewCount: 1, interval: 1, nextReview: Date.now() - 5000, learned: false, context: "Fame in the digital age can be ephemeral.", tags: ["felsefe"], wordFamily: ["ephemerality"], source: { title: "TED Talk", time: 312, url: "https://youtube.com/watch?v=123" } },
-  { word: "eloquent", translation: "etkileyici konuşan", cefrLevel: "B2", reviewCount: 3, interval: 7, nextReview: Date.now() + 86400000 * 4, learned: true, context: "She gave an eloquent speech yesterday.", tags: ["hitabet"], wordFamily: ["eloquence", "eloquently"], source: { showTitle: "BBC News", title: "Global Summit", time: 540 } },
-  { word: "give up", translation: "vazgeçmek, pes etmek", cefrLevel: "Phrasal", reviewCount: 1, interval: 2, nextReview: Date.now() - 2000, learned: false, context: "Never give up on your dreams.", tags: ["günlük"], source: { showTitle: "Stranger Things", season: 1, episode: 1, time: 820 } },
-  { word: "piece of cake", translation: "çocuk oyuncağı", cefrLevel: "Idiom", reviewCount: 2, interval: 5, nextReview: Date.now() + 86400000 * 2, learned: false, context: "The test was a piece of cake.", tags: ["deyimler"], source: { showTitle: "The Office", season: 3, episode: 5, time: 410 } },
-  { word: "meticulous", translation: "titiz, kılı kırk yaran", cefrLevel: "C1", reviewCount: 0, interval: 0, nextReview: 0, learned: false, context: "He was meticulous about keeping his records clean.", tags: ["akademik", "favori"], wordFamily: ["meticulously", "meticulousness"], source: { showTitle: "Breaking Bad", season: 2, episode: 8, time: 1120 } },
-  { word: "look forward to", translation: "dört gözle beklemek", cefrLevel: "Phrasal", reviewCount: 4, interval: 10, nextReview: Date.now() + 86400000 * 6, learned: true, context: "I look forward to meeting you soon.", tags: ["günlük"], source: { showTitle: "Sherlock", season: 1, episode: 2, time: 640 } },
-  { word: "break a leg", translation: "iyi şanslar (sahne deyimi)", cefrLevel: "Idiom", reviewCount: 1, interval: 1, nextReview: Date.now() - 1000, learned: false, context: "You're going to be great tonight, break a leg!", tags: ["deyimler"], source: { showTitle: "Modern Family", season: 4, episode: 10, time: 530 } },
-  { word: "ubiquitous", translation: "her yerde bulunan", cefrLevel: "C2", reviewCount: 0, interval: 0, nextReview: 0, learned: false, context: "Smartphones have become ubiquitous in everyday life.", tags: ["teknoloji"], wordFamily: ["ubiquity", "ubiquitously"], source: { showTitle: "Black Mirror", season: 3, episode: 1, time: 945 } },
-  { word: "profound", translation: "derin, etkileyici", cefrLevel: "B2", reviewCount: 2, interval: 4, nextReview: Date.now() + 86400000, learned: false, context: "Her speech had a profound impact on the entire audience.", tags: ["felsefe", "akademik"], wordFamily: ["profoundly", "profundity"], source: { title: "Inception", time: 2450 } },
-  { word: "catch up", translation: "yetişmek, arayı kapatmak", cefrLevel: "Phrasal", reviewCount: 1, interval: 2, nextReview: Date.now() - 3000, learned: false, context: "Let's grab a coffee and catch up this weekend.", tags: ["günlük"], source: { showTitle: "Suits", season: 1, episode: 4, time: 380 } },
-  { word: "inevitable", translation: "kaçınılmaz", cefrLevel: "B2", reviewCount: 1, interval: 3, nextReview: Date.now() + 86400000 * 2, learned: false, context: "Change is an inevitable part of life.", tags: ["felsefe"], wordFamily: ["inevitably", "inevitability"], source: { showTitle: "Dark", season: 1, episode: 1, time: 512 } },
-  { word: "come across", translation: "tesadüfen rastlamak", cefrLevel: "Phrasal", reviewCount: 0, interval: 0, nextReview: 0, learned: false, context: "I came across an old photo while cleaning.", tags: ["günlük"], source: { showTitle: "Friends", season: 3, episode: 2, time: 310 } },
-  { word: "pragmatic", translation: "faydacı, pratik", cefrLevel: "C1", reviewCount: 3, interval: 6, nextReview: Date.now() + 86400000 * 3, learned: false, context: "We need a pragmatic solution to this issue.", tags: ["iş"], wordFamily: ["pragmatically", "pragmatism"], source: { showTitle: "Succession", season: 2, episode: 5, time: 940 } },
-  { word: "burn the midnight oil", translation: "gece geç saatlere kadar çalışmak", cefrLevel: "Idiom", reviewCount: 1, interval: 1, nextReview: Date.now() - 4000, learned: false, context: "He burned the midnight oil to prepare for the bar exam.", tags: ["deyimler", "akademik"], source: { showTitle: "Better Call Saul", season: 1, episode: 3, time: 1100 } },
-  { word: "lucid", translation: "berrak, açık ve net", cefrLevel: "C1", reviewCount: 0, interval: 0, nextReview: 0, learned: false, context: "He gave a lucid explanation of complex quantum mechanics.", tags: ["akademik"], wordFamily: ["lucidity", "lucidly"], source: { title: "Cosmos", time: 780 } },
-  { word: "call off", translation: "iptal etmek", cefrLevel: "Phrasal", reviewCount: 2, interval: 4, nextReview: Date.now() + 86400000, learned: false, context: "They had to call off the meeting due to heavy snow.", tags: ["iş", "günlük"], source: { showTitle: "The Office", season: 2, episode: 8, time: 420 } },
-  { word: "ambiguous", translation: "belirsiz, iki anlamlı", cefrLevel: "B2", reviewCount: 1, interval: 2, nextReview: Date.now() - 1500, learned: false, context: "The ending of the film was intentionally ambiguous.", tags: ["sanat"], wordFamily: ["ambiguity", "ambiguously"], source: { title: "Interstellar", time: 3400 } },
-  { word: "once in a blue moon", translation: "kırk yılda bir", cefrLevel: "Idiom", reviewCount: 2, interval: 5, nextReview: Date.now() + 86400000 * 5, learned: false, context: "My brother lives abroad so I only see him once in a blue moon.", tags: ["deyimler"], source: { showTitle: "Modern Family", season: 2, episode: 11, time: 615 } }
-];
-
-window.seedSampleWords = function(force = false) {
-  try {
-    const existing = localStorage.getItem('local_savedWords');
-    if (force || !existing || existing === '[]' || existing === 'null') {
-      localStorage.setItem('local_savedWords', JSON.stringify(SAMPLE_DUMMY_WORDS));
-      localStorage.setItem('local_srsStreakStats', JSON.stringify({ currentStreak: 5, bestStreak: 12, lastStudyDate: new Date().toDateString() }));
-      localStorage.setItem('pv_dev_seeded', '1');
-      console.log('[Polyfill] Seeded ' + SAMPLE_DUMMY_WORDS.length + ' rich sample words.');
-      if (typeof loadArchive === 'function') loadArchive();
-      if (typeof updateArchiveBadge === 'function') updateArchiveBadge();
-      return true;
-    }
-  } catch (e) {
-    console.warn('[Polyfill] Error seeding words:', e);
-  }
-  return false;
-};
-
-// Remove any legacy developer backdoor credentials if present
+// Remove any legacy developer backdoor credentials if present & ensure empty starting state
 (function() {
   try {
     if (localStorage.getItem('local_googleSyncEmail') === 'developer@primevocab.app') {
@@ -269,10 +228,20 @@ window.seedSampleWords = function(force = false) {
       localStorage.removeItem('local_licenseStatus');
       localStorage.removeItem('local_isPremium');
     }
+
     const existing = localStorage.getItem('local_savedWords');
     if (!existing || existing === 'null') {
-      localStorage.setItem('local_savedWords', JSON.stringify(SAMPLE_DUMMY_WORDS));
+      localStorage.setItem('local_savedWords', JSON.stringify([]));
       localStorage.setItem('local_srsStreakStats', JSON.stringify({ currentStreak: 0, bestStreak: 0, lastStudyDate: '' }));
+    } else if (!localStorage.getItem('local_googleSyncEmail')) {
+      // If an unauthenticated device previously received the auto-seeded dummy words, reset to empty
+      try {
+        const parsed = JSON.parse(existing);
+        if (Array.isArray(parsed) && parsed.length === 20 && parsed[0]?.word === 'resilient' && parsed[1]?.word === 'serendipity') {
+          localStorage.setItem('local_savedWords', JSON.stringify([]));
+          localStorage.removeItem('pv_dev_seeded');
+        }
+      } catch(e) {}
     }
   } catch(e) {
     console.warn('[Polyfill] Init error', e);
