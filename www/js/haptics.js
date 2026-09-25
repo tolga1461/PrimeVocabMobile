@@ -61,30 +61,42 @@ const HapticsService = {
     },
 
     // Success confirmation (correct answer in game, remembered card)
+    // Crisp, light positive double-pulse (tık-tık)
     async success() {
         if (!this.isEnabled) return;
         try {
             if (window.Capacitor?.isPluginAvailable?.('Haptics') && window.Capacitor?.Plugins?.Haptics) {
-                await window.Capacitor.Plugins.Haptics.notification({ type: 'SUCCESS' });
+                await window.Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' });
+                setTimeout(async () => {
+                    try {
+                        await window.Capacitor.Plugins.Haptics.impact({ style: 'MEDIUM' });
+                    } catch (e) {}
+                }, 75);
                 return;
             }
         } catch (e) {}
         if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-            try { navigator.vibrate([18, 40, 22]); } catch (e) {}
+            try { navigator.vibrate([25, 40, 35]); } catch (e) {}
         }
     },
 
-    // Error / Warning (incorrect answer in game)
+    // Error / Warning (incorrect answer in game, forgotten card)
+    // Heavy, forceful double warning buzz (bzz-bzz)
     async error() {
         if (!this.isEnabled) return;
         try {
             if (window.Capacitor?.isPluginAvailable?.('Haptics') && window.Capacitor?.Plugins?.Haptics) {
-                await window.Capacitor.Plugins.Haptics.notification({ type: 'ERROR' });
+                await window.Capacitor.Plugins.Haptics.impact({ style: 'HEAVY' });
+                setTimeout(async () => {
+                    try {
+                        await window.Capacitor.Plugins.Haptics.impact({ style: 'HEAVY' });
+                    } catch (e) {}
+                }, 90);
                 return;
             }
         } catch (e) {}
         if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-            try { navigator.vibrate([45, 35, 45]); } catch (e) {}
+            try { navigator.vibrate([80, 50, 95]); } catch (e) {}
         }
     },
 
@@ -93,15 +105,22 @@ const HapticsService = {
         if (!this.isEnabled) return;
         try {
             if (window.Capacitor?.isPluginAvailable?.('Haptics') && window.Capacitor?.Plugins?.Haptics) {
-                await window.Capacitor.Plugins.Haptics.notification({ type: 'SUCCESS' });
-                setTimeout(() => {
-                    try { window.Capacitor.Plugins.Haptics.impact({ style: 'HEAVY' }); } catch(e){}
-                }, 140);
+                await window.Capacitor.Plugins.Haptics.impact({ style: 'MEDIUM' });
+                setTimeout(async () => {
+                    try {
+                        await window.Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' });
+                        setTimeout(async () => {
+                            try {
+                                await window.Capacitor.Plugins.Haptics.impact({ style: 'HEAVY' });
+                            } catch (e) {}
+                        }, 80);
+                    } catch (e) {}
+                }, 80);
                 return;
             }
         } catch (e) {}
         if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-            try { navigator.vibrate([30, 40, 30, 50, 60]); } catch (e) {}
+            try { navigator.vibrate([35, 40, 35, 50, 75]); } catch (e) {}
         }
     }
 };

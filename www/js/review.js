@@ -168,7 +168,7 @@ document.getElementById('fc-good')?.addEventListener('click', (e) => {
 });
 document.getElementById('fc-again')?.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (window.HapticsService) window.HapticsService.tap();
+    if (window.HapticsService) window.HapticsService.error();
     if (fcDeck[fcIndex]) {
         fcAgainItems.push(fcDeck[fcIndex]);
     }
@@ -1349,6 +1349,7 @@ const revealBtn = document.getElementById('srs-reveal-btn');
 if (revealBtn && !revealBtn._listenerBound) {
     revealBtn.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.HapticsService) window.HapticsService.flip();
         document.getElementById('srs-flip-inner')?.classList.add('flipped');
     });
     revealBtn._listenerBound = true;
@@ -1358,6 +1359,7 @@ const frontCard = document.getElementById('srs-card-front');
 if (frontCard && !frontCard._listenerBound) {
     frontCard.addEventListener('click', (e) => {
         if (e.target.closest('button') || e.target.closest('.card-speak-btn')) return;
+        if (window.HapticsService) window.HapticsService.flip();
         document.getElementById('srs-flip-inner')?.classList.add('flipped');
     });
     frontCard._listenerBound = true;
@@ -1381,6 +1383,11 @@ if (srsTransBtn && !srsTransBtn._listenerBound) {
     if (!btn || btn._listenerBound) return;
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.HapticsService) {
+            if (rating === 0) window.HapticsService.error();
+            else if (rating === 1) window.HapticsService.tap();
+            else window.HapticsService.success();
+        }
         const item = srsQueue[srsQueueIndex];
         srsSessionStats[r]++;
         if (rating === 0)
@@ -1418,6 +1425,7 @@ const srsRateLearned = document.getElementById('srs-rate-learned');
 if (srsRateLearned && !srsRateLearned._listenerBound) {
     srsRateLearned.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (window.HapticsService) window.HapticsService.celebrate();
         const item = srsQueue[srsQueueIndex];
         if (srsSessionStats.learned !== undefined)
             srsSessionStats.learned++;
