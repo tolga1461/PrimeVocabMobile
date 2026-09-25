@@ -1796,6 +1796,12 @@
   "heatmap_tooltip": {
     "message": "{date}: {count} kart"
   },
+  "heatmap_words_count": {
+    "message": "{count} kelime çalışıldı"
+  },
+  "heatmap_no_activity": {
+    "message": "Çalışma yapılmadı"
+  },
   "settings_show_learned_games_title": {
     "message": "Oyunlarda Öğrenilenleri Göster"
   },

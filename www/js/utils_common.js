@@ -84,6 +84,10 @@ async function initI18n(langOverride) {
                 const res = await fetch(url);
                 localeMessages = await res.json();
                 window.localeMessages = localeMessages;
+                window.currentAppLang = lang;
+                window.currentLocale = lang;
+                if (typeof currentLang !== 'undefined') currentLang = lang;
+                if (document.documentElement) document.documentElement.lang = lang;
                 console.log("[PV-i18n] Locale messages loaded", lang);
             }
             catch (err) {
@@ -109,6 +113,24 @@ async function initI18n(langOverride) {
         }
     });
 }
+function getAppLocale() {
+    let lang = window.currentAppLang || (document.documentElement && document.documentElement.lang) || (typeof currentLang !== 'undefined' && currentLang);
+    if (!lang || lang === 'auto') {
+        const uiLang = (typeof chrome !== 'undefined' && chrome.i18n && chrome.i18n.getUILanguage) 
+            ? chrome.i18n.getUILanguage().split('-')[0].toLowerCase() 
+            : (navigator.language || 'tr').split('-')[0].toLowerCase();
+        lang = ['en', 'tr', 'de', 'fr', 'es'].includes(uiLang) ? uiLang : 'tr';
+    }
+    const map = {
+        'tr': 'tr-TR',
+        'en': 'en-US',
+        'de': 'de-DE',
+        'es': 'es-ES',
+        'fr': 'fr-FR'
+    };
+    return map[lang] || lang;
+}
+window.getAppLocale = getAppLocale;
 function getMessage(key) {
     if (localeMessages && localeMessages[key]) {
         return localeMessages[key].message;

@@ -57,8 +57,7 @@ window.applyLanguageEverywhere = function() {
     if (typeof loadProfileData === 'function') loadProfileData();
     if (typeof syncSelectsToTriggers === 'function') syncSelectsToTriggers();
     if (typeof loadArchive === 'function') loadArchive();
-    if (typeof loadSrs === 'function') loadSrs();
-    if (typeof renderHeatmap === 'function') renderHeatmap();
+    if (typeof srsLoadHome === 'function') srsLoadHome();
     if (typeof loadGamesHub === 'function') loadGamesHub();
 };
 

@@ -37,6 +37,14 @@ const HapticsService = {
         }
     },
 
+    async light() {
+        return this.tap();
+    },
+
+    async selection() {
+        return this.flip();
+    },
+
     // Micro selection tap (card flip, toggle)
     async flip() {
         if (!this.isEnabled) return;

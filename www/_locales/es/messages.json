@@ -1730,6 +1730,12 @@
   "heatmap_tooltip": {
     "message": "{date}: {count} cartas"
   },
+  "heatmap_words_count": {
+    "message": "{count} palabras estudiadas"
+  },
+  "heatmap_no_activity": {
+    "message": "Sin actividad"
+  },
   "settings_show_learned_games_title": {
     "message": "Mostrar palabras aprendidas en juegos"
   },

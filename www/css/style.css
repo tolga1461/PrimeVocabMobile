@@ -6895,36 +6895,66 @@ input:checked+.slider:before {
 }
 
 /* ── Heatmap Floating Tooltip ────────────────────────────────────────────────── */
+.heatmap-cell {
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 0.12s ease, outline 0.12s ease, box-shadow 0.12s ease;
+  user-select: none;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.15);
+  z-index: 3;
+}
+
+.heatmap-cell.active-cell {
+  outline: 2px solid #818cf8 !important;
+  outline-offset: 1px !important;
+  transform: scale(1.22) !important;
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.6) !important;
+  z-index: 5 !important;
+}
+
 .heatmap-floating-tooltip {
   position: fixed;
   z-index: 10000;
   pointer-events: none;
-  background: rgba(18, 18, 28, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
-  padding: 5px 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  background: linear-gradient(135deg, rgba(24, 28, 48, 0.96), rgba(14, 17, 30, 0.98));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(129, 140, 248, 0.35);
+  border-radius: 12px;
+  padding: 6px 12px;
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.7), 0 0 16px -3px rgba(99, 102, 241, 0.35);
   transform: translate(-50%, -100%);
   margin-top: -8px;
   white-space: nowrap;
-  font-family: var(--font);
+  font-family: var(--font, 'Outfit', sans-serif);
   display: none;
   flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  gap: 3px;
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.heatmap-floating-tooltip.visible {
+  display: flex;
+  opacity: 1;
 }
 
 .heatmap-tooltip-date {
-  font-size: 10px;
-  color: var(--text-muted);
-  font-weight: 700;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
 .heatmap-tooltip-count {
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 800;
   color: #34d399;
+  letter-spacing: -0.2px;
 }
 
 /* ── EXP / PROFILE BANNER (Extension Parity) ── */

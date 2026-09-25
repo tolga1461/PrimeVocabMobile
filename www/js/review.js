@@ -502,9 +502,31 @@ function srsLoadHome(preserveNav = false) {
     });
 }
 // ── Heatmap ───────────────────────────────────────────────────────────────────
+let heatmapTooltipTimeout = null;
+
+function hideHeatmapTooltip() {
+    const tooltip = document.getElementById('heatmap-floating-tooltip');
+    if (tooltip) {
+        tooltip.classList.remove('visible');
+        tooltip.style.display = 'none';
+    }
+    const grid = document.getElementById('srs-heatmap-grid');
+    if (grid) {
+        grid.querySelectorAll('.heatmap-cell.active-cell').forEach(c => c.classList.remove('active-cell'));
+    }
+}
+
+// Global click to dismiss tooltip when tapping outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.heatmap-cell') && !e.target.closest('#heatmap-floating-tooltip')) {
+        hideHeatmapTooltip();
+    }
+}, { passive: true });
+
 function srsRenderHeatmap(savedWords) {
     const section = document.getElementById('srs-heatmap-section');
     const grid = document.getElementById('srs-heatmap-grid');
+    const tooltip = document.getElementById('heatmap-floating-tooltip');
     if (!section || !grid)
         return;
     const reviewed = savedWords.filter(w => (w.reviewCount ?? 0) > 0);
@@ -534,6 +556,76 @@ function srsRenderHeatmap(savedWords) {
     grid.innerHTML = '';
     const startOffset = (today.getDay() + 6) % 7;
     const startDay = todayMs - (DAYS + startOffset) * msDay;
+
+    function showTooltipForCell(cell, date, count) {
+        if (!tooltip) return;
+
+        // Highlight selected cell
+        grid.querySelectorAll('.heatmap-cell.active-cell').forEach(c => c.classList.remove('active-cell'));
+        cell.classList.add('active-cell');
+
+        const appLocale = typeof getAppLocale === 'function' 
+            ? getAppLocale() 
+            : (window.currentAppLang || (document.documentElement && document.documentElement.lang) || 'tr-TR');
+
+        const dateStr = date.toLocaleDateString(appLocale, {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            weekday: 'short'
+        });
+
+        let countStr = '';
+        if (count === 0) {
+            countStr = getMessage('heatmap_no_activity') || 'Çalışma yapılmadı';
+        } else {
+            const wordTpl = getMessage('heatmap_words_count') || '{count} kelime çalışıldı';
+            countStr = wordTpl.replace('{count}', count);
+        }
+
+        tooltip.innerHTML = `
+            <span class="heatmap-tooltip-date">${dateStr}</span>
+            <span class="heatmap-tooltip-count" style="color: ${count > 0 ? '#34d399' : '#94a3b8'};">${countStr}</span>
+        `;
+
+        tooltip.style.display = 'flex';
+        tooltip.classList.add('visible');
+
+        // Position tooltip relative to viewport
+        const rect = cell.getBoundingClientRect();
+        let left = rect.left + rect.width / 2;
+        let top = rect.top - 6;
+
+        // Keep within viewport horizontally
+        const tooltipWidth = 170;
+        left = Math.max(tooltipWidth / 2 + 12, Math.min(window.innerWidth - tooltipWidth / 2 - 12, left));
+
+        if (top < 70) {
+            top = rect.bottom + 6;
+            tooltip.style.transform = 'translate(-50%, 0)';
+            tooltip.style.marginTop = '6px';
+        } else {
+            tooltip.style.transform = 'translate(-50%, -100%)';
+            tooltip.style.marginTop = '-8px';
+        }
+
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+
+        if (window.HapticsService) {
+            try {
+                if (typeof window.HapticsService.selection === 'function') {
+                    window.HapticsService.selection();
+                } else if (typeof window.HapticsService.tap === 'function') {
+                    window.HapticsService.tap();
+                }
+            } catch (e) {}
+        }
+
+        clearTimeout(heatmapTooltipTimeout);
+        heatmapTooltipTimeout = setTimeout(hideHeatmapTooltip, 3500);
+    }
+
     for (let d = 0; d < DAYS + startOffset + 1; d++) {
         const dayMs = startDay + d * msDay;
         const count = activityMap[dayMs] || 0;
@@ -542,15 +634,23 @@ function srsRenderHeatmap(savedWords) {
         cell.className = 'heatmap-cell';
         if (isFuture || d < startOffset) {
             cell.style.opacity = '0';
+            cell.style.pointerEvents = 'none';
         }
         else {
             const intensity = count === 0 ? 0 : Math.ceil((count / maxCount) * 4);
             cell.dataset.count = count;
             cell.style.background = `var(--hm-${intensity})`;
-            if (count > 0) {
-                const date = new Date(dayMs);
-                cell.title = (getMessage("heatmap_tooltip") || "{date}: {count} kart").replace("{date}", date.toLocaleDateString()).replace("{count}", count);
-            }
+            const date = new Date(dayMs);
+            const appLocale = typeof getAppLocale === 'function' 
+                ? getAppLocale() 
+                : (window.currentAppLang || (document.documentElement && document.documentElement.lang) || 'tr-TR');
+            cell.title = (getMessage("heatmap_tooltip") || "{date}: {count} kart").replace("{date}", date.toLocaleDateString(appLocale)).replace("{count}", count);
+
+            // Interactive click for mobile tap & desktop
+            cell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showTooltipForCell(cell, date, count);
+            });
         }
         grid.appendChild(cell);
     }

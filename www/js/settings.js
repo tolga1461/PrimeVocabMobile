@@ -956,7 +956,7 @@ if (appLangSelectEl) {
                 if (typeof updateProfileUI === 'function') updateProfileUI();
                 if (typeof loadProfileData === 'function') loadProfileData();
                 if (typeof loadArchive === 'function') loadArchive();
-                if (typeof loadSrs === 'function') loadSrs();
+                if (typeof srsLoadHome === 'function') srsLoadHome();
                 if (typeof syncSelectsToTriggers === 'function') syncSelectsToTriggers();
             }
         });
