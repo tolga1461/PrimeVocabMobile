@@ -650,7 +650,7 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     virtualExpandAll = expandAll;
     virtualCefrMap = cefrMap;
 
-    wordList.querySelectorAll('.word-card, .word-item, .no-results').forEach(el => el.remove());
+    wordList.querySelectorAll('.word-card-swipe-wrap, .word-card, .word-item, .no-results').forEach(el => el.remove());
     const spacer = document.getElementById('word-list-spacer');
     if (spacer) spacer.remove();
 
@@ -827,8 +827,29 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
             </div></div>
         `;
 
-        bindCardEvents(div, item);
-        wordList.appendChild(div);
+        const wrap = document.createElement('div');
+        wrap.className = 'word-card-swipe-wrap';
+        wrap.dataset.index = item.originalIndex;
+        wrap.innerHTML = `
+            <div class="word-card-delete-bg">
+                <div class="swipe-delete-action left-action">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                        <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/>
+                    </svg>
+                    <span>${esc(deleteLbl)}</span>
+                </div>
+                <div class="swipe-delete-action right-action">
+                    <span>${esc(deleteLbl)}</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                        <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"/>
+                    </svg>
+                </div>
+            </div>
+        `;
+
+        wrap.appendChild(div);
+        bindCardEvents(div, item, wrap);
+        wordList.appendChild(wrap);
     });
 
     if (!scrollListenerAttached) {
@@ -920,9 +941,228 @@ function renderArchive(savedWords, showFamily = true, showTags = true, expandAll
     }
 }
 
-function bindCardEvents(card, item) {
+function bindCardEvents(card, item, wrap = null) {
+    let isSwiping = false;
+    let hasSwiped = false;
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let isScrolling = null;
+    let passedThreshold = false;
+
+    const leftAction = wrap ? wrap.querySelector('.left-action') : null;
+    const rightAction = wrap ? wrap.querySelector('.right-action') : null;
+
+    // Helper: Reset swipe visual state with smooth spring-back
+    const resetSwipe = () => {
+        if (!wrap) return;
+        card.style.transition = 'transform 0.24s cubic-bezier(0.25, 1, 0.5, 1)';
+        card.style.transform = 'translateX(0)';
+        if (leftAction) {
+            leftAction.classList.remove('active');
+            leftAction.style.opacity = '';
+        }
+        if (rightAction) {
+            rightAction.classList.remove('active');
+            rightAction.style.opacity = '';
+        }
+        setTimeout(() => {
+            card.style.transition = '';
+            card.style.transform = '';
+            wrap.classList.remove('is-swiping');
+        }, 240);
+    };
+
+    // Helper: Execute card removal with cancellation support
+    const triggerSwipeDelete = (direction) => {
+        const targetTranslate = direction === 'left' ? '-115%' : '115%';
+        card.style.transition = 'transform 0.24s cubic-bezier(0.25, 1, 0.5, 1)';
+        card.style.transform = `translateX(${targetTranslate})`;
+
+        // Smoothly collapse wrapper height to animate neighboring cards up
+        setTimeout(() => {
+            if (!wrap) return;
+            wrap.style.height = wrap.offsetHeight + 'px';
+            void wrap.offsetHeight; // force reflow
+            wrap.classList.add('swiping-deleted');
+            wrap.style.height = '0px';
+            wrap.style.marginBottom = '-8px';
+            wrap.style.opacity = '0';
+            wrap.style.transition = 'height 0.24s cubic-bezier(0.4, 0, 0.2, 1), margin-bottom 0.24s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease';
+        }, 120);
+
+        setTimeout(() => {
+            deleteWord(item.originalIndex, () => {
+                // onCancel: user backed out of delete confirmation modal
+                if (!wrap) return;
+                wrap.classList.remove('swiping-deleted');
+                wrap.style.height = '';
+                wrap.style.marginBottom = '';
+                wrap.style.opacity = '';
+                if (leftAction) {
+                    leftAction.classList.remove('active');
+                    leftAction.style.opacity = '';
+                }
+                if (rightAction) {
+                    rightAction.classList.remove('active');
+                    rightAction.style.opacity = '';
+                }
+                card.style.transition = 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)';
+                card.style.transform = 'translateX(0)';
+                setTimeout(() => {
+                    card.style.transition = '';
+                    card.style.transform = '';
+                    wrap.classList.remove('is-swiping');
+                }, 280);
+            });
+        }, 220);
+    };
+
+    if (wrap) {
+        let pointerCaptured = false;
+        let activePointerId = null;
+
+        const onPointerDown = (e) => {
+            // ONLY enabled when card is collapsed!
+            if (card.classList.contains('expanded')) return;
+            if (e.button !== undefined && e.button !== 0) return; // primary pointer only
+            if (e.target.closest('.word-actions, input, button, .tag-pill-remove, .card-menu')) return;
+
+            startX = e.clientX;
+            startY = e.clientY;
+            currentX = startX;
+            isScrolling = null;
+            isSwiping = false;
+            passedThreshold = false;
+            activePointerId = e.pointerId;
+        };
+
+        const onPointerMove = (e) => {
+            if (activePointerId !== e.pointerId) return;
+            if (card.classList.contains('expanded')) return;
+            if (startX === 0) return;
+
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+
+            if (isScrolling === null) {
+                // Determine gesture intention: vertical scroll vs horizontal swipe
+                if (Math.abs(dy) > 7 && Math.abs(dy) >= Math.abs(dx)) {
+                    isScrolling = true; // Natural vertical scroll
+                    activePointerId = null;
+                    return;
+                } else if (Math.abs(dx) > 7 && Math.abs(dx) > Math.abs(dy)) {
+                    isScrolling = false; // Horizontal swipe detected!
+                    isSwiping = true;
+                    hasSwiped = true;
+                    wrap.classList.add('is-swiping');
+                    card.style.cursor = 'grabbing';
+                    try {
+                        card.setPointerCapture(e.pointerId);
+                        pointerCaptured = true;
+                    } catch (err) {}
+                } else {
+                    return;
+                }
+            }
+
+            if (isScrolling === true) return;
+
+            // Horizontal swipe active
+            if (e.cancelable) e.preventDefault();
+            currentX = e.clientX;
+
+            const threshold = Math.min(125, card.offsetWidth * 0.36);
+            let displayX = dx;
+            if (Math.abs(dx) > threshold) {
+                const extra = Math.abs(dx) - threshold;
+                const sign = dx > 0 ? 1 : -1;
+                displayX = sign * (threshold + extra * 0.35);
+            }
+
+            card.style.transition = 'none';
+            card.style.transform = `translateX(${displayX}px)`;
+
+            const progress = Math.min(1, Math.abs(dx) / (threshold * 0.85));
+            if (dx < 0) {
+                if (rightAction) rightAction.style.opacity = Math.max(0.2, progress);
+                if (leftAction) leftAction.style.opacity = '0';
+            } else {
+                if (leftAction) leftAction.style.opacity = Math.max(0.2, progress);
+                if (rightAction) rightAction.style.opacity = '0';
+            }
+
+            const reached = Math.abs(dx) >= threshold;
+            if (reached && !passedThreshold) {
+                passedThreshold = true;
+                if (window.HapticsService && typeof HapticsService.light === 'function') {
+                    HapticsService.light();
+                }
+                if (dx < 0 && rightAction) rightAction.classList.add('active');
+                if (dx > 0 && leftAction) leftAction.classList.add('active');
+            } else if (!reached && passedThreshold) {
+                passedThreshold = false;
+                if (leftAction) leftAction.classList.remove('active');
+                if (rightAction) rightAction.classList.remove('active');
+            }
+        };
+
+        const onPointerUp = (e) => {
+            if (activePointerId !== e.pointerId && activePointerId !== null) return;
+            card.style.cursor = '';
+
+            if (pointerCaptured) {
+                try {
+                    card.releasePointerCapture(e.pointerId);
+                } catch (err) {}
+                pointerCaptured = false;
+            }
+
+            activePointerId = null;
+
+            if (card.classList.contains('expanded')) {
+                startX = 0;
+                return;
+            }
+
+            if (!isSwiping) {
+                startX = 0;
+                return;
+            }
+
+            const dx = currentX - startX;
+            const threshold = Math.min(125, card.offsetWidth * 0.36);
+
+            if (Math.abs(dx) >= threshold) {
+                triggerSwipeDelete(dx < 0 ? 'left' : 'right');
+            } else {
+                resetSwipe();
+            }
+
+            startX = 0;
+            isSwiping = false;
+            isScrolling = null;
+            setTimeout(() => {
+                hasSwiped = false;
+            }, 220);
+        };
+
+        card.addEventListener('pointerdown', onPointerDown);
+        card.addEventListener('pointermove', onPointerMove);
+        card.addEventListener('pointerup', onPointerUp);
+        card.addEventListener('pointercancel', onPointerUp);
+        card.addEventListener('dragstart', (e) => e.preventDefault());
+    }
+
     // Akordeon aç / kapa
     card.addEventListener('click', (e) => {
+        // Swipe yapıldıysa akordeonu açma/kapatma
+        if (hasSwiped) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
         // Metin seçimi yapıldıysa kartı kapatma
         const selection = window.getSelection();
         if (selection && selection.toString().trim().length > 0) return;

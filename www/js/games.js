@@ -125,6 +125,18 @@ function initReviewSubtabs() {
             activeCancelCallback = null;
         });
     }
+    if (confirmOverlay) {
+        confirmOverlay.addEventListener('click', (e) => {
+            if (e.target === confirmOverlay) {
+                confirmOverlay.style.display = 'none';
+                activeConfirmCallback = null;
+                if (typeof activeCancelCallback === 'function') {
+                    activeCancelCallback();
+                }
+                activeCancelCallback = null;
+            }
+        });
+    }
     const exitBtn = document.getElementById('game-exit-btn');
     if (exitBtn) {
         exitBtn.addEventListener('click', (e) => {
