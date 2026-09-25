@@ -277,10 +277,36 @@ function resetArchiveScrollState() {
 
 
 
-// ── Arşiv Yükle & Popover Güncelleyiciler ──────────────────────────────────────
+function adjustPopoverPosition(popover, trigger) {
+    if (!popover || !trigger) return;
+    popover.style.left = '0px';
+    popover.style.right = 'auto';
+    const rect = popover.getBoundingClientRect();
+    const pad = 10;
+    const screenWidth = window.innerWidth;
+    if (rect.right > screenWidth - pad) {
+        // Overflows on right: try right aligning to trigger
+        popover.style.left = 'auto';
+        popover.style.right = '0px';
+        const newRect = popover.getBoundingClientRect();
+        if (newRect.left < pad) {
+            // Overflows on left too: pin to viewport margin relative to trigger
+            const triggerRect = trigger.getBoundingClientRect();
+            popover.style.right = 'auto';
+            popover.style.left = `${Math.max(0, pad - triggerRect.left)}px`;
+        }
+    } else if (rect.left < pad) {
+        const triggerRect = trigger.getBoundingClientRect();
+        popover.style.right = 'auto';
+        popover.style.left = `${Math.max(0, pad - triggerRect.left)}px`;
+    }
+}
+
 function closeAllArchivePopovers() {
     document.querySelectorAll('.level-popover, .sort-popover, .source-popover, .dropdown, .card-menu').forEach(el => {
         el.classList.remove('open');
+        el.style.left = '';
+        el.style.right = '';
     });
     document.querySelectorAll('.chip-select').forEach(el => {
         el.classList.remove('open');
@@ -1260,6 +1286,7 @@ function initArchiveControls() {
             if (willOpen) {
                 lvlPopover.classList.add('open');
                 lvlSelect.classList.add('open');
+                adjustPopoverPosition(lvlPopover, lvlSelect);
             }
         });
         lvlPopover.querySelectorAll('.lvl-chip').forEach(chip => {
@@ -1298,6 +1325,7 @@ function initArchiveControls() {
             if (willOpen) {
                 sortPopover.classList.add('open');
                 sortSelect.classList.add('open');
+                adjustPopoverPosition(sortPopover, sortSelect);
             }
         });
         sortPopover.querySelectorAll('.sort-opt').forEach(opt => {
@@ -1324,6 +1352,7 @@ function initArchiveControls() {
             if (willOpen) {
                 sourcePopover.classList.add('open');
                 sourceSelect.classList.add('open');
+                adjustPopoverPosition(sourcePopover, sourceSelect);
             }
         });
     }
@@ -1339,6 +1368,7 @@ function initArchiveControls() {
             if (willOpen) {
                 tagPopover.classList.add('open');
                 tagSelect.classList.add('open');
+                adjustPopoverPosition(tagPopover, tagSelect);
             }
         });
     }

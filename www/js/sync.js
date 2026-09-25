@@ -670,6 +670,12 @@ async function performGoogleDriveSync(interactive = false) {
         const email = userInfo.email;
         const picture = userInfo.picture;
 
+        // Ensure user hasn't logged out while token/user info was being fetched
+        if (!localStorage.getItem('google_sync_token') && !localStorage.getItem('google_sync_refresh_token')) {
+            console.log("[PV-Sync] User logged out, aborting sync.");
+            return;
+        }
+
         // Account Switch Detection: Clear local data silently if switching users
         const lastEmail = localStorage.getItem('last_logged_sync_email') || '';
         if (lastEmail && lastEmail.toLowerCase() !== email.toLowerCase()) {
@@ -695,6 +701,11 @@ async function performGoogleDriveSync(interactive = false) {
         const localLic = await new Promise(resolve => {
             chrome.storage.local.get({ licenseType: 'FREE', isPremium: false }, resolve);
         });
+
+        if (!localStorage.getItem('google_sync_token') && !localStorage.getItem('google_sync_refresh_token')) {
+            console.log("[PV-Sync] User logged out during license check, aborting sync.");
+            return;
+        }
 
         const isDriveAllowed = localLic.isPremium === true || localLic.licenseType !== 'FREE';
         if (!isDriveAllowed) {
@@ -737,6 +748,11 @@ async function performGoogleDriveSync(interactive = false) {
             throw new Error("PREMIUM_REQUIRED");
         }
 
+        if (!localStorage.getItem('google_sync_token') && !localStorage.getItem('google_sync_refresh_token')) {
+            console.log("[PV-Sync] User logged out, aborting sync.");
+            return;
+        }
+
         await new Promise(resolve => {
             chrome.storage.local.set({ googleSyncEmail: email, googleSyncPicture: picture }, resolve);
         });
@@ -768,6 +784,11 @@ async function performGoogleDriveSync(interactive = false) {
             } catch (e) {
                 console.error("[PV-Sync] Failed to download cloud file, using empty default", e);
             }
+        }
+
+        if (!localStorage.getItem('google_sync_token') && !localStorage.getItem('google_sync_refresh_token')) {
+            console.log("[PV-Sync] User logged out during cloud download, aborting sync before write.");
+            return;
         }
 
         const mergedData = mergeSyncData(localData, cloudData, localSettings);

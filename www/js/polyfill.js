@@ -177,6 +177,38 @@ chrome.storage = {
       notifyStorageChange(changes, 'sync');
       if (callback) callback();
       return Promise.resolve();
+    },
+    remove: function(keys, callback) {
+      let removeKeys = Array.isArray(keys) ? keys : [keys];
+      let changes = {};
+      removeKeys.forEach(key => {
+        let oldVal = localStorage.getItem('sync_' + key);
+        localStorage.removeItem('sync_' + key);
+        changes[key] = {
+          oldValue: oldVal ? JSON.parse(oldVal) : undefined,
+          newValue: undefined
+        };
+      });
+      notifyStorageChange(changes, 'sync');
+      if (callback) callback();
+      return Promise.resolve();
+    },
+    clear: function(callback) {
+      let changes = {};
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('sync_')) {
+          let realKey = key.substring(5);
+          let oldVal = localStorage.getItem(key);
+          localStorage.removeItem(key);
+          changes[realKey] = {
+            oldValue: oldVal ? JSON.parse(oldVal) : undefined,
+            newValue: undefined
+          };
+        }
+      });
+      notifyStorageChange(changes, 'sync');
+      if (callback) callback();
+      return Promise.resolve();
     }
   },
   onChanged: {

@@ -799,7 +799,16 @@ function showPremiumBlockerModal(email, userCase) {
 }
 
 async function forceLogoutWithoutConfirm() {
+    if (silentSyncTimeout) {
+        clearTimeout(silentSyncTimeout);
+        silentSyncTimeout = null;
+    }
+    window.isSyncInProgress = false;
+
+    // Immediately clear tokens & revocation in background
     clearGoogleAuthToken().catch(() => {});
+
+    // Clean storage immediately
     await new Promise(resolve => {
         chrome.storage.local.remove([
             'googleSyncEmail', 
@@ -813,6 +822,8 @@ async function forceLogoutWithoutConfirm() {
             'licenseSignature'
         ], resolve);
     });
+
+    // Wipe local storage items
     localStorage.removeItem('google_sync_token');
     localStorage.removeItem('google_sync_token_expires');
     localStorage.removeItem('google_sync_refresh_token');
@@ -820,26 +831,79 @@ async function forceLogoutWithoutConfirm() {
     localStorage.removeItem('googleSyncEmail');
     localStorage.removeItem('googleSyncPicture');
     localStorage.removeItem('googleSyncEnabled');
+    localStorage.removeItem('last_logged_sync_email');
+
+    // Reset UI synchronously
+    resetProfileDOMToLoggedOut();
     updateProfileUI();
+}
+
+function resetProfileDOMToLoggedOut() {
+    const loggedOutView = document.getElementById('profile-logged-out-view');
+    const loggedInView = document.getElementById('profile-logged-in-view');
+    const loginBtn = document.getElementById('profile-login-btn');
+    const logoutBtn = document.getElementById('profile-logout-btn');
+    const emailEl = document.getElementById('profile-email');
+    const usernameEl = document.getElementById('profile-username');
+    const syncStatus = document.getElementById('profile-sync-status');
+    const syncNowBtn = document.getElementById('profile-sync-now-btn');
+    const avatarContainer = document.getElementById('profile-avatar-container');
+    const membershipBadge = document.getElementById('profile-membership-badge');
+    const settingsLoginBtn = document.getElementById('settings-login-btn');
+    const settingsSyncContainer = document.getElementById('settings-sync-status-container');
+    const settingsLogoutBtn = document.getElementById('settings-logout-btn');
+
+    if (loggedOutView) loggedOutView.style.display = 'flex';
+    if (loggedInView) loggedInView.style.display = 'none';
+    if (loginBtn) loginBtn.style.display = 'block';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (emailEl) emailEl.textContent = getMessage('profile_local_user') || 'Yerel Kullanıcı';
+    if (usernameEl) usernameEl.textContent = getMessage('profile_user_title') || 'Kullanıcı';
+    if (syncStatus) syncStatus.textContent = getMessage('profile_sync_status_unlinked') || 'Senkronizasyon Kapalı';
+    if (syncNowBtn) syncNowBtn.style.display = 'none';
+    if (avatarContainer) avatarContainer.innerHTML = PV_USER_AVATAR_SVG;
+    if (membershipBadge) {
+        membershipBadge.textContent = getMessage('profile_free_badge') || 'FREE';
+        membershipBadge.style.color = '#818cf8';
+        membershipBadge.style.background = '#0f172a';
+        membershipBadge.style.border = '1px solid #818cf8';
+    }
+    if (settingsLoginBtn) settingsLoginBtn.style.display = 'block';
+    if (settingsSyncContainer) settingsSyncContainer.style.display = 'none';
+    if (settingsLogoutBtn) settingsLogoutBtn.style.display = 'none';
+
+    const tabProfileBtn = document.getElementById('tab-profile');
+    if (tabProfileBtn) {
+        tabProfileBtn.classList.remove('has-avatar');
+        const tabAvatarRing = tabProfileBtn.querySelector('.tab-profile-avatar-ring');
+        if (tabAvatarRing) tabAvatarRing.style.display = 'none';
+        const defaultTabIcon = tabProfileBtn.querySelector('.tab-icon');
+        if (defaultTabIcon) defaultTabIcon.style.display = 'block';
+    }
 }
 
 async function handleLogout() {
     showCustomConfirm(
         "profile_logout_confirm",
         async () => {
-            // Save the current logged-in email to last_logged_sync_email before clearing it
-            try {
-                const data = await new Promise(resolve => {
-                    chrome.storage.local.get({ googleSyncEmail: "" }, resolve);
-                });
-                if (data && data.googleSyncEmail) {
-                    localStorage.setItem('last_logged_sync_email', data.googleSyncEmail);
-                }
-            } catch (e) {
-                console.warn("[PV-core] Error saving last email:", e);
+            // Cancel any pending debounced sync
+            if (silentSyncTimeout) {
+                clearTimeout(silentSyncTimeout);
+                silentSyncTimeout = null;
             }
+            window.isSyncInProgress = false;
 
-            // Immediately clear tokens & revocation in background without blocking
+            // Immediately wipe all tokens from localStorage so no pending process can reuse them
+            localStorage.removeItem('google_sync_token');
+            localStorage.removeItem('google_sync_token_expires');
+            localStorage.removeItem('google_sync_refresh_token');
+            localStorage.removeItem('local_googleSyncEmail');
+            localStorage.removeItem('googleSyncEmail');
+            localStorage.removeItem('googleSyncPicture');
+            localStorage.removeItem('googleSyncEnabled');
+            localStorage.removeItem('last_logged_sync_email');
+
+            // Immediately revoke token in background without blocking
             clearGoogleAuthToken().catch(err => console.warn("[PV-core] Error revoking token:", err));
 
             // Clean storage immediately
@@ -857,18 +921,13 @@ async function handleLogout() {
                 ], resolve);
             });
 
-            // Clean local storage items
-            localStorage.removeItem('google_sync_token');
-            localStorage.removeItem('google_sync_token_expires');
-            localStorage.removeItem('google_sync_refresh_token');
-            localStorage.removeItem('local_googleSyncEmail');
-            localStorage.removeItem('googleSyncEmail');
-            localStorage.removeItem('googleSyncPicture');
-            localStorage.removeItem('googleSyncEnabled');
-
-            // Instantly update UI and trigger haptic feedback
-            if (window.HapticsService) window.HapticsService.light();
+            // Instant DOM UI reset with zero lag or flicker
+            resetProfileDOMToLoggedOut();
             updateProfileUI();
+            if (typeof loadProfileData === 'function') loadProfileData();
+
+            // Trigger haptic feedback & confirmation toast
+            if (window.HapticsService) window.HapticsService.light();
             showToast(getMessage('profile_logged_out_toast') || "Çıkış yapıldı.");
         },
         "profile_logout_btn",
